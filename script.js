@@ -11,15 +11,15 @@ function shuffleArray(array) {
     
 }
 
-const names = ["Sebi", "Timothy", "Pablo", "David", "Matthias", "Florian", "Maxi", "Tim", "Jannis", "Nico", "Wolf", "Claudius", "Winne"]
-const partners = {'Nico': ['Sebastian', 'Vodka mit 2 Sprudelwasser und Limetten'], 'Claudius': ['Timothy', 'Vodka mit Sprite'], 'Wolf': ['Pablo', 'Bacardi Cola'], 'Pablo': ['David', 'Havanna Cola'], 'Sebastian': ['Matthias', 'Jacky Cola'], 'Tim G.': ['Florian', 'Bacardi Cola'], 'Tim W.': ['Maximilian', 'Asbach Cola'], 'Maximilian': ['Tim G.', 'Bacardi Cola'], 'Florian': ['Jannis', 'Bacardi Cola'], 'Matthias': ['Nico', 'Bacardi Cola'], 'Jannis': ['Wolf', 'Bacardi Cola'], 'Jan-Vincent': ['Claudius', 'Vodka mit Sprite'], 'Timothy': ['Jan-Vincent', 'Bacardi Cola'], 'David': ['Tim W.', 'Jacky Cola']}
+
+const partners = {'Nico': ['Sebastian', 'Vodka mit 2 Sprudelwasser und Limetten'], 'Claudius': ['Timothy', 'Vodka mit Sprite'], 'Wolf': ['Pablo', 'Bacardi Cola'], 'Niels': ['David', 'Havanna Cola'], 'Sebastian': ['Matthias', 'Jacky Cola'], 'Tim G.': ['Florian', 'Bacardi Cola'], 'Tim W.': ['Maximilian', 'Asbach Cola'], 'Maximilian': ['Tim G.', 'Bacardi Cola'], 'Florian': ['Jannis', 'Bacardi Cola'], 'Matthias': ['Nico', 'Bacardi Cola'], 'Jannis': ['Wolf', 'Bacardi Cola'], 'Jan-Vincent': ['Claudius', 'Vodka mit Sprite'], 'Timothy': ['Jan-Vincent', 'Bacardi Cola'], 'David': ['Tim W.', 'Jacky Cola']};
 var inp = prompt("Gib deinen Vornamen ein");
+var inp = inp.charAt(0).toUpperCase() + inp.slice(1);
 var el = document.getElementById('result');
+
 if (inp in partners) {
 
 
-    
-    ;
     el.innerHTML = ("Ay Gude "+inp+ "!" +"<br />"+  "du hast die Ehre " + partners[inp][0]+ " mit Schnaps zu versorgen." +"<br />"+ "Falls es dich interessiert: "+partners[inp][0] + " hat verlauten lassen, dass er gerne "+ partners[inp][1] +" oder Tequila trinken möchte." +"<br />"+ "Diese Entscheidung liegt aber in deiner Hand.");
 
 }
