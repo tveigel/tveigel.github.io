@@ -1,0 +1,55 @@
+
+#BigBox{
+    text-align: center;
+}
+
+
+
+#logo1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+
+}
+
+#logo2 {
+	position: absolute;
+	top: 0;
+	right: 0%;
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+}
+
+
+#logo3 {
+	position: absolute;
+	bottom: 0%;
+	left: 0;
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+}
+
+#logo4 {
+	bottom: 0%;
+	right: 0%;
+	position: absolute;
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+    
+}
+
+#passout{
+    max-width: 50%;
+    height: auto
+}
+
