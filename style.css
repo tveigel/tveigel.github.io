@@ -5,11 +5,11 @@
 
 #logo1 {
 	
-	top: 0;
-	left: 0;
+	top: 0%;
+	left: 0%;
     height: auto; 
-    max-width: 30%; 
-    max-height: 30%;
+    max-width: 10%; 
+    
 
 }
 
@@ -18,8 +18,8 @@
 	top: 0;
 	right: 0%;
     height: auto; 
-    max-width: 30%; 
-    max-height: 30%;
+    max-width: 10%; 
+    
 }
 
 #BigBox{
@@ -34,8 +34,8 @@
 	bottom: 0%;
 	left: 0;
     height: auto; 
-    max-width: 30%; 
-    max-height: 30%;
+    max-width: 10%; 
+
 }
 
 #logo4 {
@@ -43,8 +43,8 @@
 	right: 0%;
 	position: absolute;
     height: auto; 
-    max-width: 30%; 
-    max-height: 30%;
+    max-width: 10%; 
+
     
 }
 
