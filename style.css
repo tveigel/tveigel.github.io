@@ -1,18 +1,15 @@
 
-#BigBox{
-    text-align: center;
-}
+
 
 
 
 #logo1 {
-	position: absolute;
+	
 	top: 0;
 	left: 0;
     height: auto; 
     max-width: 30%; 
     max-height: 30%;
-
 
 }
 
@@ -23,7 +20,11 @@
     height: auto; 
     max-width: 30%; 
     max-height: 30%;
+}
 
+#BigBox{
+    text-align: center;
+    width: 100%;
 
 }
 
@@ -35,7 +36,6 @@
     height: auto; 
     max-width: 30%; 
     max-height: 30%;
-
 }
 
 #logo4 {
@@ -45,7 +45,6 @@
     height: auto; 
     max-width: 30%; 
     max-height: 30%;
-
     
 }
 
