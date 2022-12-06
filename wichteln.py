@@ -1,8 +1,8 @@
 
 import random
 
-names = [ "Sebastian", "Timothy", "Niels", "David", "Matthias", "Florian", "Maximilian", "Jannis", "Claudius", "Jan-Vincent", "Tim"]
-drinks = ["Vodka mit 2 Sprudelwasser und Limetten", "Vodka mit Sprudel und Limetten", "Tanquery Sevilla oder auch Stornsdorfer", "Havanna Cola", "Jacky Cola", "Blueberry Bacardi", "Asbach Cola", "etwas liköriges zum shotten", 
+names = [ "Sebastian", "Timothy", "Niels", "David", "Matthias", "Florian", "Maximilian", "Jannis", "Nico", "Claudius", "Jan-Vincent", "Tim"]
+drinks = ["Vodka mit 2 Sprudelwasser und Limetten", "Vodka mit Sprudel und Limetten", "Tanquery Sevilla oder auch Stornsdorfer", "Havanna Cola", "Jacky Cola", "Bacardi Cola", "Asbach Cola", "etwas liköriges zum shotten","Bacardi Cola", 
         "Vodka mit Sprite", "Jägermeister", "Rum"]
 
 # make sure noone draws themselfe
