@@ -12,7 +12,7 @@ function shuffleArray(array) {
 }
 
 
-const partners = {'Matthias': ['Sebastian', 'Vodka mit 2 Sprudelwasser und Limetten'], 'Sebastian': ['Timothy', 'Vodka mit Sprudel und Limetten'], 'Jannis': ['Niels', 'Tanquery Sevilla oder auch Stornsdorfer'], 'Claudius': ['David', 'Havanna Cola'], 'Florian': ['Matthias', 'Jacky Cola'], 'Timothy': ['Florian', 'Bacardi Cola'], 'Jan-Vincent': ['Maximilian', 'Asbach Cola'], 'Niels': ['Jannis', 'etwas liköriges zum shotten'], 'David': ['Claudius', 'Vodka mit Sprite'], 'Tim': ['Jan-Vincent', 'Jägermeister'], 'Maximilian': ['Tim', 'Rum']};
+const partners = {'David': ['Sebastian', 'Vodka mit 2 Sprudelwasser und Limetten'], 'Niels': ['Timothy', 'Vodka mit Sprudel und Limetten'], 'Florian': ['Niels', 'Tanquery Sevilla oder auch Stornsdorfer'], 'Jannis': ['David', 'Havanna Cola'], 'Maximilian': ['Matthias', 'Jacky Cola'], 'Jan-Vincent': ['Florian', 'Blueberry Bacardi'], 'Matthias': ['Maximilian', 'Asbach Cola'], 'Tim': ['Jannis', 'etwas liköriges zum shotten'], 'Timothy': ['Claudius', 'Vodka mit Sprite'], 'Sebastian': ['Jan-Vincent', 'Jägermeister'], 'Claudius': ['Tim', 'Rum']};
 var inp = prompt("Gib deinen Vornamen ein");
 var inp = inp.trim();
 var inp = inp.charAt(0).toUpperCase() + inp.slice(1);
