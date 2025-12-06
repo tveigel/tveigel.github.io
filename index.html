@@ -1,34 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css" >
-
-    <title>Schnapswichteln</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="style.css">
+    <title>Pizza Bestellung - Party Tonight! 🍕</title>
+    <meta name="description" content="Pizza Party Bestellung">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
 </head>
+
 <body>
-    <div>
-    <img id="logo1" src="fcmlogo.jpg" alt="FCM Logo">
-    <img id="logo2" src="fcmlogo.jpg" alt="FCM Logo">
+    <div class="container">
+        <header>
+            <h1>🍕 Leggaa Pizzaaa 🍕</h1>
+            <p class="subtitle">Helloo! Schau dir die Speisekarte an und trag deine Bestellung bis 18:00 ein. Wir bestellen die Pizza dann für 20:00</p>
+        </header>
+
+        <section class="menu-section">
+            <h2>📋 Speisekarte</h2>
+            <div class="pdf-container">
+                <iframe src="Speisekarte-Sendling-klein.pdf" frameborder="0"></iframe>
+            </div>
+            <div class="pdf-buttons">
+                <a href="Speisekarte-Sendling-klein.pdf" target="_blank" class="btn btn-secondary">PDF in neuem Tab öffnen</a>
+            </div>
+        </section>
+
+        <section class="order-section">
+            <h2>✍️ Deine Bestellung</h2>
+            <form id="pizzaForm">
+                <div class="form-group">
+                    <label for="name">Name: <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="z.B. Max Mustermann" autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="gericht">Gericht: <span class="required">*</span></label>
+                    <input type="text" id="gericht" name="gericht" required placeholder="z.B. Pizza Margherita">
+                </div>
+
+                <div class="form-group">
+                    <label for="groesse">Größe: <span class="optional">(optional)</span></label>
+                    <select id="groesse" name="groesse">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Klein">Klein</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Groß">Groß</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="extrawunsch">Extrawunsch: <span class="optional">(optional)</span></label>
+                    <input type="text" id="extrawunsch" name="extrawunsch" placeholder="z.B. extra Käse, ohne Zwiebeln">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Bestellung hinzufügen</button>
+            </form>
+        </section>
+
+        <section class="orders-section">
+            <h2>📝 Alle Bestellungen (<span id="orderCount">0</span>)</h2>
+            <div class="action-buttons">
+                <button id="refreshOrders" class="btn btn-refresh">🔄 Aktualisieren</button>
+                <button id="showSummary" class="btn btn-summary" style="display: none;">📊 Bestellübersicht anzeigen</button>
+            </div>
+            <div class="table-container">
+                <table id="ordersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Gericht</th>
+                            <th>Größe</th>
+                            <th>Extrawunsch</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                    </tbody>
+                </table>
+                <p id="noOrders" class="no-orders">Noch keine Bestellungen vorhanden. Sei der Erste!</p>
+            </div>
+        </section>
     </div>
-   
-    <div id= "BigBox"> 
-        <h1>Maaskantje Schnapswichteln 2022</h1>
-        <h2>Die Partnersuche</h2>
 
-        <div id="result">I will be updated</div>
-        <script src="script.js"></script>
-        <img id="passout" src="passout.jpg" alt="Flo", class="displayed">
+    <!-- Summary Modal -->
+    <div id="summaryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Bestellübersicht für die Bestellung</h2>
+                <button class="modal-close" id="closeSummary">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="summaryContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeSummaryBtn">Schließen</button>
+            </div>
+        </div>
     </div>
 
+    <script src="script.js"></script>
+</body>
 
-    <img id="logo3" src="fcmlogo.jpg" alt="FCM Logo">
-    <img id="logo4" src="fcmlogo.jpg" alt="FCM Logo">
-        
-
-    
+</html>
