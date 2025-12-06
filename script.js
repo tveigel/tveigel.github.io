@@ -48,12 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const name = document.getElementById('name').value.trim();
+        const name = document.getElementById('name').value.trim() || 'Anonym';
         const gericht = document.getElementById('gericht').value.trim();
         const groesse = document.getElementById('groesse').value;
         const extrawunsch = document.getElementById('extrawunsch').value.trim();
         
-        if (name && gericht) {
+        if (gericht) {
             const order = {
                 id: Date.now(),
                 name: name,
@@ -228,13 +228,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Save edited order
     function saveEditedOrder(orderId) {
-        const name = document.getElementById(`edit-name-${orderId}`).value.trim();
+        const name = document.getElementById(`edit-name-${orderId}`).value.trim() || 'Anonym';
         const gericht = document.getElementById(`edit-gericht-${orderId}`).value.trim();
         const groesse = document.getElementById(`edit-groesse-${orderId}`).value;
         const extrawunsch = document.getElementById(`edit-extrawunsch-${orderId}`).value.trim();
         
-        if (!name || !gericht) {
-            alert('Name und Gericht müssen ausgefüllt sein!');
+        if (!gericht) {
+            alert('Gericht muss ausgefüllt sein!');
             return;
         }
         
