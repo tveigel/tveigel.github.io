@@ -405,6 +405,63 @@ footer p {
     }
 }
 
+/* Paper Results Section */
+.paper-section {
+    background: linear-gradient(135deg, #fefefe 0%, #f8f9fa 100%);
+    border: 2px solid var(--secondary-color);
+}
+
+.paper-note {
+    background: #e8f4fc;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.paper-content {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    max-width: 800px;
+    color: #333;
+}
+
+.paper-content h3 {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0 0 20px;
+    text-transform: uppercase;
+}
+
+.paper-content h4 {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 25px 0 12px;
+    color: #333;
+}
+
+.paper-content p {
+    margin: 0 0 16px;
+    text-align: justify;
+}
+
+.paper-content em {
+    font-style: italic;
+}
+
+.paper-content sub {
+    font-size: 0.75em;
+}
+
+.paper-content strong {
+    font-weight: 600;
+}
+
 /* Print Styles */
 @media print {
     nav#toc {
