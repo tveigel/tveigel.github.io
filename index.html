@@ -1,108 +1,306 @@
 <!DOCTYPE html>
-<html lang="de">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRI Study Results: Speed-Accuracy Tradeoff Effects</title>
     <link rel="stylesheet" href="style.css">
-    <title>Pizza Bestellung - Party Tonight! 🍕</title>
-    <meta name="description" content="Pizza Party Bestellung">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-error-bars@3.0.4/dist/chartjs-plugin-error-bars.min.js"></script>
 </head>
-
 <body>
-    <div class="container">
-        <header>
-            <h1>🍕 Leggaa Pizzaaa 🍕</h1>
-            <p class="subtitle">Helloo! Schau dir die Speisekarte an und trag deine Bestellung bis 18:00 ein. Wir bestellen die Pizza dann für 20:00</p>
-        </header>
+    <header>
+        <div class="container">
+            <h1>Effects of Speed-Accuracy Tradeoff on User Experience in Human-Robot Interaction</h1>
+            <p class="subtitle">Study Results</p>
+        </div>
+    </header>
 
-        <section class="menu-section">
-            <h2>📋 Speisekarte</h2>
-            <div class="pdf-container">
-                <iframe src="Speisekarte-Sendling-klein.pdf" frameborder="0"></iframe>
+    <nav id="toc">
+        <div class="container">
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#frustration">Frustration</a></li>
+                <li><a href="#workload">NASA TLX</a></li>
+                <li><a href="#utility">Utility</a></li>
+                <li><a href="#intelligence">Intelligence</a></li>
+                <li><a href="#summary">Summary</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Study Overview -->
+        <section id="overview">
+            <h2>Study Overview</h2>
+            <div class="study-info">
+                <div class="info-card">
+                    <h3>Design</h3>
+                    <p id="design-text">Loading...</p>
+                </div>
+                <div class="info-card">
+                    <h3>Sample</h3>
+                    <p><span id="n-participants">--</span> participants</p>
+                    <p><span id="n-observations">--</span> observations</p>
+                </div>
+                <div class="info-card">
+                    <h3>Independent Variables</h3>
+                    <ul>
+                        <li><strong>Speed-Accuracy Tradeoff (SAT):</strong> Conservative, Moderate, Risky</li>
+                        <li><strong>Uncertainty Communication:</strong> Yes, No</li>
+                        <li><strong>User Decision:</strong> Yes, No</li>
+                    </ul>
+                </div>
             </div>
-            <div class="pdf-buttons">
-                <a href="Speisekarte-Sendling-klein.pdf" target="_blank" class="btn btn-secondary">PDF in neuem Tab öffnen</a>
-            </div>
-        </section>
-
-        <section class="order-section">
-            <h2>✍️ Deine Bestellung</h2>
-            <form id="pizzaForm">
-                <div class="form-group">
-                    <label for="name">Name: <span class="optional">(optional)</span></label>
-                    <input type="text" id="name" name="name" placeholder="z.B. Max Mustermann">
-                </div>
-
-                <div class="form-group">
-                    <label for="gericht">Gericht: <span class="required">*</span></label>
-                    <input type="text" id="gericht" name="gericht" required placeholder="z.B. Pizza Margherita">
-                </div>
-
-                <div class="form-group">
-                    <label for="groesse">Größe: <span class="optional">(optional)</span></label>
-                    <select id="groesse" name="groesse">
-                        <option value="">Bitte wählen...</option>
-                        <option value="Klein">Klein</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Groß">Groß</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="extrawunsch">Extrawunsch: <span class="optional">(optional)</span></label>
-                    <input type="text" id="extrawunsch" name="extrawunsch" placeholder="z.B. extra Käse, ohne Zwiebeln">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Bestellung hinzufügen</button>
-            </form>
-        </section>
-
-        <section class="orders-section">
-            <h2>📝 Alle Bestellungen (<span id="orderCount">0</span>)</h2>
-            <div class="action-buttons">
-                <button id="refreshOrders" class="btn btn-refresh">🔄 Aktualisieren</button>
-                <button id="showSummary" class="btn btn-summary" style="display: none;">📊 Bestellübersicht anzeigen</button>
-            </div>
-            <div class="table-container">
-                <table id="ordersTable" style="display: none;">
+            
+            <div class="dv-overview">
+                <h3>Dependent Variables</h3>
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Gericht</th>
-                            <th>Größe</th>
-                            <th>Extrawunsch</th>
-                            <th>Aktionen</th>
+                            <th>Measure</th>
+                            <th>Scale</th>
+                            <th>Description</th>
                         </tr>
                     </thead>
-                    <tbody id="ordersTableBody">
+                    <tbody>
+                        <tr>
+                            <td>Frustration (Robot Performance)</td>
+                            <td>1-7 Likert</td>
+                            <td>User frustration about robot performance</td>
+                        </tr>
+                        <tr>
+                            <td>Frustration (Robot Decisions)</td>
+                            <td>1-7 Likert</td>
+                            <td>User frustration about robot decisions</td>
+                        </tr>
+                        <tr>
+                            <td>NASA TLX</td>
+                            <td>1-21 (6 subscales)</td>
+                            <td>Workload assessment</td>
+                        </tr>
+                        <tr>
+                            <td>Perceived Utility</td>
+                            <td>1-4</td>
+                            <td>Composite score of 3 utility items</td>
+                        </tr>
+                        <tr>
+                            <td>Perceived Intelligence</td>
+                            <td>1-5</td>
+                            <td>Godspeed questionnaire (5 items)</td>
+                        </tr>
                     </tbody>
                 </table>
-                <p id="noOrders" class="no-orders">Noch keine Bestellungen vorhanden. Sei der Erste!</p>
             </div>
         </section>
-    </div>
 
-    <!-- Summary Modal -->
-    <div id="summaryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📊 Bestellübersicht für die Bestellung</h2>
-                <button class="modal-close" id="closeSummary">&times;</button>
+        <!-- Frustration Measures -->
+        <section id="frustration">
+            <h2>User Frustration</h2>
+            
+            <div class="results-subsection">
+                <h3>Frustration about Robot Performance</h3>
+                <div class="chart-stats-container">
+                    <div class="chart-container">
+                        <canvas id="chart-frustration-performance-sat"></canvas>
+                    </div>
+                    <div class="stats-container">
+                        <h4>Descriptive Statistics</h4>
+                        <table class="data-table" id="table-frustration-performance">
+                            <thead>
+                                <tr>
+                                    <th>SAT Level</th>
+                                    <th>M</th>
+                                    <th>SD</th>
+                                    <th>95% CI</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div class="anova-results" id="anova-frustration-performance"></div>
+                        <div class="posthoc-results" id="posthoc-frustration-performance"></div>
+                    </div>
+                </div>
+                
+                <h4>Interaction: SAT x Uncertainty Communication</h4>
+                <div class="chart-container chart-wide">
+                    <canvas id="chart-frustration-performance-interaction"></canvas>
+                </div>
+                <div class="interaction-stats" id="interaction-frustration-performance"></div>
             </div>
-            <div class="modal-body">
-                <div id="summaryContent"></div>
+
+            <div class="results-subsection">
+                <h3>Frustration about Robot Decisions</h3>
+                <div class="chart-stats-container">
+                    <div class="chart-container">
+                        <canvas id="chart-frustration-decision-sat"></canvas>
+                    </div>
+                    <div class="stats-container">
+                        <h4>Descriptive Statistics</h4>
+                        <table class="data-table" id="table-frustration-decision">
+                            <thead>
+                                <tr>
+                                    <th>SAT Level</th>
+                                    <th>M</th>
+                                    <th>SD</th>
+                                    <th>95% CI</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div class="anova-results" id="anova-frustration-decision"></div>
+                        <div class="posthoc-results" id="posthoc-frustration-decision"></div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="closeSummaryBtn">Schließen</button>
+        </section>
+
+        <!-- NASA TLX -->
+        <section id="workload">
+            <h2>NASA Task Load Index (TLX)</h2>
+            
+            <div class="results-subsection">
+                <h3>Overall Workload</h3>
+                <div class="chart-stats-container">
+                    <div class="chart-container">
+                        <canvas id="chart-tlx-overall-sat"></canvas>
+                    </div>
+                    <div class="stats-container">
+                        <h4>Descriptive Statistics</h4>
+                        <table class="data-table" id="table-tlx-overall">
+                            <thead>
+                                <tr>
+                                    <th>SAT Level</th>
+                                    <th>M</th>
+                                    <th>SD</th>
+                                    <th>95% CI</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div class="anova-results" id="anova-tlx-overall"></div>
+                    </div>
+                </div>
             </div>
+
+            <div class="results-subsection">
+                <h3>TLX Subscales by SAT Level</h3>
+                <div class="chart-container chart-full">
+                    <canvas id="chart-tlx-subscales"></canvas>
+                </div>
+                
+                <h4>Statistical Results by Subscale</h4>
+                <table class="data-table" id="table-tlx-subscales-anova">
+                    <thead>
+                        <tr>
+                            <th>Subscale</th>
+                            <th>F</th>
+                            <th>df</th>
+                            <th>p</th>
+                            <th>η²</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Perceived Utility -->
+        <section id="utility">
+            <h2>Perceived Utility</h2>
+            
+            <div class="chart-stats-container">
+                <div class="chart-container">
+                    <canvas id="chart-utility-sat"></canvas>
+                </div>
+                <div class="stats-container">
+                    <h4>Descriptive Statistics</h4>
+                    <table class="data-table" id="table-utility">
+                        <thead>
+                            <tr>
+                                <th>SAT Level</th>
+                                <th>M</th>
+                                <th>SD</th>
+                                <th>95% CI</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="anova-results" id="anova-utility"></div>
+                    <div class="posthoc-results" id="posthoc-utility"></div>
+                </div>
+            </div>
+
+            <h3>Utility by Uncertainty Communication</h3>
+            <div class="chart-container chart-medium">
+                <canvas id="chart-utility-transparency"></canvas>
+            </div>
+            <div class="anova-results" id="anova-utility-transparency"></div>
+        </section>
+
+        <!-- Perceived Intelligence -->
+        <section id="intelligence">
+            <h2>Perceived Intelligence (Godspeed)</h2>
+            
+            <div class="chart-stats-container">
+                <div class="chart-container">
+                    <canvas id="chart-intelligence-sat"></canvas>
+                </div>
+                <div class="stats-container">
+                    <h4>Descriptive Statistics</h4>
+                    <table class="data-table" id="table-intelligence">
+                        <thead>
+                            <tr>
+                                <th>SAT Level</th>
+                                <th>M</th>
+                                <th>SD</th>
+                                <th>95% CI</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="anova-results" id="anova-intelligence"></div>
+                    <div class="posthoc-results" id="posthoc-intelligence"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section id="summary">
+            <h2>Summary of Key Findings</h2>
+            
+            <div class="summary-content">
+                <div class="finding-card">
+                    <h3>Main Effect of Speed-Accuracy Tradeoff</h3>
+                    <p>The SAT condition significantly influenced multiple outcome measures. Riskier robot behavior was associated with:</p>
+                    <ul id="sat-findings"></ul>
+                </div>
+
+                <div class="finding-card">
+                    <h3>Significant Effects Overview</h3>
+                    <table class="data-table" id="table-summary">
+                        <thead>
+                            <tr>
+                                <th>Dependent Variable</th>
+                                <th>Effect</th>
+                                <th>F</th>
+                                <th>p</th>
+                                <th>η²</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>HRI Winter School Study Results</p>
         </div>
-    </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
-
 </html>

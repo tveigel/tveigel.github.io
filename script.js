@@ -1,409 +1,506 @@
-// Pizza order management with robust localStorage
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('pizzaForm');
-    const ordersTable = document.getElementById('ordersTable');
-    const ordersTableBody = document.getElementById('ordersTableBody');
-    const noOrders = document.getElementById('noOrders');
-    const refreshButton = document.getElementById('refreshOrders');
-    const summaryButton = document.getElementById('showSummary');
-    const orderCount = document.getElementById('orderCount');
-    const summaryModal = document.getElementById('summaryModal');
-    const closeSummaryBtn = document.getElementById('closeSummaryBtn');
-    const closeSummary = document.getElementById('closeSummary');
-    const summaryContent = document.getElementById('summaryContent');
-    
-    const STORAGE_KEY = 'pizzaOrders_party_2025';
-    
-    let editingOrderId = null;
-    
-    // Load orders from localStorage with error handling
-    function loadOrders() {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
-        } catch (e) {
-            console.error('Error loading orders:', e);
-            return [];
-        }
+// HRI Study Results Visualization
+// Loads results_data.json and renders charts and tables
+
+let resultsData = null;
+
+// Color palette for SAT levels
+const colors = {
+    conservative: {
+        bg: 'rgba(34, 139, 34, 0.7)',
+        border: 'rgb(34, 139, 34)'
+    },
+    moderate: {
+        bg: 'rgba(255, 165, 0, 0.7)',
+        border: 'rgb(255, 165, 0)'
+    },
+    risky: {
+        bg: 'rgba(220, 20, 60, 0.7)',
+        border: 'rgb(220, 20, 60)'
+    },
+    transparencyYes: {
+        bg: 'rgba(70, 130, 180, 0.7)',
+        border: 'rgb(70, 130, 180)'
+    },
+    transparencyNo: {
+        bg: 'rgba(169, 169, 169, 0.7)',
+        border: 'rgb(169, 169, 169)'
     }
-    
-    // Save orders to localStorage with error handling
-    function saveOrders(orders) {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-            return true;
-        } catch (e) {
-            console.error('Error saving orders:', e);
-            alert('Warnung: Bestellung konnte nicht gespeichert werden. Versuche es erneut.');
-            return false;
-        }
+};
+
+const satColors = [colors.conservative, colors.moderate, colors.risky];
+const satLabels = ['Conservative', 'Moderate', 'Risky'];
+
+// Utility functions
+function formatP(p) {
+    if (p < 0.001) return '< .001';
+    return p.toFixed(3).replace('0.', '.');
+}
+
+function formatF(anova) {
+    if (!anova) return 'N/A';
+    return `F(${anova.df1}, ${anova.df2}) = ${anova.F.toFixed(2)}, p ${formatP(anova.p)}, η² = ${anova.eta_sq.toFixed(3)}`;
+}
+
+function getSignificanceMarker(p) {
+    if (p < 0.001) return '***';
+    if (p < 0.01) return '**';
+    if (p < 0.05) return '*';
+    return '';
+}
+
+// Load data and initialize
+async function init() {
+    try {
+        const response = await fetch('results_data.json');
+        resultsData = await response.json();
+        
+        renderStudyInfo();
+        renderFrustrationSection();
+        renderTLXSection();
+        renderUtilitySection();
+        renderIntelligenceSection();
+        renderSummary();
+    } catch (error) {
+        console.error('Error loading results data:', error);
+        document.body.innerHTML = '<p class="error">Error loading results data. Please ensure results_data.json exists.</p>';
     }
+}
+
+// Render study overview
+function renderStudyInfo() {
+    document.getElementById('design-text').textContent = resultsData.study_info.design;
+    document.getElementById('n-participants').textContent = resultsData.study_info.n_participants;
+    document.getElementById('n-observations').textContent = resultsData.study_info.n_observations;
+}
+
+// Create a bar chart with error bars
+function createBarChart(canvasId, data, labels, title, yAxisLabel, yMax = null) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
     
-    let orders = loadOrders();
+    const means = labels.map(l => data[l]?.mean || 0);
+    const errors = labels.map(l => data[l]?.ci_95 || 0);
     
-    // Display existing orders on load
-    displayOrders();
-    
-    // Handle form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value.trim() || 'Anonym';
-        const gericht = document.getElementById('gericht').value.trim();
-        const groesse = document.getElementById('groesse').value;
-        const extrawunsch = document.getElementById('extrawunsch').value.trim();
-        
-        if (gericht) {
-            const order = {
-                id: Date.now(),
-                name: name,
-                gericht: gericht,
-                groesse: groesse,
-                extrawunsch: extrawunsch,
-                timestamp: new Date().toLocaleString('de-DE', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-            };
-            
-            orders.push(order);
-            
-            if (saveOrders(orders)) {
-                // Clear form
-                form.reset();
-                
-                // Update display
-                displayOrders();
-                
-                // Show success message
-                showNotification('✅ Bestellung erfolgreich hinzugefügt!');
-                
-                // Scroll to orders list on mobile
-                document.querySelector('.orders-section').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'nearest' 
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: means,
+                backgroundColor: satColors.map(c => c.bg),
+                borderColor: satColors.map(c => c.border),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: yMax,
+                    title: {
+                        display: true,
+                        text: yAxisLabel
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Speed-Accuracy Tradeoff Level'
+                    }
+                }
+            }
+        },
+        plugins: [{
+            id: 'errorBars',
+            afterDatasetsDraw: (chart) => {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, datasetIndex) => {
+                    const meta = chart.getDatasetMeta(datasetIndex);
+                    meta.data.forEach((bar, index) => {
+                        const error = errors[index];
+                        const x = bar.x;
+                        const y = bar.y;
+                        const yScale = chart.scales.y;
+                        const errorTop = yScale.getPixelForValue(means[index] + error);
+                        const errorBottom = yScale.getPixelForValue(means[index] - error);
+                        
+                        ctx.save();
+                        ctx.strokeStyle = '#333';
+                        ctx.lineWidth = 2;
+                        
+                        // Vertical line
+                        ctx.beginPath();
+                        ctx.moveTo(x, errorTop);
+                        ctx.lineTo(x, errorBottom);
+                        ctx.stroke();
+                        
+                        // Top cap
+                        ctx.beginPath();
+                        ctx.moveTo(x - 5, errorTop);
+                        ctx.lineTo(x + 5, errorTop);
+                        ctx.stroke();
+                        
+                        // Bottom cap
+                        ctx.beginPath();
+                        ctx.moveTo(x - 5, errorBottom);
+                        ctx.lineTo(x + 5, errorBottom);
+                        ctx.stroke();
+                        
+                        ctx.restore();
+                    });
                 });
             }
-        }
+        }]
     });
+}
+
+// Create interaction plot (grouped bar chart)
+function createInteractionChart(canvasId, data, title) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
     
-    // Handle refresh button
-    refreshButton.addEventListener('click', function() {
-        orders = loadOrders();
-        displayOrders();
-        showNotification('🔄 Bestellungen aktualisiert!');
-    });
+    const transparencyLevels = ['Yes', 'No'];
     
-    // Handle summary button
-    summaryButton.addEventListener('click', function() {
-        showSummary();
-    });
-    
-    // Close summary modal
-    closeSummaryBtn.addEventListener('click', function() {
-        summaryModal.classList.remove('show');
-    });
-    
-    closeSummary.addEventListener('click', function() {
-        summaryModal.classList.remove('show');
-    });
-    
-    // Close modal when clicking outside
-    summaryModal.addEventListener('click', function(e) {
-        if (e.target === summaryModal) {
-            summaryModal.classList.remove('show');
-        }
-    });
-    
-    // Display all orders
-    function displayOrders() {
-        orderCount.textContent = orders.length;
-        
-        if (orders.length === 0) {
-            ordersTable.style.display = 'none';
-            noOrders.style.display = 'block';
-            summaryButton.style.display = 'none';
-        } else {
-            // Sort by timestamp, newest first
-            const sortedOrders = [...orders].reverse();
-            
-            ordersTableBody.innerHTML = sortedOrders.map(order => {
-                if (editingOrderId === order.id) {
-                    return createEditRow(order);
-                } else {
-                    return createDisplayRow(order);
-                }
-            }).join('');
-            
-            ordersTable.style.display = 'table';
-            noOrders.style.display = 'none';
-            summaryButton.style.display = 'inline-block';
-            
-            // Attach event listeners to action buttons
-            attachActionListeners();
-        }
-    }
-    
-    // Create display row
-    function createDisplayRow(order) {
-        return `
-            <tr data-order-id="${order.id}">
-                <td>${escapeHtml(order.name)}</td>
-                <td>${escapeHtml(order.gericht || order.pizza || '-')}</td>
-                <td class="${!order.groesse ? 'empty-cell' : ''}">${escapeHtml(order.groesse || '-')}</td>
-                <td class="${!order.extrawunsch ? 'empty-cell' : ''}">${escapeHtml(order.extrawunsch || '-')}</td>
-                <td>
-                    <button class="action-btn edit" data-action="edit" data-id="${order.id}">✏️ Bearbeiten</button>
-                    <button class="action-btn delete" data-action="delete" data-id="${order.id}">🗑️ Löschen</button>
-                </td>
-            </tr>
-        `;
-    }
-    
-    // Create edit row
-    function createEditRow(order) {
-        return `
-            <tr data-order-id="${order.id}" class="editing">
-                <td><input type="text" class="edit-input" id="edit-name-${order.id}" value="${escapeHtml(order.name)}"></td>
-                <td><input type="text" class="edit-input" id="edit-gericht-${order.id}" value="${escapeHtml(order.gericht || order.pizza || '')}"></td>
-                <td>
-                    <select class="edit-select" id="edit-groesse-${order.id}">
-                        <option value="">-</option>
-                        <option value="Klein" ${order.groesse === 'Klein' ? 'selected' : ''}>Klein</option>
-                        <option value="Standard" ${order.groesse === 'Standard' ? 'selected' : ''}>Standard</option>
-                        <option value="Groß" ${order.groesse === 'Groß' ? 'selected' : ''}>Groß</option>
-                    </select>
-                </td>
-                <td><input type="text" class="edit-input" id="edit-extrawunsch-${order.id}" value="${escapeHtml(order.extrawunsch || '')}"></td>
-                <td>
-                    <button class="action-btn save" data-action="save" data-id="${order.id}">💾 Speichern</button>
-                    <button class="action-btn cancel" data-action="cancel" data-id="${order.id}">❌ Abbrechen</button>
-                </td>
-            </tr>
-        `;
-    }
-    
-    // Attach action listeners
-    function attachActionListeners() {
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const action = this.dataset.action;
-                const orderId = parseInt(this.dataset.id);
-                
-                switch(action) {
-                    case 'edit':
-                        editOrder(orderId);
-                        break;
-                    case 'delete':
-                        deleteOrder(orderId);
-                        break;
-                    case 'save':
-                        saveEditedOrder(orderId);
-                        break;
-                    case 'cancel':
-                        cancelEdit();
-                        break;
-                }
-            });
+    const datasets = transparencyLevels.map((trans, idx) => {
+        const means = satLabels.map(sat => {
+            const key = `${sat}_${trans}`;
+            return data[key]?.mean || 0;
         });
-    }
-    
-    // Edit order
-    function editOrder(orderId) {
-        editingOrderId = orderId;
-        displayOrders();
-    }
-    
-    // Delete order
-    function deleteOrder(orderId) {
-        if (confirm('Möchtest du diese Bestellung wirklich löschen?')) {
-            orders = orders.filter(order => order.id !== orderId);
-            saveOrders(orders);
-            displayOrders();
-            showNotification('🗑️ Bestellung gelöscht!');
-        }
-    }
-    
-    // Save edited order
-    function saveEditedOrder(orderId) {
-        const name = document.getElementById(`edit-name-${orderId}`).value.trim() || 'Anonym';
-        const gericht = document.getElementById(`edit-gericht-${orderId}`).value.trim();
-        const groesse = document.getElementById(`edit-groesse-${orderId}`).value;
-        const extrawunsch = document.getElementById(`edit-extrawunsch-${orderId}`).value.trim();
+        const colorSet = idx === 0 ? colors.transparencyYes : colors.transparencyNo;
         
-        if (!gericht) {
-            alert('Gericht muss ausgefüllt sein!');
-            return;
-        }
-        
-        const orderIndex = orders.findIndex(order => order.id === orderId);
-        if (orderIndex !== -1) {
-            orders[orderIndex] = {
-                ...orders[orderIndex],
-                name: name,
-                gericht: gericht,
-                groesse: groesse,
-                extrawunsch: extrawunsch
-            };
-            
-            if (saveOrders(orders)) {
-                editingOrderId = null;
-                displayOrders();
-                showNotification('💾 Bestellung aktualisiert!');
+        return {
+            label: `Uncertainty: ${trans}`,
+            data: means,
+            backgroundColor: colorSet.bg,
+            borderColor: colorSet.border,
+            borderWidth: 2
+        };
+    });
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: satLabels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Mean Score'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'SAT Level'
+                    }
+                }
             }
         }
-    }
+    });
+}
+
+// Populate descriptive statistics table
+function populateDescriptiveTable(tableId, data) {
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = '';
     
-    // Cancel edit
-    function cancelEdit() {
-        editingOrderId = null;
-        displayOrders();
-    }
-    
-    // Show summary
-    function showSummary() {
-        // Group orders by gericht + groesse + extrawunsch
-        const groupedOrders = {};
-        
-        orders.forEach(order => {
-            // Normalize the fields
-            const gericht = (order.gericht || order.pizza || '').trim();
-            const groesse = (order.groesse || '').trim();
-            const extrawunsch = (order.extrawunsch || '').trim();
-            
-            // Create a unique key for grouping
-            const key = `${gericht}|||${groesse}|||${extrawunsch}`;
-            
-            if (!groupedOrders[key]) {
-                groupedOrders[key] = {
-                    gericht: gericht,
-                    groesse: groesse,
-                    extrawunsch: extrawunsch,
-                    count: 0,
-                    names: []
-                };
-            }
-            
-            groupedOrders[key].count++;
-            groupedOrders[key].names.push(order.name);
-        });
-        
-        // Convert to array and sort by count (descending)
-        const summary = Object.values(groupedOrders).sort((a, b) => b.count - a.count);
-        
-        // Generate summary HTML
-        let summaryHTML = `
-            <div class="summary-total">
-                Gesamt: ${orders.length} Bestellung${orders.length !== 1 ? 'en' : ''}
-            </div>
-            <table class="summary-table">
-                <thead>
-                    <tr>
-                        <th>Anzahl</th>
-                        <th>Gericht</th>
-                        <th>Größe</th>
-                        <th>Extrawunsch</th>
-                        <th>Bestellt von</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        summary.forEach(item => {
-            summaryHTML += `
-                <tr>
-                    <td><span class="summary-count">${item.count}x</span></td>
-                    <td><strong>${escapeHtml(item.gericht)}</strong></td>
-                    <td>${item.groesse ? escapeHtml(item.groesse) : '<em style="color: #999;">-</em>'}</td>
-                    <td>${item.extrawunsch ? escapeHtml(item.extrawunsch) : '<em style="color: #999;">-</em>'}</td>
-                    <td>
-                        <div class="summary-names">${item.names.map(name => escapeHtml(name)).join(', ')}</div>
-                    </td>
-                </tr>
+    satLabels.forEach(sat => {
+        const stats = data[sat];
+        if (stats) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sat}</td>
+                <td>${stats.mean.toFixed(2)}</td>
+                <td>${stats.sd.toFixed(2)}</td>
+                <td>[${(stats.mean - stats.ci_95).toFixed(2)}, ${(stats.mean + stats.ci_95).toFixed(2)}]</td>
             `;
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Render ANOVA results
+function renderAnovaResult(containerId, anova, label = 'Main effect of SAT') {
+    const container = document.getElementById(containerId);
+    if (!anova) {
+        container.innerHTML = '<p class="no-data">ANOVA data not available</p>';
+        return;
+    }
+    
+    const sig = anova.significant ? '<span class="significant">*</span>' : '';
+    container.innerHTML = `
+        <p class="anova-text">
+            <strong>${label}:</strong> ${formatF(anova)}${sig}
+        </p>
+    `;
+}
+
+// Render post-hoc results
+function renderPosthoc(containerId, posthoc) {
+    const container = document.getElementById(containerId);
+    if (!posthoc || posthoc.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let html = '<h5>Pairwise Comparisons (Bonferroni corrected)</h5><ul class="posthoc-list">';
+    posthoc.forEach(comp => {
+        const sig = comp.significant ? ' <span class="significant">*</span>' : '';
+        html += `<li>${comp.contrast}: t(${comp.df}) = ${comp.t.toFixed(2)}, p = ${formatP(comp.p_adj)}${sig}</li>`;
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+}
+
+// Render frustration section
+function renderFrustrationSection() {
+    // Frustration about robot performance
+    const perfData = resultsData.analyses.FrustrationRobotPerformance;
+    createBarChart('chart-frustration-performance-sat', perfData.descriptives_SAT, satLabels, 
+        'Frustration about Robot Performance by SAT Level', 'Frustration (1-7)', 7);
+    populateDescriptiveTable('table-frustration-performance', perfData.descriptives_SAT);
+    renderAnovaResult('anova-frustration-performance', perfData.anova_SAT);
+    renderPosthoc('posthoc-frustration-performance', perfData.posthoc_SAT);
+    
+    // Interaction chart
+    createInteractionChart('chart-frustration-performance-interaction', 
+        perfData.descriptives_SAT_Transparency, 
+        'Frustration (Performance) by SAT x Uncertainty Communication');
+    
+    // Interaction stats
+    const interactionContainer = document.getElementById('interaction-frustration-performance');
+    const satTransAnova = perfData.anova_SAT_Transparency;
+    if (satTransAnova && satTransAnova['SAT * Transparency']) {
+        const interaction = satTransAnova['SAT * Transparency'];
+        const sig = interaction.significant ? '<span class="significant">*</span>' : '';
+        interactionContainer.innerHTML = `
+            <p class="anova-text"><strong>Interaction (SAT × Uncertainty):</strong> ${formatF(interaction)}${sig}</p>
+        `;
+    }
+    
+    // Frustration about robot decisions
+    const decData = resultsData.analyses.FrustrationRobotDecision;
+    createBarChart('chart-frustration-decision-sat', decData.descriptives_SAT, satLabels,
+        'Frustration about Robot Decisions by SAT Level', 'Frustration (1-7)', 7);
+    populateDescriptiveTable('table-frustration-decision', decData.descriptives_SAT);
+    renderAnovaResult('anova-frustration-decision', decData.anova_SAT);
+    renderPosthoc('posthoc-frustration-decision', decData.posthoc_SAT);
+}
+
+// Render NASA TLX section
+function renderTLXSection() {
+    // Overall TLX
+    const tlxData = resultsData.analyses.TLX_Overall;
+    createBarChart('chart-tlx-overall-sat', tlxData.descriptives_SAT, satLabels,
+        'Overall NASA TLX by SAT Level', 'Workload (1-21)', 21);
+    populateDescriptiveTable('table-tlx-overall', tlxData.descriptives_SAT);
+    renderAnovaResult('anova-tlx-overall', tlxData.anova_SAT);
+    
+    // TLX Subscales grouped chart
+    const subscales = [
+        { key: 'TLX_Mental', label: 'Mental' },
+        { key: 'TLX_Physical', label: 'Physical' },
+        { key: 'TLX_Temporal', label: 'Temporal' },
+        { key: 'TLX_Performance', label: 'Performance' },
+        { key: 'TLX_Effort', label: 'Effort' },
+        { key: 'TLX_Frustration', label: 'Frustration' }
+    ];
+    
+    const ctx = document.getElementById('chart-tlx-subscales').getContext('2d');
+    
+    const datasets = satLabels.map((sat, idx) => {
+        const means = subscales.map(sub => {
+            const data = resultsData.analyses[sub.key]?.descriptives_SAT[sat];
+            return data?.mean || 0;
         });
         
-        summaryHTML += `
-                </tbody>
-            </table>
-        `;
-        
-        summaryContent.innerHTML = summaryHTML;
-        summaryModal.classList.add('show');
-    }
+        return {
+            label: sat,
+            data: means,
+            backgroundColor: satColors[idx].bg,
+            borderColor: satColors[idx].border,
+            borderWidth: 2
+        };
+    });
     
-    // Escape HTML to prevent XSS
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-    
-    // Show notification
-    function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #28a745;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
-            animation: slideDown 0.3s ease;
-            max-width: 90%;
-            text-align: center;
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideUp 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-    
-    // Add animation styles
-    if (!document.getElementById('notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            @keyframes slideDown {
-                from {
-                    transform: translateX(-50%) translateY(-100px);
-                    opacity: 0;
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: subscales.map(s => s.label),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'NASA TLX Subscales by SAT Level',
+                    font: { size: 14, weight: 'bold' }
                 }
-                to {
-                    transform: translateX(-50%) translateY(0);
-                    opacity: 1;
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 21,
+                    title: {
+                        display: true,
+                        text: 'Score (1-21)'
+                    }
                 }
             }
-            @keyframes slideUp {
-                from {
-                    transform: translateX(-50%) translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(-50%) translateY(-100px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Auto-refresh every 30 seconds to catch new orders from other devices
-    setInterval(function() {
-        const currentOrders = loadOrders();
-        if (currentOrders.length !== orders.length) {
-            orders = currentOrders;
-            displayOrders();
         }
-    }, 30000);
-});
+    });
+    
+    // Subscales ANOVA table
+    const tbody = document.querySelector('#table-tlx-subscales-anova tbody');
+    tbody.innerHTML = '';
+    
+    subscales.forEach(sub => {
+        const anova = resultsData.analyses[sub.key]?.anova_SAT;
+        if (anova) {
+            const row = document.createElement('tr');
+            const sig = anova.significant ? ' *' : '';
+            row.innerHTML = `
+                <td>${sub.label}</td>
+                <td>${anova.F.toFixed(2)}${sig}</td>
+                <td>(${anova.df1}, ${anova.df2})</td>
+                <td>${formatP(anova.p)}</td>
+                <td>${anova.eta_sq.toFixed(3)}</td>
+            `;
+            if (anova.significant) {
+                row.classList.add('significant-row');
+            }
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Render utility section
+function renderUtilitySection() {
+    const utilData = resultsData.analyses.Utility_Score;
+    
+    createBarChart('chart-utility-sat', utilData.descriptives_SAT, satLabels,
+        'Perceived Utility by SAT Level', 'Utility Score (1-4)', 4);
+    populateDescriptiveTable('table-utility', utilData.descriptives_SAT);
+    renderAnovaResult('anova-utility', utilData.anova_SAT);
+    renderPosthoc('posthoc-utility', utilData.posthoc_SAT);
+    
+    // Utility by Transparency
+    const ctx = document.getElementById('chart-utility-transparency').getContext('2d');
+    const transData = utilData.descriptives_Transparency;
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Yes', 'No'],
+            datasets: [{
+                label: 'Utility',
+                data: [transData['Yes']?.mean || 0, transData['No']?.mean || 0],
+                backgroundColor: [colors.transparencyYes.bg, colors.transparencyNo.bg],
+                borderColor: [colors.transparencyYes.border, colors.transparencyNo.border],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Perceived Utility by Uncertainty Communication',
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 4,
+                    title: { display: true, text: 'Utility Score (1-4)' }
+                },
+                x: {
+                    title: { display: true, text: 'Uncertainty Communication' }
+                }
+            }
+        }
+    });
+    
+    renderAnovaResult('anova-utility-transparency', utilData.anova_Transparency, 
+        'Main effect of Uncertainty Communication');
+}
+
+// Render intelligence section
+function renderIntelligenceSection() {
+    const intData = resultsData.analyses.Godspeed_Intelligence;
+    
+    createBarChart('chart-intelligence-sat', intData.descriptives_SAT, satLabels,
+        'Perceived Intelligence by SAT Level', 'Intelligence Score (1-5)', 5);
+    populateDescriptiveTable('table-intelligence', intData.descriptives_SAT);
+    renderAnovaResult('anova-intelligence', intData.anova_SAT);
+    renderPosthoc('posthoc-intelligence', intData.posthoc_SAT);
+}
+
+// Render summary section
+function renderSummary() {
+    const summary = resultsData.summary;
+    
+    // SAT findings list
+    const satFindings = document.getElementById('sat-findings');
+    const satEffects = summary.significant_effects.filter(e => e.effect === 'SAT (main effect)');
+    
+    satEffects.forEach(effect => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${effect.dv}:</strong> F = ${effect.F.toFixed(2)}, p ${formatP(effect.p)}, η² = ${effect.eta_sq.toFixed(3)}`;
+        satFindings.appendChild(li);
+    });
+    
+    // Summary table
+    const tbody = document.querySelector('#table-summary tbody');
+    tbody.innerHTML = '';
+    
+    summary.significant_effects.forEach(effect => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${effect.dv}</td>
+            <td>${effect.effect}</td>
+            <td>${effect.F.toFixed(2)}</td>
+            <td>${formatP(effect.p)}</td>
+            <td>${effect.eta_sq.toFixed(3)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', init);

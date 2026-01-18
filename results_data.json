@@ -1,0 +1,4486 @@
+{
+  "study_info": {
+    "design": "3 (SAT) \u00d7 2 (Uncertainty Communication) \u00d7 2 (User Decision) within-subjects",
+    "n_participants": 24,
+    "n_observations": 288,
+    "factors": {
+      "SAT": [
+        "Conservative",
+        "Moderate",
+        "Risky"
+      ],
+      "Transparency": [
+        "Yes",
+        "No"
+      ],
+      "UserDecision": [
+        "Yes",
+        "No"
+      ]
+    },
+    "dv_scales": {
+      "FrustrationRobotPerformance": {
+        "min": 1,
+        "max": 7,
+        "label": "7-point Likert"
+      },
+      "FrustrationRobotDecision": {
+        "min": 1,
+        "max": 7,
+        "label": "7-point Likert"
+      },
+      "TLX_Overall": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Mental": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Physical": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Temporal": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Performance": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Effort": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "TLX_Frustration": {
+        "min": 1,
+        "max": 21,
+        "label": "21-point scale"
+      },
+      "Utility_Score": {
+        "min": 1,
+        "max": 4,
+        "label": "Composite score"
+      },
+      "Godspeed_Intelligence": {
+        "min": 1,
+        "max": 5,
+        "label": "Godspeed scale"
+      }
+    }
+  },
+  "analyses": {
+    "FrustrationRobotPerformance": {
+      "label": "Frustration: Robot Performance",
+      "variable": "FrustrationRobotPerformance",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 2.094,
+          "sd": 1.338,
+          "se": 0.137,
+          "ci_95": 0.268,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 3.792,
+          "sd": 1.602,
+          "se": 0.164,
+          "ci_95": 0.32,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 5.042,
+          "sd": 1.806,
+          "se": 0.184,
+          "ci_95": 0.361,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 3.604,
+          "sd": 2.022,
+          "se": 0.168,
+          "ci_95": 0.33,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 3.681,
+          "sd": 1.978,
+          "se": 0.165,
+          "ci_95": 0.323,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 3.778,
+          "sd": 2.107,
+          "se": 0.176,
+          "ci_95": 0.344,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 3.507,
+          "sd": 1.877,
+          "se": 0.156,
+          "ci_95": 0.307,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 2.0,
+          "sd": 1.337,
+          "se": 0.193,
+          "ci_95": 0.378,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 2.188,
+          "sd": 1.347,
+          "se": 0.194,
+          "ci_95": 0.381,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 3.688,
+          "sd": 1.56,
+          "se": 0.225,
+          "ci_95": 0.441,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 3.896,
+          "sd": 1.653,
+          "se": 0.239,
+          "ci_95": 0.468,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 5.125,
+          "sd": 1.794,
+          "se": 0.259,
+          "ci_95": 0.507,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 4.958,
+          "sd": 1.833,
+          "se": 0.265,
+          "ci_95": 0.519,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 1.792,
+          "sd": 1.01,
+          "se": 0.146,
+          "ci_95": 0.286,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 2.396,
+          "sd": 1.554,
+          "se": 0.224,
+          "ci_95": 0.44,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 4.062,
+          "sd": 1.563,
+          "se": 0.226,
+          "ci_95": 0.442,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 3.521,
+          "sd": 1.611,
+          "se": 0.233,
+          "ci_95": 0.456,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 5.479,
+          "sd": 1.726,
+          "se": 0.249,
+          "ci_95": 0.488,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 4.604,
+          "sd": 1.795,
+          "se": 0.259,
+          "ci_95": 0.508,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 3.736,
+          "sd": 2.143,
+          "se": 0.253,
+          "ci_95": 0.495,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 3.472,
+          "sd": 1.899,
+          "se": 0.224,
+          "ci_95": 0.439,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 3.819,
+          "sd": 2.085,
+          "se": 0.246,
+          "ci_95": 0.482,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 3.542,
+          "sd": 1.868,
+          "se": 0.22,
+          "ci_95": 0.432,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 1.708,
+          "sd": 0.999,
+          "se": 0.204,
+          "ci_95": 0.4,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 2.292,
+          "sd": 1.574,
+          "se": 0.321,
+          "ci_95": 0.63,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 1.875,
+          "sd": 1.035,
+          "se": 0.211,
+          "ci_95": 0.414,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 2.5,
+          "sd": 1.56,
+          "se": 0.319,
+          "ci_95": 0.624,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 3.958,
+          "sd": 1.459,
+          "se": 0.298,
+          "ci_95": 0.584,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 3.417,
+          "sd": 1.64,
+          "se": 0.335,
+          "ci_95": 0.656,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 4.167,
+          "sd": 1.685,
+          "se": 0.344,
+          "ci_95": 0.674,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 3.625,
+          "sd": 1.61,
+          "se": 0.329,
+          "ci_95": 0.644,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 5.542,
+          "sd": 1.817,
+          "se": 0.371,
+          "ci_95": 0.727,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 4.708,
+          "sd": 1.706,
+          "se": 0.348,
+          "ci_95": 0.683,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 5.417,
+          "sd": 1.666,
+          "se": 0.34,
+          "ci_95": 0.667,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 4.5,
+          "sd": 1.911,
+          "se": 0.39,
+          "ci_95": 0.765,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 73.153,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.55,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.335,
+        "p": 0.5683,
+        "p_corr": 0.5683,
+        "eta_sq": 0.002,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 1.165,
+        "p": 0.2917,
+        "p_corr": 0.2917,
+        "eta_sq": 0.016,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 73.153,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.5,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.335,
+          "p": 0.5683,
+          "p_corr": 0.5683,
+          "eta_sq": 0.001,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 1.058,
+          "p": 0.3556,
+          "p_corr": 0.3545,
+          "eta_sq": 0.005,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 73.153,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.439,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 1.165,
+          "p": 0.2917,
+          "p_corr": 0.2917,
+          "eta_sq": 0.01,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 7.445,
+          "p": 0.0016,
+          "p_corr": 0.0017,
+          "eta_sq": 0.051,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -7.625,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -1.642,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -10.486,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -2.722,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -5.538,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -0.979,
+          "significant": true
+        }
+      ]
+    },
+    "FrustrationRobotDecision": {
+      "label": "Frustration: Robot Decisions",
+      "variable": "FrustrationRobotDecision",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 1.958,
+          "sd": 1.305,
+          "se": 0.133,
+          "ci_95": 0.261,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 3.292,
+          "sd": 1.782,
+          "se": 0.182,
+          "ci_95": 0.357,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 4.302,
+          "sd": 2.143,
+          "se": 0.219,
+          "ci_95": 0.429,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 3.132,
+          "sd": 2.029,
+          "se": 0.169,
+          "ci_95": 0.331,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 3.236,
+          "sd": 2.007,
+          "se": 0.167,
+          "ci_95": 0.328,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 3.521,
+          "sd": 2.193,
+          "se": 0.183,
+          "ci_95": 0.358,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 2.847,
+          "sd": 1.763,
+          "se": 0.147,
+          "ci_95": 0.288,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 1.833,
+          "sd": 1.173,
+          "se": 0.169,
+          "ci_95": 0.332,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 2.083,
+          "sd": 1.427,
+          "se": 0.206,
+          "ci_95": 0.404,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 3.167,
+          "sd": 1.73,
+          "se": 0.25,
+          "ci_95": 0.489,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 3.417,
+          "sd": 1.843,
+          "se": 0.266,
+          "ci_95": 0.521,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 4.396,
+          "sd": 2.19,
+          "se": 0.316,
+          "ci_95": 0.62,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 4.208,
+          "sd": 2.113,
+          "se": 0.305,
+          "ci_95": 0.598,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 1.75,
+          "sd": 1.12,
+          "se": 0.162,
+          "ci_95": 0.317,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 2.167,
+          "sd": 1.449,
+          "se": 0.209,
+          "ci_95": 0.41,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 3.708,
+          "sd": 1.81,
+          "se": 0.261,
+          "ci_95": 0.512,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 2.875,
+          "sd": 1.671,
+          "se": 0.241,
+          "ci_95": 0.473,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 5.104,
+          "sd": 2.076,
+          "se": 0.3,
+          "ci_95": 0.587,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 3.5,
+          "sd": 1.913,
+          "se": 0.276,
+          "ci_95": 0.541,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 3.528,
+          "sd": 2.264,
+          "se": 0.267,
+          "ci_95": 0.523,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 2.736,
+          "sd": 1.687,
+          "se": 0.199,
+          "ci_95": 0.39,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 3.514,
+          "sd": 2.136,
+          "se": 0.252,
+          "ci_95": 0.493,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 2.958,
+          "sd": 1.842,
+          "se": 0.217,
+          "ci_95": 0.425,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 1.667,
+          "sd": 1.09,
+          "se": 0.223,
+          "ci_95": 0.436,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 2.0,
+          "sd": 1.251,
+          "se": 0.255,
+          "ci_95": 0.501,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 1.833,
+          "sd": 1.167,
+          "se": 0.238,
+          "ci_95": 0.467,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 2.333,
+          "sd": 1.633,
+          "se": 0.333,
+          "ci_95": 0.653,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 3.583,
+          "sd": 1.742,
+          "se": 0.356,
+          "ci_95": 0.697,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 2.75,
+          "sd": 1.648,
+          "se": 0.336,
+          "ci_95": 0.66,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 3.833,
+          "sd": 1.903,
+          "se": 0.389,
+          "ci_95": 0.762,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 3.0,
+          "sd": 1.719,
+          "se": 0.351,
+          "ci_95": 0.688,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 5.333,
+          "sd": 2.14,
+          "se": 0.437,
+          "ci_95": 0.856,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 3.458,
+          "sd": 1.841,
+          "se": 0.376,
+          "ci_95": 0.737,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 4.875,
+          "sd": 2.028,
+          "se": 0.414,
+          "ci_95": 0.812,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 3.542,
+          "sd": 2.021,
+          "se": 0.413,
+          "ci_95": 0.809,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 52.538,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.41,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.463,
+        "p": 0.503,
+        "p_corr": 0.503,
+        "eta_sq": 0.003,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 5.197,
+        "p": 0.0322,
+        "p_corr": 0.0322,
+        "eta_sq": 0.074,
+        "significant": 1
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 52.538,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.36,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.463,
+          "p": 0.503,
+          "p_corr": 0.503,
+          "eta_sq": 0.002,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 1.352,
+          "p": 0.2688,
+          "p_corr": 0.2682,
+          "eta_sq": 0.006,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 52.538,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.296,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 5.197,
+          "p": 0.0322,
+          "p_corr": 0.0322,
+          "eta_sq": 0.049,
+          "significant": true
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 10.876,
+          "p": 0.0001,
+          "p_corr": 0.0002,
+          "eta_sq": 0.073,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -6.318,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -1.251,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -8.806,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -2.063,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -4.904,
+          "df": 23,
+          "p": 0.0001,
+          "p_adj": 0.0002,
+          "d": -0.741,
+          "significant": true
+        }
+      ]
+    },
+    "TLX_Overall": {
+      "label": "NASA TLX Overall",
+      "variable": "TLX_Overall",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 4.523,
+          "sd": 2.515,
+          "se": 0.257,
+          "ci_95": 0.503,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 5.677,
+          "sd": 2.795,
+          "se": 0.285,
+          "ci_95": 0.559,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 6.788,
+          "sd": 3.233,
+          "se": 0.33,
+          "ci_95": 0.647,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 5.606,
+          "sd": 2.965,
+          "se": 0.247,
+          "ci_95": 0.484,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.719,
+          "sd": 3.043,
+          "se": 0.254,
+          "ci_95": 0.497,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 5.653,
+          "sd": 3.181,
+          "se": 0.265,
+          "ci_95": 0.52,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.672,
+          "sd": 2.818,
+          "se": 0.235,
+          "ci_95": 0.46,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 4.604,
+          "sd": 2.609,
+          "se": 0.377,
+          "ci_95": 0.738,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.441,
+          "sd": 2.442,
+          "se": 0.353,
+          "ci_95": 0.691,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.493,
+          "sd": 2.644,
+          "se": 0.382,
+          "ci_95": 0.748,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.861,
+          "sd": 2.956,
+          "se": 0.427,
+          "ci_95": 0.836,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 6.722,
+          "sd": 3.261,
+          "se": 0.471,
+          "ci_95": 0.923,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.854,
+          "sd": 3.237,
+          "se": 0.467,
+          "ci_95": 0.916,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 4.233,
+          "sd": 2.449,
+          "se": 0.353,
+          "ci_95": 0.693,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.812,
+          "sd": 2.572,
+          "se": 0.371,
+          "ci_95": 0.728,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.5,
+          "sd": 2.882,
+          "se": 0.416,
+          "ci_95": 0.815,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.854,
+          "sd": 2.724,
+          "se": 0.393,
+          "ci_95": 0.771,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.226,
+          "sd": 3.446,
+          "se": 0.497,
+          "ci_95": 0.975,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.351,
+          "sd": 2.976,
+          "se": 0.43,
+          "ci_95": 0.842,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 5.662,
+          "sd": 3.221,
+          "se": 0.38,
+          "ci_95": 0.744,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 5.551,
+          "sd": 2.706,
+          "se": 0.319,
+          "ci_95": 0.625,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 5.644,
+          "sd": 3.164,
+          "se": 0.373,
+          "ci_95": 0.731,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 5.794,
+          "sd": 2.939,
+          "se": 0.346,
+          "ci_95": 0.679,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 4.361,
+          "sd": 2.626,
+          "se": 0.536,
+          "ci_95": 1.051,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 4.847,
+          "sd": 2.625,
+          "se": 0.536,
+          "ci_95": 1.05,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 4.104,
+          "sd": 2.307,
+          "se": 0.471,
+          "ci_95": 0.923,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 4.778,
+          "sd": 2.575,
+          "se": 0.526,
+          "ci_95": 1.03,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 5.319,
+          "sd": 2.76,
+          "se": 0.563,
+          "ci_95": 1.104,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 5.667,
+          "sd": 2.57,
+          "se": 0.525,
+          "ci_95": 1.028,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 5.681,
+          "sd": 3.048,
+          "se": 0.622,
+          "ci_95": 1.22,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 6.042,
+          "sd": 2.914,
+          "se": 0.595,
+          "ci_95": 1.166,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 7.306,
+          "sd": 3.577,
+          "se": 0.73,
+          "ci_95": 1.431,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 6.139,
+          "sd": 2.868,
+          "se": 0.585,
+          "ci_95": 1.147,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 7.146,
+          "sd": 3.385,
+          "se": 0.691,
+          "ci_95": 1.354,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 6.562,
+          "sd": 3.127,
+          "se": 0.638,
+          "ci_95": 1.251,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 27.738,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.11,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.838,
+        "p": 0.3694,
+        "p_corr": 0.3694,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.01,
+        "p": 0.9215,
+        "p_corr": 0.9215,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 27.738,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.105,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.838,
+          "p": 0.3694,
+          "p_corr": 0.3694,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 1.085,
+          "p": 0.3464,
+          "p_corr": 0.3462,
+          "eta_sq": 0.002,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 27.738,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.104,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.01,
+          "p": 0.9215,
+          "p_corr": 0.9215,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 11.479,
+          "p": 0.0001,
+          "p_corr": 0.0002,
+          "eta_sq": 0.014,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -4.63,
+          "df": 23,
+          "p": 0.0001,
+          "p_adj": 0.0004,
+          "d": -0.453,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -6.163,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -0.815,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -3.921,
+          "df": 23,
+          "p": 0.0007,
+          "p_adj": 0.0021,
+          "d": -0.388,
+          "significant": true
+        }
+      ]
+    },
+    "TLX_Mental": {
+      "label": "NASA TLX: Mental Demand",
+      "variable": "TLX_Mental",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 5.188,
+          "sd": 3.734,
+          "se": 0.381,
+          "ci_95": 0.747,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 5.646,
+          "sd": 4.052,
+          "se": 0.414,
+          "ci_95": 0.811,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 6.354,
+          "sd": 4.355,
+          "se": 0.445,
+          "ci_95": 0.871,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 5.688,
+          "sd": 4.039,
+          "se": 0.337,
+          "ci_95": 0.66,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.771,
+          "sd": 4.113,
+          "se": 0.343,
+          "ci_95": 0.672,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 5.646,
+          "sd": 4.041,
+          "se": 0.337,
+          "ci_95": 0.66,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.812,
+          "sd": 4.11,
+          "se": 0.343,
+          "ci_95": 0.671,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 5.167,
+          "sd": 3.839,
+          "se": 0.554,
+          "ci_95": 1.086,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 5.208,
+          "sd": 3.667,
+          "se": 0.529,
+          "ci_95": 1.037,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.5,
+          "sd": 3.747,
+          "se": 0.541,
+          "ci_95": 1.06,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.792,
+          "sd": 4.371,
+          "se": 0.631,
+          "ci_95": 1.237,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 6.396,
+          "sd": 4.476,
+          "se": 0.646,
+          "ci_95": 1.266,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.312,
+          "sd": 4.278,
+          "se": 0.618,
+          "ci_95": 1.21,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 4.833,
+          "sd": 3.36,
+          "se": 0.485,
+          "ci_95": 0.951,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 5.542,
+          "sd": 4.079,
+          "se": 0.589,
+          "ci_95": 1.154,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.438,
+          "sd": 3.908,
+          "se": 0.564,
+          "ci_95": 1.106,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.854,
+          "sd": 4.222,
+          "se": 0.609,
+          "ci_95": 1.195,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 6.667,
+          "sd": 4.619,
+          "se": 0.667,
+          "ci_95": 1.307,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.042,
+          "sd": 4.1,
+          "se": 0.592,
+          "ci_95": 1.16,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 5.597,
+          "sd": 4.079,
+          "se": 0.481,
+          "ci_95": 0.942,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 5.778,
+          "sd": 4.025,
+          "se": 0.474,
+          "ci_95": 0.93,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 5.694,
+          "sd": 4.03,
+          "se": 0.475,
+          "ci_95": 0.931,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 5.847,
+          "sd": 4.222,
+          "se": 0.498,
+          "ci_95": 0.975,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 4.833,
+          "sd": 3.632,
+          "se": 0.741,
+          "ci_95": 1.453,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 5.5,
+          "sd": 4.086,
+          "se": 0.834,
+          "ci_95": 1.635,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 4.833,
+          "sd": 3.144,
+          "se": 0.642,
+          "ci_95": 1.258,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 5.583,
+          "sd": 4.159,
+          "se": 0.849,
+          "ci_95": 1.664,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 5.208,
+          "sd": 3.336,
+          "se": 0.681,
+          "ci_95": 1.335,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 5.792,
+          "sd": 4.17,
+          "se": 0.851,
+          "ci_95": 1.668,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 5.667,
+          "sd": 4.469,
+          "se": 0.912,
+          "ci_95": 1.788,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 5.917,
+          "sd": 4.363,
+          "se": 0.891,
+          "ci_95": 1.746,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 6.75,
+          "sd": 4.989,
+          "se": 1.018,
+          "ci_95": 1.996,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 6.042,
+          "sd": 3.973,
+          "se": 0.811,
+          "ci_95": 1.589,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 6.583,
+          "sd": 4.323,
+          "se": 0.882,
+          "ci_95": 1.73,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 6.042,
+          "sd": 4.309,
+          "se": 0.879,
+          "ci_95": 1.724,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 7.448,
+        "p": 0.0016,
+        "p_corr": 0.0033,
+        "eta_sq": 0.016,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.507,
+        "p": 0.4835,
+        "p_corr": 0.4835,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.268,
+        "p": 0.6098,
+        "p_corr": 0.6098,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 7.448,
+          "p": 0.0016,
+          "p_corr": 0.0033,
+          "eta_sq": 0.016,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.507,
+          "p": 0.4835,
+          "p_corr": 0.4835,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.353,
+          "p": 0.7046,
+          "p_corr": 0.6807,
+          "eta_sq": 0.0,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 7.448,
+          "p": 0.0016,
+          "p_corr": 0.0033,
+          "eta_sq": 0.015,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.268,
+          "p": 0.6098,
+          "p_corr": 0.6098,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 5.288,
+          "p": 0.0086,
+          "p_corr": 0.0096,
+          "eta_sq": 0.005,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -1.815,
+          "df": 23,
+          "p": 0.0826,
+          "p_adj": 0.2479,
+          "d": -0.124,
+          "significant": false
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -3.166,
+          "df": 23,
+          "p": 0.0043,
+          "p_adj": 0.0129,
+          "d": -0.295,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -2.524,
+          "df": 23,
+          "p": 0.0189,
+          "p_adj": 0.0568,
+          "d": -0.175,
+          "significant": false
+        }
+      ]
+    },
+    "TLX_Physical": {
+      "label": "NASA TLX: Physical Demand",
+      "variable": "TLX_Physical",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 4.729,
+          "sd": 3.358,
+          "se": 0.343,
+          "ci_95": 0.672,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 5.844,
+          "sd": 3.765,
+          "se": 0.384,
+          "ci_95": 0.753,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 7.26,
+          "sd": 4.856,
+          "se": 0.496,
+          "ci_95": 0.971,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 5.931,
+          "sd": 4.199,
+          "se": 0.35,
+          "ci_95": 0.686,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.958,
+          "sd": 4.136,
+          "se": 0.345,
+          "ci_95": 0.675,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 5.986,
+          "sd": 4.195,
+          "se": 0.35,
+          "ci_95": 0.685,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 5.903,
+          "sd": 4.14,
+          "se": 0.345,
+          "ci_95": 0.676,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 4.708,
+          "sd": 3.313,
+          "se": 0.478,
+          "ci_95": 0.937,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.75,
+          "sd": 3.436,
+          "se": 0.496,
+          "ci_95": 0.972,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.896,
+          "sd": 3.932,
+          "se": 0.567,
+          "ci_95": 1.112,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.792,
+          "sd": 3.632,
+          "se": 0.524,
+          "ci_95": 1.027,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.188,
+          "sd": 4.906,
+          "se": 0.708,
+          "ci_95": 1.388,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 7.333,
+          "sd": 4.857,
+          "se": 0.701,
+          "ci_95": 1.374,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 4.667,
+          "sd": 3.165,
+          "se": 0.457,
+          "ci_95": 0.895,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.792,
+          "sd": 3.573,
+          "se": 0.516,
+          "ci_95": 1.011,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.521,
+          "sd": 3.747,
+          "se": 0.541,
+          "ci_95": 1.06,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 6.167,
+          "sd": 3.794,
+          "se": 0.548,
+          "ci_95": 1.073,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.771,
+          "sd": 4.922,
+          "se": 0.71,
+          "ci_95": 1.392,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.75,
+          "sd": 4.787,
+          "se": 0.691,
+          "ci_95": 1.354,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 6.111,
+          "sd": 4.287,
+          "se": 0.505,
+          "ci_95": 0.99,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 5.75,
+          "sd": 4.131,
+          "se": 0.487,
+          "ci_95": 0.954,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 5.861,
+          "sd": 4.126,
+          "se": 0.486,
+          "ci_95": 0.953,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 6.056,
+          "sd": 4.172,
+          "se": 0.492,
+          "ci_95": 0.964,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 4.792,
+          "sd": 3.12,
+          "se": 0.637,
+          "ci_95": 1.248,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 4.625,
+          "sd": 3.561,
+          "se": 0.727,
+          "ci_95": 1.425,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 4.542,
+          "sd": 3.27,
+          "se": 0.668,
+          "ci_95": 1.308,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 4.958,
+          "sd": 3.653,
+          "se": 0.746,
+          "ci_95": 1.462,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 5.833,
+          "sd": 4.135,
+          "se": 0.844,
+          "ci_95": 1.655,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 5.958,
+          "sd": 3.805,
+          "se": 0.777,
+          "ci_95": 1.522,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 5.208,
+          "sd": 3.375,
+          "se": 0.689,
+          "ci_95": 1.35,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 6.375,
+          "sd": 3.854,
+          "se": 0.787,
+          "ci_95": 1.542,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 7.708,
+          "sd": 5.034,
+          "se": 1.028,
+          "ci_95": 2.014,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 6.667,
+          "sd": 4.824,
+          "se": 0.985,
+          "ci_95": 1.93,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 7.833,
+          "sd": 4.914,
+          "se": 1.003,
+          "ci_95": 1.966,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 6.833,
+          "sd": 4.851,
+          "se": 0.99,
+          "ci_95": 1.941,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 17.434,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.072,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.025,
+        "p": 0.8757,
+        "p_corr": 0.8757,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.081,
+        "p": 0.779,
+        "p_corr": 0.779,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 17.434,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.069,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.025,
+          "p": 0.8757,
+          "p_corr": 0.8757,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.099,
+          "p": 0.9058,
+          "p_corr": 0.8426,
+          "eta_sq": 0.0,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 17.434,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.068,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.081,
+          "p": 0.779,
+          "p_corr": 0.779,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 7.612,
+          "p": 0.0014,
+          "p_corr": 0.0015,
+          "eta_sq": 0.008,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -3.572,
+          "df": 23,
+          "p": 0.0016,
+          "p_adj": 0.0049,
+          "d": -0.33,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -4.633,
+          "df": 23,
+          "p": 0.0001,
+          "p_adj": 0.0003,
+          "d": -0.632,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -3.564,
+          "df": 23,
+          "p": 0.0016,
+          "p_adj": 0.0049,
+          "d": -0.344,
+          "significant": true
+        }
+      ]
+    },
+    "TLX_Temporal": {
+      "label": "NASA TLX: Temporal Demand",
+      "variable": "TLX_Temporal",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 3.646,
+          "sd": 2.679,
+          "se": 0.273,
+          "ci_95": 0.536,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 4.688,
+          "sd": 3.216,
+          "se": 0.328,
+          "ci_95": 0.643,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 5.365,
+          "sd": 4.097,
+          "se": 0.418,
+          "ci_95": 0.819,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 4.431,
+          "sd": 3.355,
+          "se": 0.28,
+          "ci_95": 0.548,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 4.701,
+          "sd": 3.536,
+          "se": 0.295,
+          "ci_95": 0.578,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 4.743,
+          "sd": 3.561,
+          "se": 0.297,
+          "ci_95": 0.582,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 4.389,
+          "sd": 3.324,
+          "se": 0.277,
+          "ci_95": 0.543,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 3.521,
+          "sd": 2.414,
+          "se": 0.348,
+          "ci_95": 0.683,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.771,
+          "sd": 2.941,
+          "se": 0.424,
+          "ci_95": 0.832,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 4.583,
+          "sd": 3.175,
+          "se": 0.458,
+          "ci_95": 0.898,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 4.792,
+          "sd": 3.287,
+          "se": 0.474,
+          "ci_95": 0.93,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 5.188,
+          "sd": 4.108,
+          "se": 0.593,
+          "ci_95": 1.162,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 5.542,
+          "sd": 4.12,
+          "se": 0.595,
+          "ci_95": 1.166,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 3.625,
+          "sd": 2.679,
+          "se": 0.387,
+          "ci_95": 0.758,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.667,
+          "sd": 2.708,
+          "se": 0.391,
+          "ci_95": 0.766,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 4.771,
+          "sd": 3.11,
+          "se": 0.449,
+          "ci_95": 0.88,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 4.604,
+          "sd": 3.35,
+          "se": 0.484,
+          "ci_95": 0.948,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 5.833,
+          "sd": 4.387,
+          "se": 0.633,
+          "ci_95": 1.241,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 4.896,
+          "sd": 3.771,
+          "se": 0.544,
+          "ci_95": 1.067,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 4.722,
+          "sd": 3.589,
+          "se": 0.423,
+          "ci_95": 0.829,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 4.139,
+          "sd": 3.101,
+          "se": 0.365,
+          "ci_95": 0.716,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 4.764,
+          "sd": 3.558,
+          "se": 0.419,
+          "ci_95": 0.822,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 4.639,
+          "sd": 3.538,
+          "se": 0.417,
+          "ci_95": 0.817,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 3.5,
+          "sd": 2.467,
+          "se": 0.504,
+          "ci_95": 0.987,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 3.542,
+          "sd": 2.413,
+          "se": 0.493,
+          "ci_95": 0.966,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 3.75,
+          "sd": 2.923,
+          "se": 0.597,
+          "ci_95": 1.169,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 3.792,
+          "sd": 3.021,
+          "se": 0.617,
+          "ci_95": 1.209,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 4.833,
+          "sd": 3.239,
+          "se": 0.661,
+          "ci_95": 1.296,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 4.333,
+          "sd": 3.158,
+          "se": 0.645,
+          "ci_95": 1.263,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 4.708,
+          "sd": 3.043,
+          "se": 0.621,
+          "ci_95": 1.217,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 4.875,
+          "sd": 3.579,
+          "se": 0.731,
+          "ci_95": 1.432,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 5.833,
+          "sd": 4.508,
+          "se": 0.92,
+          "ci_95": 1.803,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 4.542,
+          "sd": 3.647,
+          "se": 0.744,
+          "ci_95": 1.459,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 5.833,
+          "sd": 4.361,
+          "se": 0.89,
+          "ci_95": 1.745,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 5.25,
+          "sd": 3.937,
+          "se": 0.804,
+          "ci_95": 1.575,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 9.266,
+        "p": 0.0004,
+        "p_corr": 0.0009,
+        "eta_sq": 0.058,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 2.391,
+        "p": 0.1357,
+        "p_corr": 0.1357,
+        "eta_sq": 0.003,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.864,
+        "p": 0.3622,
+        "p_corr": 0.3622,
+        "eta_sq": 0.004,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 9.266,
+          "p": 0.0004,
+          "p_corr": 0.0009,
+          "eta_sq": 0.054,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 2.391,
+          "p": 0.1357,
+          "p_corr": 0.1357,
+          "eta_sq": 0.002,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.057,
+          "p": 0.945,
+          "p_corr": 0.9391,
+          "eta_sq": 0.0,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 9.266,
+          "p": 0.0004,
+          "p_corr": 0.0009,
+          "eta_sq": 0.048,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.864,
+          "p": 0.3622,
+          "p_corr": 0.3622,
+          "eta_sq": 0.003,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 1.161,
+          "p": 0.3223,
+          "p_corr": 0.3186,
+          "eta_sq": 0.004,
+          "significant": false
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -3.383,
+          "df": 23,
+          "p": 0.0026,
+          "p_adj": 0.0077,
+          "d": -0.408,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -3.959,
+          "df": 23,
+          "p": 0.0006,
+          "p_adj": 0.0019,
+          "d": -0.56,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -1.506,
+          "df": 23,
+          "p": 0.1456,
+          "p_adj": 0.4369,
+          "d": -0.209,
+          "significant": false
+        }
+      ]
+    },
+    "TLX_Performance": {
+      "label": "NASA TLX: Performance",
+      "variable": "TLX_Performance",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 5.896,
+          "sd": 7.021,
+          "se": 0.717,
+          "ci_95": 1.404,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 6.635,
+          "sd": 6.34,
+          "se": 0.647,
+          "ci_95": 1.268,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 7.344,
+          "sd": 6.24,
+          "se": 0.637,
+          "ci_95": 1.248,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 6.59,
+          "sd": 6.617,
+          "se": 0.551,
+          "ci_95": 1.081,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 6.66,
+          "sd": 6.499,
+          "se": 0.542,
+          "ci_95": 1.062,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 6.229,
+          "sd": 6.264,
+          "se": 0.522,
+          "ci_95": 1.023,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 7.021,
+          "sd": 6.817,
+          "se": 0.568,
+          "ci_95": 1.113,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 6.312,
+          "sd": 7.375,
+          "se": 1.064,
+          "ci_95": 2.086,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 5.479,
+          "sd": 6.7,
+          "se": 0.967,
+          "ci_95": 1.896,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 6.167,
+          "sd": 6.19,
+          "se": 0.893,
+          "ci_95": 1.751,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 7.104,
+          "sd": 6.518,
+          "se": 0.941,
+          "ci_95": 1.844,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.292,
+          "sd": 6.304,
+          "se": 0.91,
+          "ci_95": 1.783,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 7.396,
+          "sd": 6.242,
+          "se": 0.901,
+          "ci_95": 1.766,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 5.479,
+          "sd": 6.722,
+          "se": 0.97,
+          "ci_95": 1.902,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 6.312,
+          "sd": 7.355,
+          "se": 1.062,
+          "ci_95": 2.081,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 6.083,
+          "sd": 6.094,
+          "se": 0.88,
+          "ci_95": 1.724,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 7.188,
+          "sd": 6.594,
+          "se": 0.952,
+          "ci_95": 1.865,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.125,
+          "sd": 5.97,
+          "se": 0.862,
+          "ci_95": 1.689,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 7.562,
+          "sd": 6.556,
+          "se": 0.946,
+          "ci_95": 1.855,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 6.111,
+          "sd": 6.425,
+          "se": 0.757,
+          "ci_95": 1.484,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 7.069,
+          "sd": 6.814,
+          "se": 0.803,
+          "ci_95": 1.574,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 6.347,
+          "sd": 6.142,
+          "se": 0.724,
+          "ci_95": 1.419,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 6.972,
+          "sd": 6.867,
+          "se": 0.809,
+          "ci_95": 1.586,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 5.75,
+          "sd": 7.036,
+          "se": 1.436,
+          "ci_95": 2.815,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 6.875,
+          "sd": 7.809,
+          "se": 1.594,
+          "ci_95": 3.124,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 5.208,
+          "sd": 6.534,
+          "se": 1.334,
+          "ci_95": 2.614,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 5.75,
+          "sd": 6.992,
+          "se": 1.427,
+          "ci_95": 2.797,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 5.417,
+          "sd": 6.036,
+          "se": 1.232,
+          "ci_95": 2.415,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 6.917,
+          "sd": 6.379,
+          "se": 1.302,
+          "ci_95": 2.552,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 6.75,
+          "sd": 6.208,
+          "se": 1.267,
+          "ci_95": 2.484,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 7.458,
+          "sd": 6.928,
+          "se": 1.414,
+          "ci_95": 2.772,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 7.167,
+          "sd": 6.302,
+          "se": 1.286,
+          "ci_95": 2.521,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 7.417,
+          "sd": 6.44,
+          "se": 1.315,
+          "ci_95": 2.576,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 7.083,
+          "sd": 5.755,
+          "se": 1.175,
+          "ci_95": 2.303,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 7.708,
+          "sd": 6.805,
+          "se": 1.389,
+          "ci_95": 2.722,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 2.204,
+        "p": 0.1219,
+        "p_corr": 0.147,
+        "eta_sq": 0.009,
+        "significant": 0
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.078,
+        "p": 0.7825,
+        "p_corr": 0.7825,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 8.88,
+        "p": 0.0067,
+        "p_corr": 0.0067,
+        "eta_sq": 0.005,
+        "significant": 1
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 2.204,
+          "p": 0.1219,
+          "p_corr": 0.147,
+          "eta_sq": 0.009,
+          "significant": false
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.078,
+          "p": 0.7825,
+          "p_corr": 0.7825,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 2.04,
+          "p": 0.1416,
+          "p_corr": 0.1557,
+          "eta_sq": 0.003,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 2.204,
+          "p": 0.1219,
+          "p_corr": 0.147,
+          "eta_sq": 0.009,
+          "significant": false
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 8.88,
+          "p": 0.0067,
+          "p_corr": 0.0067,
+          "eta_sq": 0.004,
+          "significant": true
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.465,
+          "p": 0.6307,
+          "p_corr": 0.6174,
+          "eta_sq": 0.0,
+          "significant": false
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -1.427,
+          "df": 23,
+          "p": 0.1669,
+          "p_adj": 0.5007,
+          "d": -0.114,
+          "significant": false
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -1.543,
+          "df": 23,
+          "p": 0.1364,
+          "p_adj": 0.4092,
+          "d": -0.222,
+          "significant": false
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -1.342,
+          "df": 23,
+          "p": 0.1926,
+          "p_adj": 0.5778,
+          "d": -0.118,
+          "significant": false
+        }
+      ]
+    },
+    "TLX_Effort": {
+      "label": "NASA TLX: Effort",
+      "variable": "TLX_Effort",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 4.542,
+          "sd": 3.384,
+          "se": 0.345,
+          "ci_95": 0.677,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 6.385,
+          "sd": 4.069,
+          "se": 0.415,
+          "ci_95": 0.814,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 8.0,
+          "sd": 4.944,
+          "se": 0.505,
+          "ci_95": 0.989,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 6.25,
+          "sd": 4.314,
+          "se": 0.359,
+          "ci_95": 0.705,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 6.368,
+          "sd": 4.5,
+          "se": 0.375,
+          "ci_95": 0.735,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 6.347,
+          "sd": 4.707,
+          "se": 0.392,
+          "ci_95": 0.769,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 6.271,
+          "sd": 4.087,
+          "se": 0.341,
+          "ci_95": 0.668,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 4.688,
+          "sd": 3.574,
+          "se": 0.516,
+          "ci_95": 1.011,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.396,
+          "sd": 3.214,
+          "se": 0.464,
+          "ci_95": 0.909,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 6.271,
+          "sd": 3.934,
+          "se": 0.568,
+          "ci_95": 1.113,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 6.5,
+          "sd": 4.238,
+          "se": 0.612,
+          "ci_95": 1.199,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.792,
+          "sd": 4.842,
+          "se": 0.699,
+          "ci_95": 1.37,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 8.208,
+          "sd": 5.086,
+          "se": 0.734,
+          "ci_95": 1.439,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 4.271,
+          "sd": 3.181,
+          "se": 0.459,
+          "ci_95": 0.9,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 4.812,
+          "sd": 3.589,
+          "se": 0.518,
+          "ci_95": 1.015,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 6.146,
+          "sd": 4.058,
+          "se": 0.586,
+          "ci_95": 1.148,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 6.625,
+          "sd": 4.108,
+          "se": 0.593,
+          "ci_95": 1.162,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 8.625,
+          "sd": 5.576,
+          "se": 0.805,
+          "ci_95": 1.577,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 7.375,
+          "sd": 4.185,
+          "se": 0.604,
+          "ci_95": 1.184,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 6.278,
+          "sd": 4.52,
+          "se": 0.533,
+          "ci_95": 1.044,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 6.222,
+          "sd": 4.129,
+          "se": 0.487,
+          "ci_95": 0.954,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 6.417,
+          "sd": 4.918,
+          "se": 0.58,
+          "ci_95": 1.136,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 6.319,
+          "sd": 4.073,
+          "se": 0.48,
+          "ci_95": 0.941,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 4.583,
+          "sd": 3.387,
+          "se": 0.691,
+          "ci_95": 1.355,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 4.792,
+          "sd": 3.822,
+          "se": 0.78,
+          "ci_95": 1.529,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 3.958,
+          "sd": 3.0,
+          "se": 0.612,
+          "ci_95": 1.2,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 4.833,
+          "sd": 3.422,
+          "se": 0.699,
+          "ci_95": 1.369,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 5.875,
+          "sd": 3.791,
+          "se": 0.774,
+          "ci_95": 1.517,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 6.667,
+          "sd": 4.114,
+          "se": 0.84,
+          "ci_95": 1.646,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 6.417,
+          "sd": 4.373,
+          "se": 0.893,
+          "ci_95": 1.75,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 6.583,
+          "sd": 4.19,
+          "se": 0.855,
+          "ci_95": 1.676,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 8.375,
+          "sd": 5.428,
+          "se": 1.108,
+          "ci_95": 2.172,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 7.208,
+          "sd": 4.212,
+          "se": 0.86,
+          "ci_95": 1.685,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 8.875,
+          "sd": 5.826,
+          "se": 1.189,
+          "ci_95": 2.331,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 7.542,
+          "sd": 4.242,
+          "se": 0.866,
+          "ci_95": 1.697,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 22.802,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.126,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.195,
+        "p": 0.663,
+        "p_corr": 0.663,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.07,
+        "p": 0.7934,
+        "p_corr": 0.7934,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 22.802,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.117,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.195,
+          "p": 0.663,
+          "p_corr": 0.663,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.707,
+          "p": 0.4985,
+          "p_corr": 0.4901,
+          "eta_sq": 0.001,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 22.802,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.115,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.07,
+          "p": 0.7934,
+          "p_corr": 0.7934,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 4.235,
+          "p": 0.0205,
+          "p_corr": 0.0302,
+          "eta_sq": 0.011,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -4.11,
+          "df": 23,
+          "p": 0.0004,
+          "p_adj": 0.0013,
+          "d": -0.527,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -5.677,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -0.884,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -3.477,
+          "df": 23,
+          "p": 0.002,
+          "p_adj": 0.0061,
+          "d": -0.388,
+          "significant": true
+        }
+      ]
+    },
+    "TLX_Frustration": {
+      "label": "NASA TLX: Frustration",
+      "variable": "TLX_Frustration",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 3.135,
+          "sd": 2.79,
+          "se": 0.285,
+          "ci_95": 0.558,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 4.865,
+          "sd": 4.177,
+          "se": 0.426,
+          "ci_95": 0.836,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 6.406,
+          "sd": 4.436,
+          "se": 0.453,
+          "ci_95": 0.887,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 4.75,
+          "sd": 3.943,
+          "se": 0.329,
+          "ci_95": 0.644,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 4.854,
+          "sd": 4.228,
+          "se": 0.352,
+          "ci_95": 0.691,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 4.965,
+          "sd": 4.301,
+          "se": 0.358,
+          "ci_95": 0.702,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 4.639,
+          "sd": 3.857,
+          "se": 0.321,
+          "ci_95": 0.63,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 3.229,
+          "sd": 2.919,
+          "se": 0.421,
+          "ci_95": 0.826,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.042,
+          "sd": 2.681,
+          "se": 0.387,
+          "ci_95": 0.759,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 4.542,
+          "sd": 3.525,
+          "se": 0.509,
+          "ci_95": 0.997,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 5.188,
+          "sd": 4.756,
+          "se": 0.687,
+          "ci_95": 1.346,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 6.479,
+          "sd": 4.571,
+          "se": 0.66,
+          "ci_95": 1.293,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 6.333,
+          "sd": 4.343,
+          "se": 0.627,
+          "ci_95": 1.229,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 2.521,
+          "sd": 2.163,
+          "se": 0.312,
+          "ci_95": 0.612,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.75,
+          "sd": 3.206,
+          "se": 0.463,
+          "ci_95": 0.907,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 5.042,
+          "sd": 4.346,
+          "se": 0.627,
+          "ci_95": 1.23,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 4.688,
+          "sd": 4.038,
+          "se": 0.583,
+          "ci_95": 1.142,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 7.333,
+          "sd": 4.568,
+          "se": 0.659,
+          "ci_95": 1.292,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 5.479,
+          "sd": 4.141,
+          "se": 0.598,
+          "ci_95": 1.172,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 5.153,
+          "sd": 4.446,
+          "se": 0.524,
+          "ci_95": 1.027,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 4.347,
+          "sd": 3.349,
+          "se": 0.395,
+          "ci_95": 0.774,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 4.778,
+          "sd": 4.173,
+          "se": 0.492,
+          "ci_95": 0.964,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 4.931,
+          "sd": 4.31,
+          "se": 0.508,
+          "ci_95": 0.995,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 2.708,
+          "sd": 2.71,
+          "se": 0.553,
+          "ci_95": 1.084,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 3.75,
+          "sd": 3.082,
+          "se": 0.629,
+          "ci_95": 1.233,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 2.333,
+          "sd": 1.465,
+          "se": 0.299,
+          "ci_95": 0.586,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 3.75,
+          "sd": 3.391,
+          "se": 0.692,
+          "ci_95": 1.357,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 4.75,
+          "sd": 3.71,
+          "se": 0.757,
+          "ci_95": 1.484,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 4.333,
+          "sd": 3.397,
+          "se": 0.693,
+          "ci_95": 1.359,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 5.333,
+          "sd": 4.967,
+          "se": 1.014,
+          "ci_95": 1.987,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 5.042,
+          "sd": 4.639,
+          "se": 0.947,
+          "ci_95": 1.856,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 8.0,
+          "sd": 5.004,
+          "se": 1.022,
+          "ci_95": 2.002,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 4.958,
+          "sd": 3.581,
+          "se": 0.731,
+          "ci_95": 1.433,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 6.667,
+          "sd": 4.082,
+          "se": 0.833,
+          "ci_95": 1.633,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 6.0,
+          "sd": 4.653,
+          "se": 0.95,
+          "ci_95": 1.862,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 22.008,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.151,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.243,
+        "p": 0.6264,
+        "p_corr": 0.6264,
+        "eta_sq": 0.0,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.65,
+        "p": 0.4285,
+        "p_corr": 0.4285,
+        "eta_sq": 0.003,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 22.008,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.134,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.243,
+          "p": 0.6264,
+          "p_corr": 0.6264,
+          "eta_sq": 0.0,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.709,
+          "p": 0.4972,
+          "p_corr": 0.4641,
+          "eta_sq": 0.003,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 22.008,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.132,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.65,
+          "p": 0.4285,
+          "p_corr": 0.4285,
+          "eta_sq": 0.002,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 11.723,
+          "p": 0.0001,
+          "p_corr": 0.0001,
+          "eta_sq": 0.033,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": -3.394,
+          "df": 23,
+          "p": 0.0025,
+          "p_adj": 0.0075,
+          "d": -0.567,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": -6.024,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": -1.094,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": -3.678,
+          "df": 23,
+          "p": 0.0012,
+          "p_adj": 0.0037,
+          "d": -0.408,
+          "significant": true
+        }
+      ]
+    },
+    "Utility_Score": {
+      "label": "Perceived Utility",
+      "variable": "Utility_Score",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 3.222,
+          "sd": 0.769,
+          "se": 0.078,
+          "ci_95": 0.154,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 2.486,
+          "sd": 0.768,
+          "se": 0.078,
+          "ci_95": 0.154,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 1.753,
+          "sd": 0.754,
+          "se": 0.077,
+          "ci_95": 0.151,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 2.544,
+          "sd": 0.947,
+          "se": 0.079,
+          "ci_95": 0.155,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 2.431,
+          "sd": 0.992,
+          "se": 0.083,
+          "ci_95": 0.162,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 2.414,
+          "sd": 1.028,
+          "se": 0.086,
+          "ci_95": 0.168,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 2.56,
+          "sd": 0.905,
+          "se": 0.075,
+          "ci_95": 0.148,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 3.257,
+          "sd": 0.715,
+          "se": 0.103,
+          "ci_95": 0.202,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.188,
+          "sd": 0.825,
+          "se": 0.119,
+          "ci_95": 0.233,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 2.618,
+          "sd": 0.705,
+          "se": 0.102,
+          "ci_95": 0.199,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 2.354,
+          "sd": 0.812,
+          "se": 0.117,
+          "ci_95": 0.23,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 1.757,
+          "sd": 0.749,
+          "se": 0.108,
+          "ci_95": 0.212,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 1.75,
+          "sd": 0.767,
+          "se": 0.111,
+          "ci_95": 0.217,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 3.382,
+          "sd": 0.641,
+          "se": 0.093,
+          "ci_95": 0.181,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.062,
+          "sd": 0.855,
+          "se": 0.123,
+          "ci_95": 0.242,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 2.382,
+          "sd": 0.741,
+          "se": 0.107,
+          "ci_95": 0.21,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 2.59,
+          "sd": 0.788,
+          "se": 0.114,
+          "ci_95": 0.223,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 1.479,
+          "sd": 0.637,
+          "se": 0.092,
+          "ci_95": 0.18,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 2.028,
+          "sd": 0.768,
+          "se": 0.111,
+          "ci_95": 0.217,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 2.468,
+          "sd": 1.016,
+          "se": 0.12,
+          "ci_95": 0.235,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 2.62,
+          "sd": 0.873,
+          "se": 0.103,
+          "ci_95": 0.202,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 2.361,
+          "sd": 1.045,
+          "se": 0.123,
+          "ci_95": 0.241,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 2.5,
+          "sd": 0.938,
+          "se": 0.111,
+          "ci_95": 0.217,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 3.431,
+          "sd": 0.56,
+          "se": 0.114,
+          "ci_95": 0.224,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 3.083,
+          "sd": 0.818,
+          "se": 0.167,
+          "ci_95": 0.327,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 3.333,
+          "sd": 0.722,
+          "se": 0.147,
+          "ci_95": 0.289,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 3.042,
+          "sd": 0.908,
+          "se": 0.185,
+          "ci_95": 0.363,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 2.5,
+          "sd": 0.667,
+          "se": 0.136,
+          "ci_95": 0.267,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 2.736,
+          "sd": 0.735,
+          "se": 0.15,
+          "ci_95": 0.294,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 2.264,
+          "sd": 0.804,
+          "se": 0.164,
+          "ci_95": 0.322,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 2.444,
+          "sd": 0.826,
+          "se": 0.169,
+          "ci_95": 0.331,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 1.472,
+          "sd": 0.651,
+          "se": 0.133,
+          "ci_95": 0.261,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 2.042,
+          "sd": 0.744,
+          "se": 0.152,
+          "ci_95": 0.298,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 1.486,
+          "sd": 0.637,
+          "se": 0.13,
+          "ci_95": 0.255,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 2.014,
+          "sd": 0.807,
+          "se": 0.165,
+          "ci_95": 0.323,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 93.978,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.563,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 3.894,
+        "p": 0.0606,
+        "p_corr": 0.0606,
+        "eta_sq": 0.015,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 1.786,
+        "p": 0.1945,
+        "p_corr": 0.1945,
+        "eta_sq": 0.02,
+        "significant": 0
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 93.978,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.519,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 3.894,
+          "p": 0.0606,
+          "p_corr": 0.0606,
+          "eta_sq": 0.01,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 2.007,
+          "p": 0.146,
+          "p_corr": 0.1476,
+          "eta_sq": 0.009,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 93.978,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.456,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 1.786,
+          "p": 0.1945,
+          "p_corr": 0.1945,
+          "eta_sq": 0.012,
+          "significant": false
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 9.08,
+          "p": 0.0005,
+          "p_corr": 0.0005,
+          "eta_sq": 0.069,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": 6.645,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 1.325,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": 12.568,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 2.773,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": 7.945,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 1.306,
+          "significant": true
+        }
+      ]
+    },
+    "Godspeed_Intelligence": {
+      "label": "Perceived Intelligence",
+      "variable": "Godspeed_Intelligence",
+      "descriptives_SAT": {
+        "Conservative": {
+          "mean": 3.827,
+          "sd": 0.724,
+          "se": 0.074,
+          "ci_95": 0.145,
+          "n": 96
+        },
+        "Moderate": {
+          "mean": 3.146,
+          "sd": 0.723,
+          "se": 0.074,
+          "ci_95": 0.145,
+          "n": 96
+        },
+        "Risky": {
+          "mean": 2.506,
+          "sd": 0.909,
+          "se": 0.093,
+          "ci_95": 0.182,
+          "n": 96
+        }
+      },
+      "descriptives_Transparency": {
+        "No": {
+          "mean": 3.14,
+          "sd": 0.931,
+          "se": 0.078,
+          "ci_95": 0.152,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 3.179,
+          "sd": 0.981,
+          "se": 0.082,
+          "ci_95": 0.16,
+          "n": 144
+        }
+      },
+      "descriptives_UserDecision": {
+        "No": {
+          "mean": 2.992,
+          "sd": 1.058,
+          "se": 0.088,
+          "ci_95": 0.173,
+          "n": 144
+        },
+        "Yes": {
+          "mean": 3.328,
+          "sd": 0.808,
+          "se": 0.067,
+          "ci_95": 0.132,
+          "n": 144
+        }
+      },
+      "descriptives_SAT_Transparency": {
+        "Conservative_No": {
+          "mean": 3.812,
+          "sd": 0.701,
+          "se": 0.101,
+          "ci_95": 0.198,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.842,
+          "sd": 0.754,
+          "se": 0.109,
+          "ci_95": 0.213,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 3.133,
+          "sd": 0.666,
+          "se": 0.096,
+          "ci_95": 0.188,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 3.158,
+          "sd": 0.783,
+          "se": 0.113,
+          "ci_95": 0.221,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 2.475,
+          "sd": 0.888,
+          "se": 0.128,
+          "ci_95": 0.251,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 2.538,
+          "sd": 0.937,
+          "se": 0.135,
+          "ci_95": 0.265,
+          "n": 48
+        }
+      },
+      "descriptives_SAT_UserDecision": {
+        "Conservative_No": {
+          "mean": 3.812,
+          "sd": 0.788,
+          "se": 0.114,
+          "ci_95": 0.223,
+          "n": 48
+        },
+        "Conservative_Yes": {
+          "mean": 3.842,
+          "sd": 0.663,
+          "se": 0.096,
+          "ci_95": 0.187,
+          "n": 48
+        },
+        "Moderate_No": {
+          "mean": 3.083,
+          "sd": 0.768,
+          "se": 0.111,
+          "ci_95": 0.217,
+          "n": 48
+        },
+        "Moderate_Yes": {
+          "mean": 3.208,
+          "sd": 0.677,
+          "se": 0.098,
+          "ci_95": 0.191,
+          "n": 48
+        },
+        "Risky_No": {
+          "mean": 2.079,
+          "sd": 0.806,
+          "se": 0.116,
+          "ci_95": 0.228,
+          "n": 48
+        },
+        "Risky_Yes": {
+          "mean": 2.933,
+          "sd": 0.805,
+          "se": 0.116,
+          "ci_95": 0.228,
+          "n": 48
+        }
+      },
+      "descriptives_Transparency_UserDecision": {
+        "No_No": {
+          "mean": 2.958,
+          "sd": 1.039,
+          "se": 0.123,
+          "ci_95": 0.24,
+          "n": 72
+        },
+        "No_Yes": {
+          "mean": 3.322,
+          "sd": 0.773,
+          "se": 0.091,
+          "ci_95": 0.179,
+          "n": 72
+        },
+        "Yes_No": {
+          "mean": 3.025,
+          "sd": 1.083,
+          "se": 0.128,
+          "ci_95": 0.25,
+          "n": 72
+        },
+        "Yes_Yes": {
+          "mean": 3.333,
+          "sd": 0.847,
+          "se": 0.1,
+          "ci_95": 0.196,
+          "n": 72
+        }
+      },
+      "descriptives_all": {
+        "Conservative_No_No": {
+          "mean": 3.833,
+          "sd": 0.782,
+          "se": 0.16,
+          "ci_95": 0.313,
+          "n": 24
+        },
+        "Conservative_No_Yes": {
+          "mean": 3.792,
+          "sd": 0.625,
+          "se": 0.128,
+          "ci_95": 0.25,
+          "n": 24
+        },
+        "Conservative_Yes_No": {
+          "mean": 3.792,
+          "sd": 0.81,
+          "se": 0.165,
+          "ci_95": 0.324,
+          "n": 24
+        },
+        "Conservative_Yes_Yes": {
+          "mean": 3.892,
+          "sd": 0.708,
+          "se": 0.144,
+          "ci_95": 0.283,
+          "n": 24
+        },
+        "Moderate_No_No": {
+          "mean": 2.992,
+          "sd": 0.709,
+          "se": 0.145,
+          "ci_95": 0.284,
+          "n": 24
+        },
+        "Moderate_No_Yes": {
+          "mean": 3.275,
+          "sd": 0.601,
+          "se": 0.123,
+          "ci_95": 0.24,
+          "n": 24
+        },
+        "Moderate_Yes_No": {
+          "mean": 3.175,
+          "sd": 0.828,
+          "se": 0.169,
+          "ci_95": 0.331,
+          "n": 24
+        },
+        "Moderate_Yes_Yes": {
+          "mean": 3.142,
+          "sd": 0.752,
+          "se": 0.153,
+          "ci_95": 0.301,
+          "n": 24
+        },
+        "Risky_No_No": {
+          "mean": 2.05,
+          "sd": 0.749,
+          "se": 0.153,
+          "ci_95": 0.3,
+          "n": 24
+        },
+        "Risky_No_Yes": {
+          "mean": 2.9,
+          "sd": 0.821,
+          "se": 0.168,
+          "ci_95": 0.329,
+          "n": 24
+        },
+        "Risky_Yes_No": {
+          "mean": 2.108,
+          "sd": 0.875,
+          "se": 0.179,
+          "ci_95": 0.35,
+          "n": 24
+        },
+        "Risky_Yes_Yes": {
+          "mean": 2.967,
+          "sd": 0.804,
+          "se": 0.164,
+          "ci_95": 0.322,
+          "n": 24
+        }
+      },
+      "anova_SAT": {
+        "factor": "SAT",
+        "df1": 2,
+        "df2": 46,
+        "F": 53.951,
+        "p": 0.0,
+        "p_corr": 0.0,
+        "eta_sq": 0.463,
+        "significant": 1
+      },
+      "anova_Transparency": {
+        "factor": "Transparency",
+        "df1": 1,
+        "df2": 23,
+        "F": 0.518,
+        "p": 0.4791,
+        "p_corr": 0.4791,
+        "eta_sq": 0.002,
+        "significant": 0
+      },
+      "anova_UserDecision": {
+        "factor": "UserDecision",
+        "df1": 1,
+        "df2": 23,
+        "F": 12.517,
+        "p": 0.0018,
+        "p_corr": 0.0018,
+        "eta_sq": 0.096,
+        "significant": 1
+      },
+      "anova_SAT_Transparency": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 53.951,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.43,
+          "significant": true
+        },
+        "Transparency": {
+          "df1": 1,
+          "df2": 23,
+          "F": 0.518,
+          "p": 0.4791,
+          "p_corr": 0.4791,
+          "eta_sq": 0.001,
+          "significant": false
+        },
+        "SAT * Transparency": {
+          "df1": 2,
+          "df2": 46,
+          "F": 0.052,
+          "p": 0.9497,
+          "p_corr": 0.9493,
+          "eta_sq": 0.0,
+          "significant": false
+        }
+      },
+      "anova_SAT_UserDecision": {
+        "SAT": {
+          "df1": 2,
+          "df2": 46,
+          "F": 53.951,
+          "p": 0.0,
+          "p_corr": 0.0,
+          "eta_sq": 0.391,
+          "significant": true
+        },
+        "UserDecision": {
+          "df1": 1,
+          "df2": 23,
+          "F": 12.517,
+          "p": 0.0018,
+          "p_corr": 0.0018,
+          "eta_sq": 0.059,
+          "significant": true
+        },
+        "SAT * UserDecision": {
+          "df1": 2,
+          "df2": 46,
+          "F": 12.144,
+          "p": 0.0001,
+          "p_corr": 0.0003,
+          "eta_sq": 0.07,
+          "significant": true
+        }
+      },
+      "posthoc_SAT": [
+        {
+          "contrast": "Conservative vs Moderate",
+          "A": "Conservative",
+          "B": "Moderate",
+          "t": 6.911,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 1.141,
+          "significant": true
+        },
+        {
+          "contrast": "Conservative vs Risky",
+          "A": "Conservative",
+          "B": "Risky",
+          "t": 8.208,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 2.17,
+          "significant": true
+        },
+        {
+          "contrast": "Moderate vs Risky",
+          "A": "Moderate",
+          "B": "Risky",
+          "t": 5.63,
+          "df": 23,
+          "p": 0.0,
+          "p_adj": 0.0,
+          "d": 1.058,
+          "significant": true
+        }
+      ]
+    }
+  },
+  "summary": {
+    "significant_effects": [
+      {
+        "dv": "Frustration: Robot Performance",
+        "effect": "SAT (main effect)",
+        "F": 73.153,
+        "p": 0.0,
+        "eta_sq": 0.55
+      },
+      {
+        "dv": "Frustration: Robot Performance",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 7.445,
+        "p": 0.0016,
+        "eta_sq": 0.051
+      },
+      {
+        "dv": "Frustration: Robot Decisions",
+        "effect": "SAT (main effect)",
+        "F": 52.538,
+        "p": 0.0,
+        "eta_sq": 0.41
+      },
+      {
+        "dv": "Frustration: Robot Decisions",
+        "effect": "User Decision (main effect)",
+        "F": 5.197,
+        "p": 0.0322,
+        "eta_sq": 0.074
+      },
+      {
+        "dv": "Frustration: Robot Decisions",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 10.876,
+        "p": 0.0001,
+        "eta_sq": 0.073
+      },
+      {
+        "dv": "NASA TLX Overall",
+        "effect": "SAT (main effect)",
+        "F": 27.738,
+        "p": 0.0,
+        "eta_sq": 0.11
+      },
+      {
+        "dv": "NASA TLX Overall",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 11.479,
+        "p": 0.0001,
+        "eta_sq": 0.014
+      },
+      {
+        "dv": "NASA TLX: Mental Demand",
+        "effect": "SAT (main effect)",
+        "F": 7.448,
+        "p": 0.0016,
+        "eta_sq": 0.016
+      },
+      {
+        "dv": "NASA TLX: Mental Demand",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 5.288,
+        "p": 0.0086,
+        "eta_sq": 0.005
+      },
+      {
+        "dv": "NASA TLX: Physical Demand",
+        "effect": "SAT (main effect)",
+        "F": 17.434,
+        "p": 0.0,
+        "eta_sq": 0.072
+      },
+      {
+        "dv": "NASA TLX: Physical Demand",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 7.612,
+        "p": 0.0014,
+        "eta_sq": 0.008
+      },
+      {
+        "dv": "NASA TLX: Temporal Demand",
+        "effect": "SAT (main effect)",
+        "F": 9.266,
+        "p": 0.0004,
+        "eta_sq": 0.058
+      },
+      {
+        "dv": "NASA TLX: Performance",
+        "effect": "User Decision (main effect)",
+        "F": 8.88,
+        "p": 0.0067,
+        "eta_sq": 0.005
+      },
+      {
+        "dv": "NASA TLX: Effort",
+        "effect": "SAT (main effect)",
+        "F": 22.802,
+        "p": 0.0,
+        "eta_sq": 0.126
+      },
+      {
+        "dv": "NASA TLX: Effort",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 4.235,
+        "p": 0.0205,
+        "eta_sq": 0.011
+      },
+      {
+        "dv": "NASA TLX: Frustration",
+        "effect": "SAT (main effect)",
+        "F": 22.008,
+        "p": 0.0,
+        "eta_sq": 0.151
+      },
+      {
+        "dv": "NASA TLX: Frustration",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 11.723,
+        "p": 0.0001,
+        "eta_sq": 0.033
+      },
+      {
+        "dv": "Perceived Utility",
+        "effect": "SAT (main effect)",
+        "F": 93.978,
+        "p": 0.0,
+        "eta_sq": 0.563
+      },
+      {
+        "dv": "Perceived Utility",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 9.08,
+        "p": 0.0005,
+        "eta_sq": 0.069
+      },
+      {
+        "dv": "Perceived Intelligence",
+        "effect": "SAT (main effect)",
+        "F": 53.951,
+        "p": 0.0,
+        "eta_sq": 0.463
+      },
+      {
+        "dv": "Perceived Intelligence",
+        "effect": "User Decision (main effect)",
+        "F": 12.517,
+        "p": 0.0018,
+        "eta_sq": 0.096
+      },
+      {
+        "dv": "Perceived Intelligence",
+        "effect": "SAT \u00d7 User Decision",
+        "F": 12.144,
+        "p": 0.0001,
+        "eta_sq": 0.07
+      }
+    ],
+    "key_patterns": []
+  }
+}
