@@ -1,340 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRI Study Results: Speed-Accuracy Tradeoff Effects</title>
+    <title>Willkommen in Bärlin, Carla! 🐻</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-error-bars@3.0.4/dist/chartjs-plugin-error-bars.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Effects of Speed-Accuracy Tradeoff on User Experience in Human-Robot Interaction</h1>
-            <p class="subtitle">Study Results</p>
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="polaroid-container">
+                <img src="partypetexcarla.jpeg" alt="Freunde" class="polaroid polaroid-1">
+                <img src="WhatsApp Image 2026-01-30 at 15.52.17.jpeg" alt="Carla" class="polaroid polaroid-2">
+            </div>
+            <h1>Willkommen in Bärlin, Carla! 🐻</h1>
+            <p class="subtitle">50 € Genussgutschein – such dir aus, worauf du Lust hast.</p>
         </div>
     </header>
 
-    <nav id="toc">
+    <!-- Intro Section -->
+    <section class="intro">
         <div class="container">
-            <ul>
-                <li><a href="#paper-results">Paper Results</a></li>
-                <li><a href="#overview">Overview</a></li>
-                <li><a href="#frustration">Frustration</a></li>
-                <li><a href="#workload">NASA TLX</a></li>
-                <li><a href="#utility">Utility</a></li>
-                <li><a href="#intelligence">Intelligence</a></li>
-                <li><a href="#summary">Summary</a></li>
-            </ul>
+            <p class="intro-text">
+                Zum Berlin-Start möchten wir dir gutes Essen schenken.<br>
+                <strong>Bitte wähle eine Option – wir kümmern uns um den Rest.</strong>
+            </p>
         </div>
-    </nav>
+    </section>
 
-    <main class="container">
-        <!-- Paper Results Section -->
-        <section id="paper-results" class="paper-section">
-            <h2>Results Section for Paper</h2>
-            <p class="paper-note">Copy-ready text formatted for HRI publication. All statistics use Bonferroni-corrected p-values where applicable.</p>
-            
-            <div class="paper-content">
-                <h3>4. RESULTS</h3>
-                
-                <p>We conducted repeated measures ANOVAs with Speed-Accuracy Tradeoff (SAT: Conservative, Moderate, Risky), Uncertainty Communication (Yes, No), and User Decision (Yes, No) as within-subjects factors. Effect sizes are reported as generalized eta-squared (η²<sub>G</sub>).</p>
-
-                <h4>4.1 User Frustration</h4>
-                
-                <p><strong>Frustration with Robot Performance.</strong> SAT significantly affected user frustration about robot performance, <em>F</em>(2, 46) = 73.15, <em>p</em> &lt; .001, η²<sub>G</sub> = .550. Frustration increased from conservative (<em>M</em> = 2.09, <em>SD</em> = 1.34) to moderate (<em>M</em> = 3.79, <em>SD</em> = 1.60) to risky conditions (<em>M</em> = 5.04, <em>SD</em> = 1.81). All pairwise comparisons were significant (<em>p</em> &lt; .001). A significant SAT × User Decision interaction emerged, <em>F</em>(2, 46) = 7.45, <em>p</em> = .002, η²<sub>G</sub> = .051.</p>
-
-                <p><strong>Frustration with Robot Decisions.</strong> SAT significantly affected frustration about robot decisions, <em>F</em>(2, 46) = 52.54, <em>p</em> &lt; .001, η²<sub>G</sub> = .413, with conservative (<em>M</em> = 1.99, <em>SD</em> = 1.25), moderate (<em>M</em> = 3.23, <em>SD</em> = 1.66), and risky conditions (<em>M</em> = 4.04, <em>SD</em> = 2.07). User Decision also showed a main effect, <em>F</em>(1, 23) = 5.20, <em>p</em> = .032, η²<sub>G</sub> = .074. A significant SAT × User Decision interaction was observed, <em>F</em>(2, 46) = 10.88, <em>p</em> &lt; .001, η²<sub>G</sub> = .073.</p>
-
-                <h4>4.2 Workload (NASA TLX)</h4>
-                
-                <p><strong>Overall Workload.</strong> SAT significantly affected overall workload, <em>F</em>(2, 46) = 27.74, <em>p</em> &lt; .001, η²<sub>G</sub> = .110. The SAT × User Decision interaction was significant, <em>F</em>(2, 46) = 11.48, <em>p</em> &lt; .001, η²<sub>G</sub> = .014.</p>
-
-                <p><strong>TLX Subscales.</strong> SAT significantly affected mental demand (<em>F</em>(2, 46) = 7.45, <em>p</em> = .002, η²<sub>G</sub> = .016), physical demand (<em>F</em>(2, 46) = 17.43, <em>p</em> &lt; .001, η²<sub>G</sub> = .072), temporal demand (<em>F</em>(2, 46) = 9.27, <em>p</em> &lt; .001, η²<sub>G</sub> = .058), effort (<em>F</em>(2, 46) = 22.80, <em>p</em> &lt; .001, η²<sub>G</sub> = .126), and frustration (<em>F</em>(2, 46) = 22.01, <em>p</em> &lt; .001, η²<sub>G</sub> = .151). User Decision showed a main effect on perceived performance, <em>F</em>(1, 23) = 8.88, <em>p</em> = .007, η²<sub>G</sub> = .005.</p>
-
-                <h4>4.3 Perceived Utility</h4>
-                
-                <p>SAT significantly affected perceived utility, <em>F</em>(2, 46) = 93.98, <em>p</em> &lt; .001, η²<sub>G</sub> = .563. Utility decreased from conservative (<em>M</em> = 3.26, <em>SD</em> = 0.66) to moderate (<em>M</em> = 2.46, <em>SD</em> = 0.74) to risky conditions (<em>M</em> = 1.74, <em>SD</em> = 0.71). All pairwise comparisons were significant (<em>p</em> &lt; .001). A significant SAT × User Decision interaction was found, <em>F</em>(2, 46) = 9.08, <em>p</em> &lt; .001, η²<sub>G</sub> = .069.</p>
-
-                <h4>4.4 Perceived Intelligence</h4>
-                
-                <p>SAT significantly affected perceived intelligence, <em>F</em>(2, 46) = 53.95, <em>p</em> &lt; .001, η²<sub>G</sub> = .463. Intelligence ratings decreased from conservative (<em>M</em> = 3.76, <em>SD</em> = 0.77) to moderate (<em>M</em> = 3.10, <em>SD</em> = 0.68) to risky conditions (<em>M</em> = 2.49, <em>SD</em> = 0.87). User Decision showed a main effect, <em>F</em>(1, 23) = 12.52, <em>p</em> = .002, η²<sub>G</sub> = .096. The SAT × User Decision interaction was significant, <em>F</em>(2, 46) = 12.14, <em>p</em> &lt; .001, η²<sub>G</sub> = .070.</p>
-
-                <h4>4.5 Summary</h4>
-                
-                <p>The SAT manipulation produced robust effects across all dependent measures, with large effect sizes for frustration (η²<sub>G</sub> = .41–.55), utility (η²<sub>G</sub> = .56), and perceived intelligence (η²<sub>G</sub> = .46). Riskier robot behavior consistently led to higher frustration, greater workload, lower perceived utility, and reduced perceived intelligence. Notably, Uncertainty Communication showed no significant main effects, while User Decision and SAT × User Decision interactions emerged for several measures, suggesting that user agency moderates the impact of SAT on user experience.</p>
-            </div>
-        </section>
-
-        <!-- Study Overview -->
-        <section id="overview">
-            <h2>Study Overview</h2>
-            <div class="study-info">
-                <div class="info-card">
-                    <h3>Design</h3>
-                    <p id="design-text">Loading...</p>
-                </div>
-                <div class="info-card">
-                    <h3>Sample</h3>
-                    <p><span id="n-participants">--</span> participants</p>
-                    <p><span id="n-observations">--</span> observations</p>
-                </div>
-                <div class="info-card">
-                    <h3>Independent Variables</h3>
-                    <ul>
-                        <li><strong>Speed-Accuracy Tradeoff (SAT):</strong> Conservative, Moderate, Risky</li>
-                        <li><strong>Uncertainty Communication:</strong> Yes, No</li>
-                        <li><strong>User Decision:</strong> Yes, No</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="dv-overview">
-                <h3>Dependent Variables</h3>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Measure</th>
-                            <th>Scale</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Frustration (Robot Performance)</td>
-                            <td>1-7 Likert</td>
-                            <td>User frustration about robot performance</td>
-                        </tr>
-                        <tr>
-                            <td>Frustration (Robot Decisions)</td>
-                            <td>1-7 Likert</td>
-                            <td>User frustration about robot decisions</td>
-                        </tr>
-                        <tr>
-                            <td>NASA TLX</td>
-                            <td>1-21 (6 subscales)</td>
-                            <td>Workload assessment</td>
-                        </tr>
-                        <tr>
-                            <td>Perceived Utility</td>
-                            <td>1-4</td>
-                            <td>Composite score of 3 utility items</td>
-                        </tr>
-                        <tr>
-                            <td>Perceived Intelligence</td>
-                            <td>1-5</td>
-                            <td>Godspeed questionnaire (5 items)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Frustration Measures -->
-        <section id="frustration">
-            <h2>User Frustration</h2>
-            
-            <div class="results-subsection">
-                <h3>Frustration about Robot Performance</h3>
-                <div class="chart-stats-container">
-                    <div class="chart-container">
-                        <canvas id="chart-frustration-performance-sat"></canvas>
-                    </div>
-                    <div class="stats-container">
-                        <h4>Descriptive Statistics</h4>
-                        <table class="data-table" id="table-frustration-performance">
-                            <thead>
-                                <tr>
-                                    <th>SAT Level</th>
-                                    <th>M</th>
-                                    <th>SD</th>
-                                    <th>95% CI</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <div class="anova-results" id="anova-frustration-performance"></div>
-                        <div class="posthoc-results" id="posthoc-frustration-performance"></div>
-                    </div>
-                </div>
-                
-                <h4>Interaction: SAT x Uncertainty Communication</h4>
-                <div class="chart-container chart-wide">
-                    <canvas id="chart-frustration-performance-interaction"></canvas>
-                </div>
-                <div class="interaction-stats" id="interaction-frustration-performance"></div>
-            </div>
-
-            <div class="results-subsection">
-                <h3>Frustration about Robot Decisions</h3>
-                <div class="chart-stats-container">
-                    <div class="chart-container">
-                        <canvas id="chart-frustration-decision-sat"></canvas>
-                    </div>
-                    <div class="stats-container">
-                        <h4>Descriptive Statistics</h4>
-                        <table class="data-table" id="table-frustration-decision">
-                            <thead>
-                                <tr>
-                                    <th>SAT Level</th>
-                                    <th>M</th>
-                                    <th>SD</th>
-                                    <th>95% CI</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <div class="anova-results" id="anova-frustration-decision"></div>
-                        <div class="posthoc-results" id="posthoc-frustration-decision"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- NASA TLX -->
-        <section id="workload">
-            <h2>NASA Task Load Index (TLX)</h2>
-            
-            <div class="results-subsection">
-                <h3>Overall Workload</h3>
-                <div class="chart-stats-container">
-                    <div class="chart-container">
-                        <canvas id="chart-tlx-overall-sat"></canvas>
-                    </div>
-                    <div class="stats-container">
-                        <h4>Descriptive Statistics</h4>
-                        <table class="data-table" id="table-tlx-overall">
-                            <thead>
-                                <tr>
-                                    <th>SAT Level</th>
-                                    <th>M</th>
-                                    <th>SD</th>
-                                    <th>95% CI</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <div class="anova-results" id="anova-tlx-overall"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="results-subsection">
-                <h3>TLX Subscales by SAT Level</h3>
-                <div class="chart-container chart-full">
-                    <canvas id="chart-tlx-subscales"></canvas>
-                </div>
-                
-                <h4>Statistical Results by Subscale</h4>
-                <table class="data-table" id="table-tlx-subscales-anova">
-                    <thead>
-                        <tr>
-                            <th>Subscale</th>
-                            <th>F</th>
-                            <th>df</th>
-                            <th>p</th>
-                            <th>η²</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Perceived Utility -->
-        <section id="utility">
-            <h2>Perceived Utility</h2>
-            
-            <div class="chart-stats-container">
-                <div class="chart-container">
-                    <canvas id="chart-utility-sat"></canvas>
-                </div>
-                <div class="stats-container">
-                    <h4>Descriptive Statistics</h4>
-                    <table class="data-table" id="table-utility">
-                        <thead>
-                            <tr>
-                                <th>SAT Level</th>
-                                <th>M</th>
-                                <th>SD</th>
-                                <th>95% CI</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                    <div class="anova-results" id="anova-utility"></div>
-                    <div class="posthoc-results" id="posthoc-utility"></div>
-                </div>
-            </div>
-
-            <h3>Utility by Uncertainty Communication</h3>
-            <div class="chart-container chart-medium">
-                <canvas id="chart-utility-transparency"></canvas>
-            </div>
-            <div class="anova-results" id="anova-utility-transparency"></div>
-        </section>
-
-        <!-- Perceived Intelligence -->
-        <section id="intelligence">
-            <h2>Perceived Intelligence (Godspeed)</h2>
-            
-            <div class="chart-stats-container">
-                <div class="chart-container">
-                    <canvas id="chart-intelligence-sat"></canvas>
-                </div>
-                <div class="stats-container">
-                    <h4>Descriptive Statistics</h4>
-                    <table class="data-table" id="table-intelligence">
-                        <thead>
-                            <tr>
-                                <th>SAT Level</th>
-                                <th>M</th>
-                                <th>SD</th>
-                                <th>95% CI</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                    <div class="anova-results" id="anova-intelligence"></div>
-                    <div class="posthoc-results" id="posthoc-intelligence"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Summary -->
-        <section id="summary">
-            <h2>Summary of Key Findings</h2>
-            
-            <div class="summary-content">
-                <div class="finding-card">
-                    <h3>Main Effect of Speed-Accuracy Tradeoff</h3>
-                    <p>The SAT condition significantly influenced multiple outcome measures. Riskier robot behavior was associated with:</p>
-                    <ul id="sat-findings"></ul>
-                </div>
-
-                <div class="finding-card">
-                    <h3>Significant Effects Overview</h3>
-                    <table class="data-table" id="table-summary">
-                        <thead>
-                            <tr>
-                                <th>Dependent Variable</th>
-                                <th>Effect</th>
-                                <th>F</th>
-                                <th>p</th>
-                                <th>η²</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
+    <!-- Options Section -->
+    <section class="options">
         <div class="container">
-            <p>HRI Winter School Study Results</p>
+            <!-- Decorative side images -->
+            <div class="side-decorations left">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
+            </div>
+            <div class="side-decorations right">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
+                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
+            </div>
+            <div class="options-grid">
+                <!-- Option A -->
+                <div class="option-card" data-option="vegan">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop" alt="Veganes Essen">
+                    </div>
+                    <div class="card-content">
+                        <h3>🥗 Vegan durch Berlin</h3>
+                        <p>2× Gutscheinheft, perfekt zum gemeinsamen Durchprobieren.</p>
+                        <a href="https://vegandurchdeutschland.de/products/preorder-20-off-guide-mit-gutscheinen-vegan-durch-berlin-2025-gutscheinheft-kopie" target="_blank" class="info-link">Mehr erfahren →</a>
+                    </div>
+                    <button class="select-btn" data-value="vegan">
+                        <span class="checkmark">✓</span>
+                        Diese Option wählen
+                    </button>
+                </div>
+
+                <!-- Option B -->
+                <div class="option-card" data-option="foersters">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop" alt="Restaurant Atmosphäre">
+                    </div>
+                    <div class="card-content">
+                        <h3>🍽️ Das Försters</h3>
+                        <p>Ein Abend in einem richtig cool klingenden Restaurant.</p>
+                        <a href="https://das-foersters.de/gutscheine/" target="_blank" class="info-link">Mehr erfahren →</a>
+                    </div>
+                    <button class="select-btn" data-value="foersters">
+                        <span class="checkmark">✓</span>
+                        Diese Option wählen
+                    </button>
+                </div>
+
+                <!-- Option C -->
+                <div class="option-card" data-option="wunsch">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop" alt="Deine Wahl">
+                    </div>
+                    <div class="card-content">
+                        <h3>✨ Deine Wahl</h3>
+                        <p>Du suchst dir dein Lieblingsrestaurant in Berlin aus.</p>
+                        <input type="text" id="custom-restaurant" class="restaurant-input" placeholder="Dein Restaurant-Wunsch...">
+                    </div>
+                    <button class="select-btn" data-value="wunsch">
+                        <span class="checkmark">✓</span>
+                        Diese Option wählen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-section">
+                <button id="submit-btn" class="submit-btn" disabled>
+                    Auswahl abschicken 💌
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confirmation Overlay -->
+    <div id="confirmation" class="confirmation-overlay">
+        <div class="confirmation-content">
+            <button class="close-btn" id="close-confirmation">✕</button>
+            <div class="confetti">🎉</div>
+            <h2>Yay!</h2>
+            <p>Wir freuen uns – der Gutschein kommt bald 💌</p>
+            <p class="hint-text">Bitte schick uns kurz die E-Mail ab, die sich gleich öffnet! Wenn sie sich nicht öffnet (arsch geleckt), sag einfach Bescheid hehe </p>
+            <div class="heart-animation">❤️</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-photos">
+                <img src="berlin-mit-berliner-baer-baerlin-baby-t-shirt.jpg" alt="Berlin Bär" class="footer-img">
+            </div>
+            <p class="footer-text">Von uns – für viele gute Essenserinnerungen in Bärlin.</p>
+            <p class="footer-names">PartyPete, Alli & Tim 🖤</p>
+            <p class="footer-date">Januar 2026</p>
         </div>
     </footer>
 
