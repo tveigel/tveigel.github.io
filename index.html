@@ -1,135 +1,26 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Willkommen in Bärlin, Carla! 🐻</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Hello World</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <header class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="polaroid-container">
-                <img src="partypetexcarla.jpeg" alt="Freunde" class="polaroid polaroid-1">
-                <img src="WhatsApp Image 2026-01-30 at 15.52.17.jpeg" alt="Carla" class="polaroid polaroid-2">
-            </div>
-            <h1>Willkommen in Bärlin, Carla! 🐻</h1>
-            <p class="subtitle">50 € Genussgutschein – such dir aus, worauf du Lust hast.</p>
-        </div>
-    </header>
-
-    <!-- Intro Section -->
-    <section class="intro">
-        <div class="container">
-            <p class="intro-text">
-                Zum Berlin-Start möchten wir dir gutes Essen schenken.<br>
-                <strong>Bitte wähle eine Option – wir kümmern uns um den Rest.</strong>
-            </p>
-        </div>
-    </section>
-
-    <!-- Options Section -->
-    <section class="options">
-        <div class="container">
-            <!-- Decorative side images -->
-            <div class="side-decorations left">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img">
-            </div>
-            <div class="side-decorations right">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
-                <img src="WhatsApp Image 2026-01-30 at 15.59.28.jpeg" alt="Deko" class="side-img mirrored">
-            </div>
-            <div class="options-grid">
-                <!-- Option A -->
-                <div class="option-card" data-option="vegan">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop" alt="Veganes Essen">
-                    </div>
-                    <div class="card-content">
-                        <h3>🥗 Vegan durch Berlin</h3>
-                        <p>2× Gutscheinheft, perfekt zum gemeinsamen Durchprobieren.</p>
-                        <a href="https://vegandurchdeutschland.de/products/preorder-20-off-guide-mit-gutscheinen-vegan-durch-berlin-2025-gutscheinheft-kopie" target="_blank" class="info-link">Mehr erfahren →</a>
-                    </div>
-                    <button class="select-btn" data-value="vegan">
-                        <span class="checkmark">✓</span>
-                        Diese Option wählen
-                    </button>
-                </div>
-
-                <!-- Option B -->
-                <div class="option-card" data-option="foersters">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop" alt="Restaurant Atmosphäre">
-                    </div>
-                    <div class="card-content">
-                        <h3>🍽️ Das Försters</h3>
-                        <p>Ein Abend in einem richtig cool klingenden Restaurant.</p>
-                        <a href="https://das-foersters.de/gutscheine/" target="_blank" class="info-link">Mehr erfahren →</a>
-                    </div>
-                    <button class="select-btn" data-value="foersters">
-                        <span class="checkmark">✓</span>
-                        Diese Option wählen
-                    </button>
-                </div>
-
-                <!-- Option C -->
-                <div class="option-card" data-option="wunsch">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop" alt="Deine Wahl">
-                    </div>
-                    <div class="card-content">
-                        <h3>✨ Deine Wahl</h3>
-                        <p>Du suchst dir dein Lieblingsrestaurant in Berlin aus.</p>
-                        <input type="text" id="custom-restaurant" class="restaurant-input" placeholder="Dein Restaurant-Wunsch...">
-                    </div>
-                    <button class="select-btn" data-value="wunsch">
-                        <span class="checkmark">✓</span>
-                        Diese Option wählen
-                    </button>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="submit-section">
-                <button id="submit-btn" class="submit-btn" disabled>
-                    Auswahl abschicken 💌
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Confirmation Overlay -->
-    <div id="confirmation" class="confirmation-overlay">
-        <div class="confirmation-content">
-            <button class="close-btn" id="close-confirmation">✕</button>
-            <div class="confetti">🎉</div>
-            <h2>Yay!</h2>
-            <p>Wir freuen uns – der Gutschein kommt bald 💌</p>
-            <p class="hint-text">Bitte schick uns kurz die E-Mail ab, die sich gleich öffnet! Wenn sie sich nicht öffnet (arsch geleckt), sag einfach Bescheid hehe </p>
-            <div class="heart-animation">❤️</div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-photos">
-                <img src="berlin-mit-berliner-baer-baerlin-baby-t-shirt.jpg" alt="Berlin Bär" class="footer-img">
-            </div>
-            <p class="footer-text">Von uns – für viele gute Essenserinnerungen in Bärlin.</p>
-            <p class="footer-names">PartyPete, Alli & Tim 🖤</p>
-            <p class="footer-date">Januar 2026</p>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+    <h1>Hello World</h1>
 </body>
 </html>
