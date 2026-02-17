@@ -66,6 +66,14 @@
             border-radius: 12px;
             background: var(--hover);
         }
+        .toolbar-user {
+            font-size: .72rem;
+            color: var(--text);
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #f5efea;
+            border: 1px solid var(--border);
+        }
         .toolbar-status.connected { color: var(--success); }
         .toolbar-status.error { color: var(--danger); }
 
@@ -252,6 +260,7 @@
         .cb {
             width: 20px;
             height: 20px;
+            --cb-color: var(--accent);
             border: 1.5px solid var(--border);
             border-radius: 4px;
             cursor: pointer;
@@ -264,8 +273,8 @@
         }
         .cb:hover { border-color: var(--accent); }
         .cb.checked {
-            background: var(--accent);
-            border-color: var(--accent);
+            background: var(--cb-color);
+            border-color: var(--cb-color);
         }
         .cb.checked::after {
             content: '✓';
@@ -274,6 +283,10 @@
             font-weight: 700;
             line-height: 1;
         }
+        .cb.mine {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+        }
+        .cb.other { opacity: .92; }
         .row-actions {
             display: flex;
             gap: 2px;
@@ -544,6 +557,8 @@
     <div class="toolbar">
         <span class="toolbar-title">✨ Putzplan Creator</span>
         <span id="syncStatus" class="toolbar-status">Lokal</span>
+        <span id="userBadge" class="toolbar-user">👤 Name wählen</span>
+        <button class="btn btn-sm" onclick="openUserNameModal()">Name</button>
         <button class="btn btn-sm" onclick="showAddSectionModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Bereich
@@ -579,6 +594,19 @@
 <!-- ══════════════════════════════════════════════════ -->
 <!--  MODALS                                           -->
 <!-- ══════════════════════════════════════════════════ -->
+
+<!-- Name Setup -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal">
+        <h3>Wie heißt du?</h3>
+        <label>Gib deinen Namen ein, damit deine Häkchen ihre Farbe bekommen.</label>
+        <input type="text" id="userNameInput" maxlength="20" placeholder="z.B. Tim">
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal('userModal')">Abbrechen</button>
+            <button class="btn btn-primary" onclick="saveUserNameFromModal()">Speichern</button>
+        </div>
+    </div>
+</div>
 
 <!-- Add Section -->
 <div class="modal-overlay" id="addSectionModal">
@@ -627,8 +655,28 @@
 // ════════════════════════════════════════════════════
 //  UTILITIES
 // ════════════════════════════════════════════════════
+const USER_NAME_STORAGE_KEY = 'putzplan_user_name';
+const USER_COLOR_PALETTE = ['#2f80ed', '#f2994a', '#27ae60', '#eb5757', '#9b51e0', '#2d9cdb', '#56cc9b', '#bb6bd9'];
+
 function sid() { return 's' + Math.random().toString(36).substr(2, 9); }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function normalizeUserName(value) {
+    return (value || '').trim().replace(/\s+/g, ' ');
+}
+function userKey(value) {
+    return normalizeUserName(value).toLowerCase();
+}
+function getUserColor(name) {
+    const key = userKey(name);
+    if (!key) return 'var(--accent)';
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) hash += key.charCodeAt(i);
+    return USER_COLOR_PALETTE[hash % USER_COLOR_PALETTE.length];
+}
+function getCheckboxOwner(value) {
+    const owner = (typeof value === 'string') ? normalizeUserName(value) : '';
+    return owner === 'true' || owner === 'false' ? '' : owner;
+}
 
 // ════════════════════════════════════════════════════
 //  DEFAULT DATA
@@ -717,6 +765,7 @@ function createDefaultData() {
 //  STATE
 // ════════════════════════════════════════════════════
 let data = null;
+let currentUserName = '';
 let db = null;
 let docRef = null;
 let unsubscribe = null;
@@ -724,10 +773,86 @@ let saveTimeout = null;
 let firestoreReady = false;
 let suppressNextSnapshot = false;
 
+function isOwnerCurrentUser(owner) {
+    return userKey(owner) === userKey(currentUserName);
+}
+function normalizeSectionChecks(section) {
+    if (!section.checked || typeof section.checked !== 'object' || Array.isArray(section.checked)) {
+        section.checked = {};
+        return;
+    }
+    Object.keys(section.checked).forEach((key) => {
+        const owner = getCheckboxOwner(section.checked[key]);
+        if (owner) {
+            section.checked[key] = owner;
+        } else if (section.checked[key] === true) {
+            section.checked[key] = 'Anonym';
+        } else {
+            delete section.checked[key];
+        }
+    });
+}
+function normalizeAllChecks() {
+    if (!data || !Array.isArray(data.sections)) return;
+    data.sections.forEach(normalizeSectionChecks);
+}
+function renderCheckbox(sectionId, key) {
+    const sec = data.sections.find(s => s.id === sectionId);
+    if (!sec || !sec.checked) return `<div class="cb" data-section="${sectionId}" data-key="${key}"></div>`;
+    const owner = getCheckboxOwner(sec.checked[key]);
+    if (!owner) return `<div class="cb" data-section="${sectionId}" data-key="${key}"></div>`;
+    const extraClass = isOwnerCurrentUser(owner) ? ' mine' : ' other';
+    const color = getUserColor(owner);
+    const title = esc(`Erledigt von ${owner}`);
+    return `<div class="cb checked${extraClass}" data-section="${sectionId}" data-key="${key}" title="${title}" style="--cb-color:${color};"></div>`;
+}
+function updateUserBadge() {
+    const badge = document.getElementById('userBadge');
+    if (!badge) return;
+    badge.textContent = currentUserName ? `👤 ${currentUserName}` : '👤 Name wählen';
+}
+function setCurrentUserName(name) {
+    const normalized = normalizeUserName(name);
+    if (!normalized) {
+        currentUserName = '';
+        localStorage.removeItem(USER_NAME_STORAGE_KEY);
+        updateUserBadge();
+        return false;
+    }
+    currentUserName = normalized;
+    localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserName);
+    updateUserBadge();
+    return true;
+}
+function openUserNameModal() {
+    const input = document.getElementById('userNameInput');
+    if (!input) return;
+    input.value = currentUserName || '';
+    openModal('userModal');
+    setTimeout(() => input.focus(), 120);
+}
+function saveUserNameFromModal() {
+    const input = document.getElementById('userNameInput');
+    if (!input) return;
+    const name = normalizeUserName(input.value);
+    if (!name) {
+        input.focus();
+        return;
+    }
+    setCurrentUserName(name);
+    closeModal('userModal');
+    render();
+}
+function initCurrentUser() {
+    const saved = localStorage.getItem(USER_NAME_STORAGE_KEY);
+    if (!setCurrentUserName(saved)) openUserNameModal();
+}
+
 // ════════════════════════════════════════════════════
 //  FIREBASE
 // ════════════════════════════════════════════════════
 function initApp() {
+    initCurrentUser();
     // The firebaseConfig and documentId are now expected to be in firebase-config.js
     if (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) {
         try {
@@ -746,6 +871,8 @@ function startLocal() {
     try {
         const saved = localStorage.getItem('putzplan');
         data = saved ? JSON.parse(saved) : createDefaultData();
+        if (!data || !Array.isArray(data.sections)) data = createDefaultData();
+        normalizeAllChecks();
     } catch { data = createDefaultData(); }
     document.getElementById('appContainer').style.display = '';
     updateSyncStatus('local');
@@ -766,13 +893,16 @@ function initFirestore(config, docId) {
                 if (suppressNextSnapshot) { suppressNextSnapshot = false; return; }
                 if (doc.exists) {
                     data = doc.data();
-                    (data.sections || []).forEach(s => { if (!s.checked) s.checked = {}; });
+                    if (!data || !Array.isArray(data.sections)) data = createDefaultData();
+                    normalizeAllChecks();
                     localStorage.setItem('putzplan', JSON.stringify(data));
                     updateSyncStatus('connected');
                     render();
                 } else {
                     const local = localStorage.getItem('putzplan');
                     data = local ? JSON.parse(local) : createDefaultData();
+                    if (!data || !Array.isArray(data.sections)) data = createDefaultData();
+                    normalizeAllChecks();
                     docRef.set(data);
                     updateSyncStatus('connected');
                     render();
@@ -831,6 +961,8 @@ function render() {
     if (!data) return;
     const monthInput = document.getElementById('monthInput');
     if (monthInput) monthInput.value = data.month || '';
+    if (!Array.isArray(data.sections)) data.sections = [];
+    normalizeAllChecks();
     const body = document.getElementById('planBody');
     if (!body) return;
     body.innerHTML = '';
@@ -863,8 +995,7 @@ function renderWeeklySection(sec) {
             let boxes = '';
             for (let b = 0; b < sec.boxes; b++) {
                 const key = `${t.id}_${b}`;
-                const checked = sec.checked[key] ? ' checked' : '';
-                boxes += `<div class="cb${checked}" data-section="${sec.id}" data-key="${key}"></div>`;
+                boxes += renderCheckbox(sec.id, key);
             }
             tasks += `
                 <div class="task-row">
@@ -951,8 +1082,7 @@ function renderDailySection(sec) {
         let cells = `<td>${d}</td>`;
         (sec.columns || []).forEach(col => {
             const key = `${col.id}_${d}`;
-            const checked = sec.checked[key] ? ' checked' : '';
-            cells += `<td><div class="cb${checked}" data-section="${sec.id}" data-key="${key}"></div></td>`;
+            cells += `<td>${renderCheckbox(sec.id, key)}</td>`;
         });
         rows += `<tr>${cells}</tr>`;
     }
@@ -995,12 +1125,21 @@ function bindEvents() {
     // Checkboxes
     document.querySelectorAll('.cb').forEach(cb => {
         cb.addEventListener('click', () => {
+            if (!currentUserName) {
+                openUserNameModal();
+                return;
+            }
             const sec = data.sections.find(s => s.id === cb.dataset.section);
             if (!sec) return;
             if (!sec.checked) sec.checked = {};
             const key = cb.dataset.key;
-            sec.checked[key] = !sec.checked[key];
-            cb.classList.toggle('checked');
+            const owner = getCheckboxOwner(sec.checked[key]);
+            if (isOwnerCurrentUser(owner)) {
+                delete sec.checked[key];
+            } else {
+                sec.checked[key] = currentUserName;
+            }
+            render();
             save();
         });
     });
@@ -1137,6 +1276,13 @@ document.getElementById('confirmYesBtn').addEventListener('click', () => {
     closeModal('confirmModal');
     if (confirmCallback) { confirmCallback(); confirmCallback = null; }
 });
+
+const userNameInput = document.getElementById('userNameInput');
+if (userNameInput) {
+    userNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveUserNameFromModal();
+    });
+}
 
 // ════════════════════════════════════════════════════
 //  MODAL HELPERS
