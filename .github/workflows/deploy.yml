@@ -1,1 +1,32 @@
-name: Deploy to GitHub Pages\n\non:\n  push:\n    branches:\n      - main # Or your default branch\n\njobs:\n  build-and-deploy:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout \ud83d\udc4b\n        uses: actions/checkout@v3\n\n      - name: Create Firebase config file\n        run: |\n          echo \"const firebaseConfig = {\" > firebase-config.js\n          echo \"  apiKey: \\\"${{ secrets.FIREBASE_API_KEY }}\\\",\" >> firebase-config.js\n          echo \"  authDomain: \\\"${{ secrets.FIREBASE_AUTH_DOMAIN }}\\\",\" >> firebase-config.js\n          echo \"  projectId: \\\"${{ secrets.FIREBASE_PROJECT_ID }}\\\",\" >> firebase-config.js\n          echo \"  storageBucket: \\\"${{ secrets.FIREBASE_STORAGE_BUCKET }}\\\",\" >> firebase-config.js\n          echo \"  messagingSenderId: \\\"${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}\\\",\" >> firebase-config.js\n          echo \"  appId: \\\"${{ secrets.FIREBASE_APP_ID }}\\\"\" >> firebase-config.js\n          echo \"};\" >> firebase-config.js\n          echo \"const documentId = \\\"default-putzplan\\\";\" >> firebase-config.js\n\n      - name: Deploy \ud83d\ude80\n        uses: JamesIves/github-pages-deploy-action@v4\n        with:\n          branch: gh-pages # The branch the action should deploy to.\n          folder: . # The folder the action should deploy.\n
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Firebase config file
+        run: |
+          echo 'const firebaseConfig = {' > firebase-config.js
+          echo '  apiKey: "${{ secrets.FIREBASE_API_KEY }}",' >> firebase-config.js
+          echo '  authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN }}",' >> firebase-config.js
+          echo '  projectId: "${{ secrets.FIREBASE_PROJECT_ID }}",' >> firebase-config.js
+          echo '  storageBucket: "${{ secrets.FIREBASE_STORAGE_BUCKET }}",' >> firebase-config.js
+          echo '  messagingSenderId: "${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}",' >> firebase-config.js
+          echo '  appId: "${{ secrets.FIREBASE_APP_ID }}"' >> firebase-config.js
+          echo '};' >> firebase-config.js
+          echo 'const documentId = "default-putzplan";' >> firebase-config.js
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .

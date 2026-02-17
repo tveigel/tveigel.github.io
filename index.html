@@ -135,9 +135,20 @@
         /* ── PLAN BODY ── */
         .plan-body {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
+            grid-template-columns: auto 1fr;
+            gap: 24px;
             align-items: start;
+        }
+        .plan-col {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .plan-col-left {
+            min-width: 0;
+        }
+        .plan-col-right {
+            min-width: 0;
         }
 
         /* ── SECTION CARD ── */
@@ -450,25 +461,69 @@
             .add-btn, .icon-btn, .no-print,
             .confirm-bar, .col-remove-btn { display: none !important; }
 
-            body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 9px; }
             .main { padding: 0; max-width: 100%; }
-            .plan-body { gap: 18px; }
+
+            .plan-header { margin-bottom: 12px; }
+            .plan-title { font-size: 2rem; }
+            .plan-icon { font-size: 2rem; }
+            .month-input { font-size: .85rem; }
+
+            .plan-body {
+                grid-template-columns: auto 1fr;
+                gap: 8px 12px;
+            }
+            .plan-col { gap: 8px; }
+
             .section {
                 border: 1px solid #ccc;
                 break-inside: avoid;
                 page-break-inside: avoid;
-                padding: 14px 18px;
+                padding: 10px 12px;
+                border-radius: 6px;
             }
-            .section-title-input, .category-name-input, .task-label-input,
-            .month-input {
+            .section-title-input {
+                font-size: 1.3rem;
+                border-bottom: none !important;
+                margin-bottom: 4px;
+            }
+            .section-header { margin-bottom: 8px; }
+
+            .category { margin-bottom: 10px; }
+            .category-name-input {
+                font-size: .78rem;
                 border-bottom: none !important;
             }
-            .cb { border-color: #999; }
+            .task-label-input {
+                font-size: .72rem;
+                border-bottom: none !important;
+            }
+            .task-row { padding: 1.5px 0; gap: 4px; }
+            .checkboxes { gap: 2px; }
+            .cb {
+                width: 14px;
+                height: 14px;
+                border-color: #999;
+                border-radius: 2px;
+                border-width: 1px;
+            }
             .cb.checked {
                 background: #555 !important;
                 border-color: #555 !important;
             }
-            @page { margin: 1.5cm; size: A4; }
+            .cb.checked::after { font-size: 9px; }
+
+            .month-input { border-bottom: none !important; }
+
+            /* Daily table compact */
+            .daily-table { font-size: .65rem; }
+            .daily-table th.col-header { height: 90px; padding-bottom: 4px; }
+            .daily-table th.col-header .col-header-text { font-size: .6rem; }
+            .daily-table th { padding: 2px 1px; font-size: .6rem; }
+            .daily-table td { padding: 1.5px 1px; }
+            .daily-table .cb { width: 13px; height: 13px; }
+
+            @page { margin: 1cm; size: A4; }
         }
 
         /* ── RESPONSIVE ── */
@@ -779,9 +834,22 @@ function render() {
     const body = document.getElementById('planBody');
     if (!body) return;
     body.innerHTML = '';
-    data.sections.forEach(sec => {
-        body.innerHTML += sec.type === 'daily' ? renderDailySection(sec) : renderWeeklySection(sec);
-    });
+
+    // Separate daily and non-daily sections
+    const dailySections = data.sections.filter(s => s.type === 'daily');
+    const otherSections = data.sections.filter(s => s.type !== 'daily');
+
+    // Left column: daily tables
+    let leftCol = '<div class="plan-col plan-col-left">';
+    dailySections.forEach(sec => { leftCol += renderDailySection(sec); });
+    leftCol += '</div>';
+
+    // Right column: weekly / biweekly / monthly
+    let rightCol = '<div class="plan-col plan-col-right">';
+    otherSections.forEach(sec => { rightCol += renderWeeklySection(sec); });
+    rightCol += '</div>';
+
+    body.innerHTML = leftCol + rightCol;
     bindEvents();
 }
 
