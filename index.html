@@ -11,6 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+    <!-- Local Firebase config -->
+    <script src="firebase-config.js"></script>
+
     <style>
         :root {
             --bg: #f8f6f3;
@@ -438,68 +441,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── FIREBASE SETUP SCREEN ── */
-        .setup-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 24px;
-        }
-        .setup-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 36px;
-            max-width: 540px;
-            width: 100%;
-            box-shadow: 0 4px 20px rgba(0,0,0,.06);
-        }
-        .setup-card h2 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        .setup-card p {
-            font-size: .88rem;
-            color: var(--text-light);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        .setup-card label {
-            font-size: .82rem;
-            font-weight: 500;
-            display: block;
-            margin-bottom: 4px;
-            color: var(--text-light);
-        }
-        .setup-card input, .setup-card textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: .88rem;
-            font-family: inherit;
-            margin-bottom: 14px;
-            outline: none;
-        }
-        .setup-card textarea {
-            height: 160px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: .78rem;
-        }
-        .setup-card input:focus, .setup-card textarea:focus { border-color: var(--accent); }
-        .setup-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-        .setup-or {
-            text-align: center;
-            color: var(--text-light);
-            font-size: .82rem;
-            margin: 12px 0;
-        }
+        /* ── FIREBASE SETUP SCREEN (HIDDEN) ── */
+        .setup-screen { display: none; }
 
         /* ── PRINT ── */
         @media print {
@@ -538,47 +481,9 @@
 <body>
 
 <!-- ══════════════════════════════════════════════════ -->
-<!--  FIREBASE SETUP SCREEN                            -->
-<!-- ══════════════════════════════════════════════════ -->
-<div id="setupScreen" class="setup-screen" style="display:none;">
-    <div class="setup-card">
-        <h2>🔥 Firebase verbinden</h2>
-        <p>
-            Um deinen Putzplan geräteübergreifend zu speichern, verbinde eine
-            <strong>Firebase Firestore</strong> Datenbank.<br>
-            Erstelle ein Projekt auf <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">console.firebase.google.com</a>,
-            aktiviere <strong>Firestore</strong> (Testmodus), und füge die Config hier ein.
-        </p>
-
-        <label>Firebase Config (JSON)</label>
-        <textarea id="firebaseConfigInput" placeholder='{
-  "apiKey": "AIza...",
-  "authDomain": "your-project.firebaseapp.com",
-  "projectId": "your-project",
-  "storageBucket": "your-project.appspot.com",
-  "messagingSenderId": "123456",
-  "appId": "1:123456:web:abc..."
-}'></textarea>
-
-        <label>Dokument-ID (optional — für geteilte Pläne)</label>
-        <input type="text" id="docIdInput" placeholder="z.B. wg-putzplan-2026">
-
-        <div class="setup-actions">
-            <button class="btn" onclick="skipFirebase()">Ohne Firebase (nur lokal)</button>
-            <button class="btn btn-primary" onclick="connectFirebase()">Verbinden</button>
-        </div>
-
-        <div class="setup-or">— oder —</div>
-        <p style="font-size:.8rem;text-align:center;margin-bottom:0;">
-            Falls du bereits verbunden warst, wird die App automatisch laden.
-        </p>
-    </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════ -->
 <!--  MAIN APP                                         -->
 <!-- ══════════════════════════════════════════════════ -->
-<div id="appContainer" style="display:none;">
+<div id="appContainer">
 
     <!-- TOOLBAR -->
     <div class="toolbar">
@@ -600,7 +505,6 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Drucken
         </button>
-        <button class="btn btn-sm" onclick="showFirebaseSettings()" title="Firebase Einstellungen">⚙️</button>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -648,23 +552,6 @@
         <div class="modal-actions">
             <button class="btn" onclick="closeModal('addColModal')">Abbrechen</button>
             <button class="btn btn-primary" onclick="confirmAddCol()">Hinzufügen</button>
-        </div>
-    </div>
-</div>
-
-<!-- Firebase Settings -->
-<div class="modal-overlay" id="firebaseModal">
-    <div class="modal">
-        <h3>🔥 Firebase Einstellungen</h3>
-        <div id="firebaseCurrentStatus"></div>
-        <label>Firebase Config (JSON)</label>
-        <textarea id="fbConfigEdit" style="width:100%;height:120px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:'SF Mono',monospace;font-size:.78rem;margin-bottom:14px;outline:none;resize:vertical;"></textarea>
-        <label>Dokument-ID</label>
-        <input type="text" id="fbDocIdEdit" placeholder="z.B. wg-putzplan-2026">
-        <div class="modal-actions">
-            <button class="btn btn-danger" onclick="disconnectFirebase()">Trennen</button>
-            <button class="btn" onclick="closeModal('firebaseModal')">Abbrechen</button>
-            <button class="btn btn-primary" onclick="updateFirebaseConfig()">Speichern</button>
         </div>
     </div>
 </div>
@@ -785,29 +672,19 @@ let suppressNextSnapshot = false;
 // ════════════════════════════════════════════════════
 //  FIREBASE
 // ════════════════════════════════════════════════════
-function getStoredFirebaseConfig() {
-    try { return JSON.parse(localStorage.getItem('putzplan_firebase_config')); }
-    catch { return null; }
-}
-function getStoredDocId() {
-    return localStorage.getItem('putzplan_firebase_docid') || 'default-putzplan';
-}
-
 function initApp() {
-    const config = getStoredFirebaseConfig();
-    if (config) {
-        try { initFirestore(config, getStoredDocId()); }
-        catch (e) { console.error('Firebase init failed:', e); startLocal(); }
+    // The firebaseConfig and documentId are now expected to be in firebase-config.js
+    if (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) {
+        try {
+            initFirestore(firebaseConfig, documentId || 'default-putzplan');
+        } catch (e) {
+            console.error('Firebase init failed:', e);
+            startLocal();
+        }
     } else {
-        const localData = localStorage.getItem('putzplan');
-        if (localData) { startLocal(); }
-        else { document.getElementById('setupScreen').style.display = 'flex'; }
+        console.warn("Firebase config not found. Running in local mode.");
+        startLocal();
     }
-}
-
-function skipFirebase() {
-    document.getElementById('setupScreen').style.display = 'none';
-    startLocal();
 }
 
 function startLocal() {
@@ -818,22 +695,6 @@ function startLocal() {
     document.getElementById('appContainer').style.display = '';
     updateSyncStatus('local');
     render();
-}
-
-function connectFirebase() {
-    const raw = document.getElementById('firebaseConfigInput').value.trim();
-    const docId = document.getElementById('docIdInput').value.trim() || 'default-putzplan';
-    let config;
-    try { config = JSON.parse(raw); }
-    catch (e) { alert('Ungültiges JSON!\n\n' + e.message); return; }
-    if (!config.apiKey || !config.projectId) {
-        alert('Config muss mindestens "apiKey" und "projectId" enthalten.');
-        return;
-    }
-    localStorage.setItem('putzplan_firebase_config', JSON.stringify(config));
-    localStorage.setItem('putzplan_firebase_docid', docId);
-    document.getElementById('setupScreen').style.display = 'none';
-    initFirestore(config, docId);
 }
 
 function initFirestore(config, docId) {
@@ -885,40 +746,6 @@ function updateSyncStatus(status) {
         case 'saving': el.textContent = '🔄 Speichert...'; break;
         case 'error': el.textContent = '🔴 Fehler'; el.classList.add('error'); break;
     }
-}
-
-function showFirebaseSettings() {
-    const config = getStoredFirebaseConfig();
-    document.getElementById('fbConfigEdit').value = config ? JSON.stringify(config, null, 2) : '';
-    document.getElementById('fbDocIdEdit').value = getStoredDocId();
-    const statusEl = document.getElementById('firebaseCurrentStatus');
-    statusEl.innerHTML = firestoreReady
-        ? '<p style="color:var(--success);font-size:.85rem;margin-bottom:12px;">✅ Verbunden</p>'
-        : '<p style="color:var(--text-light);font-size:.85rem;margin-bottom:12px;">Nicht verbunden</p>';
-    openModal('firebaseModal');
-}
-
-function updateFirebaseConfig() {
-    const raw = document.getElementById('fbConfigEdit').value.trim();
-    const docId = document.getElementById('fbDocIdEdit').value.trim() || 'default-putzplan';
-    if (!raw) { alert('Bitte Config eingeben.'); return; }
-    let config;
-    try { config = JSON.parse(raw); } catch (e) { alert('Ungültiges JSON: ' + e.message); return; }
-    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-    firestoreReady = false;
-    localStorage.setItem('putzplan_firebase_config', JSON.stringify(config));
-    localStorage.setItem('putzplan_firebase_docid', docId);
-    closeModal('firebaseModal');
-    initFirestore(config, docId);
-}
-
-function disconnectFirebase() {
-    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-    firestoreReady = false; db = null; docRef = null;
-    localStorage.removeItem('putzplan_firebase_config');
-    localStorage.removeItem('putzplan_firebase_docid');
-    updateSyncStatus('local');
-    closeModal('firebaseModal');
 }
 
 // ════════════════════════════════════════════════════
