@@ -57,6 +57,18 @@
             </div>
             <span class="plan-icon">🧹</span>
         </div>
+        <section class="slogan-band no-print">
+            <div class="slogan-marquee" role="status" aria-live="polite">
+                <div class="slogan-track" id="sloganTrack"></div>
+            </div>
+            <div class="slogan-composer">
+                <input id="sloganInput" class="slogan-input" type="text" maxlength="220"
+                       placeholder="Nachricht eingeben..."
+                       onkeydown="if (event.key === 'Enter') { event.preventDefault(); sendSloganMessage(); }">
+                <button type="button" class="btn btn-sm" onclick="sendSloganMessage()">Senden</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="clearSlogans()">Löschen</button>
+            </div>
+        </section>
         <div class="plan-body" id="planBody"></div>
     </div>
 </div>

@@ -4,6 +4,7 @@
 const USER_NAME_STORAGE_KEY = 'putzplan_user_name';
 const ALLOWED_USER_NAMES = ['Alli', 'Tim'];
 const USER_COLOR_PALETTE = ['#2f80ed', '#f2994a', '#27ae60', '#eb5757', '#9b51e0', '#2d9cdb', '#56cc9b', '#bb6bd9'];
+const SECTION_MAX_SPAN = 4;
 
 function sid() { return 's' + Math.random().toString(36).substr(2, 9); }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -41,6 +42,152 @@ function normalizeTaskNotes() {
         });
     });
 }
+function normalizeMessages() {
+    if (!data) return;
+    if (!Array.isArray(data.messages)) data.messages = [];
+
+    const cleaned = [];
+    data.messages.forEach(msg => {
+        if (!msg || typeof msg !== 'object') return;
+        const text = normalizeUserName(msg.text || '');
+        const author = normalizeUserName(msg.author || '');
+        if (!text) return;
+        cleaned.push({
+            id: msg.id || sid(),
+            text: text.slice(0, 220),
+            author: author || 'Freund/in',
+            createdAt: Number.isFinite(Number(msg.createdAt)) ? Number(msg.createdAt) : Date.now()
+        });
+    });
+
+    data.messages = cleaned
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+        .slice(-40);
+}
+function getSectionTileSpan(sec) {
+    const span = parseInt(sec && sec.layout && sec.layout.span, 10);
+    if (span >= 1 && span <= SECTION_MAX_SPAN) return span;
+    if (sec && sec.type === 'daily') return 2;
+    return 1;
+}
+function normalizeSectionLayout() {
+    if (!data || !Array.isArray(data.sections)) return;
+    data.sections.forEach(section => {
+        if (!section || typeof section !== 'object') return;
+        const span = parseInt(section.layout && section.layout.span, 10);
+        if (span < 1 || span > SECTION_MAX_SPAN) {
+            section.layout = section.layout || {};
+            section.layout.span = section.type === 'daily' ? 2 : 1;
+        }
+    });
+}
+function sectionSpanSelectMarkup(secId, span) {
+    const spanOptions = Array.from({ length: SECTION_MAX_SPAN }, (_, i) => i + 1)
+        .map(value => `<option value="${value}" ${span === value ? 'selected' : ''}>${value}/${SECTION_MAX_SPAN}</option>`)
+        .join('');
+    return `
+        <label style="font-size:.65rem;color:var(--text-light);display:flex;align-items:center;gap:4px;" title="Kachel-Breite">
+            <span>Größe:</span>
+            <select class="tile-size-select" data-action="setSectionSpan" data-section="${secId}">
+                ${spanOptions}
+            </select>
+        </label>
+    `;
+}
+function moveSectionByIndex(index, toIndex) {
+    if (index === -1 || toIndex < 0 || toIndex >= data.sections.length) return;
+    const section = data.sections.splice(index, 1)[0];
+    data.sections.splice(toIndex, 0, section);
+}
+
+const DESKTOP_MASONRY_BREAKPOINT = 801;
+
+function getPlanBodyGutterPx() {
+    const body = document.getElementById('planBody');
+    if (!body) return 16;
+    const styles = getComputedStyle(body);
+    const rawGap = (styles.gap || styles.gridGap || styles.columnGap || '').split(' ')[0];
+    const px = parseFloat(rawGap);
+    return Number.isFinite(px) ? px : 16;
+}
+
+function shouldUseMasonryLayout() {
+    return window.innerWidth >= DESKTOP_MASONRY_BREAKPOINT;
+}
+
+function getSectionById(id) {
+    if (!data || !Array.isArray(data.sections)) return null;
+    return data.sections.find(s => s.id === id) || null;
+}
+
+function applyMasonryLayout() {
+    const body = document.getElementById('planBody');
+    if (!body) return;
+
+    const sections = [...body.querySelectorAll('.section[data-section]')];
+    const useMasonry = shouldUseMasonryLayout();
+    body.classList.toggle('masonry-mode', useMasonry);
+
+    if (sections.length === 0) {
+        body.style.height = '';
+        return;
+    }
+
+    if (!useMasonry) {
+        sections.forEach(section => {
+            section.style.position = '';
+            section.style.top = '';
+            section.style.left = '';
+            section.style.width = '';
+        });
+        body.style.height = '';
+        return;
+    }
+
+    const bodyWidth = body.clientWidth;
+    const gutter = getPlanBodyGutterPx();
+    const spanCount = SECTION_MAX_SPAN;
+    const columnWidth = (bodyWidth - ((spanCount - 1) * gutter)) / spanCount;
+    if (!Number.isFinite(columnWidth) || columnWidth <= 0) return;
+
+    const columnHeights = Array.from({ length: spanCount }, () => 0);
+    let maxHeight = 0;
+
+    sections.forEach(section => {
+        const sec = getSectionById(section.dataset.section);
+        const span = getSectionTileSpan(sec);
+        const effectiveSpan = Math.min(Math.max(1, span), spanCount);
+        const stepWidth = columnWidth + gutter;
+
+        let bestStartCol = 0;
+        let bestTop = Infinity;
+        for (let startCol = 0; startCol <= spanCount - effectiveSpan; startCol++) {
+            const endCol = startCol + effectiveSpan;
+            const candidateTop = Math.max(...columnHeights.slice(startCol, endCol));
+            if (candidateTop < bestTop) {
+                bestTop = candidateTop;
+                bestStartCol = startCol;
+            }
+        }
+
+        const targetWidth = effectiveSpan === spanCount
+            ? `${bodyWidth}px`
+            : `${(effectiveSpan * columnWidth) + ((effectiveSpan - 1) * gutter)}px`;
+
+        section.style.position = 'absolute';
+        section.style.left = `${bestStartCol * stepWidth}px`;
+        section.style.top = `${bestTop}px`;
+        section.style.width = targetWidth;
+
+        const height = section.getBoundingClientRect().height;
+        for (let col = bestStartCol; col < bestStartCol + effectiveSpan; col++) {
+            columnHeights[col] = bestTop + height + gutter;
+        }
+        if (bestTop + height > maxHeight) maxHeight = bestTop + height;
+    });
+
+    body.style.height = `${maxHeight}px`;
+}
 
 // ════════════════════════════════════════════════════
 //  DEFAULT DATA
@@ -48,9 +195,11 @@ function normalizeTaskNotes() {
 function createDefaultData() {
     return {
         month: '',
+        messages: [],
         sections: [
             {
                 id: sid(), type: 'daily', title: 'Täglich', days: 31,
+                layout: { span: 2 },
                 columns: [
                     { id: sid(), group: 'Küche & Essbereich', name: 'Küche aufräumen' },
                     { id: sid(), group: 'Küche & Essbereich', name: 'Tisch abwischen' },
@@ -65,6 +214,7 @@ function createDefaultData() {
             },
             {
                 id: sid(), type: 'weekly', title: 'Wöchentlich', boxes: 4,
+                layout: { span: 1 },
                 categories: [
                     { id: sid(), name: 'Allgemein', tasks: [
                         { id: sid(), name: 'Staub wischen' },
@@ -93,6 +243,7 @@ function createDefaultData() {
             },
             {
                 id: sid(), type: 'weekly', title: '2-Wöchentlich', boxes: 2,
+                layout: { span: 1 },
                 categories: [
                     { id: sid(), name: 'Schlafzimmer', tasks: [
                         { id: sid(), name: 'Bettwäsche wechseln' },
@@ -101,6 +252,7 @@ function createDefaultData() {
             },
             {
                 id: sid(), type: 'weekly', title: 'Monatlich', boxes: 1,
+                layout: { span: 1 },
                 categories: [
                     { id: sid(), name: 'Allgemein', tasks: [
                         { id: sid(), name: 'Heizkörper reinigen' },
@@ -136,6 +288,7 @@ let unsubscribe = null;
 let saveTimeout = null;
 let firestoreReady = false;
 let suppressNextSnapshot = false;
+let draggingSectionId = null;
 
 function isOwnerCurrentUser(owner) {
     return userKey(owner) === userKey(currentUserName);
@@ -159,6 +312,8 @@ function normalizeSectionChecks(section) {
 function normalizeAllChecks() {
     if (!data || !Array.isArray(data.sections)) return;
     data.sections.forEach(normalizeSectionChecks);
+    normalizeMessages();
+    normalizeSectionLayout();
     normalizeTaskNotes();
 }
 function renderCheckbox(sectionId, key) {
@@ -326,33 +481,91 @@ function render() {
     if (!data) return;
     const monthInput = document.getElementById('monthInput');
     if (monthInput) monthInput.value = data.month || '';
+    renderSloganTicker();
     if (!Array.isArray(data.sections)) data.sections = [];
     normalizeAllChecks();
     const body = document.getElementById('planBody');
     if (!body) return;
     body.innerHTML = '';
 
-    // Separate daily and non-daily sections
-    const dailySections = data.sections.filter(s => s.type === 'daily');
-    const otherSections = data.sections.filter(s => s.type !== 'daily');
-
-    // Left column: daily tables
-    let leftCol = '<div class="plan-col plan-col-left">';
-    dailySections.forEach(sec => { leftCol += renderDailySection(sec); });
-    leftCol += '</div>';
-
-    // Right column: weekly / biweekly / monthly
-    let rightCol = '<div class="plan-col plan-col-right">';
-    otherSections.forEach(sec => { rightCol += renderWeeklySection(sec); });
-    rightCol += '</div>';
-
-    body.innerHTML = leftCol + rightCol;
+    let sections = '';
+    data.sections.forEach(sec => {
+        if (sec.type === 'daily') sections += renderDailySection(sec);
+        else sections += renderWeeklySection(sec);
+    });
+    body.innerHTML = sections;
     bindEvents();
+    applyMasonryLayout();
+}
+
+function getSloganTickerText() {
+    if (!Array.isArray(data.messages) || data.messages.length === 0) {
+        return '';
+    }
+
+    const lines = data.messages.map(msg => `${msg.author || 'Freund/in'}: ${msg.text || ''}`);
+    return lines.join('   ···   ');
+}
+
+function renderSloganTicker() {
+    const track = document.getElementById('sloganTrack');
+    if (!track) return;
+
+    const text = getSloganTickerText();
+    if (!text) {
+        track.textContent = '';
+        track.style.animation = 'none';
+        return;
+    }
+
+    const repeated = `${text}   •••   ${text}`;
+    const safeText = esc(repeated);
+
+    track.innerHTML = `<span class="slogan-segment">${safeText}</span>`;
+    track.style.animation = '';
+    const duration = Math.max(16, Math.min(45, Math.round(repeated.length / 5)));
+    track.style.setProperty('--slogan-duration', `${duration}s`);
+}
+
+function sendSloganMessage() {
+    const input = document.getElementById('sloganInput');
+    if (!input) return;
+    if (!currentUserName) {
+        openUserNameModal();
+        return;
+    }
+
+    const message = normalizeUserName(input.value);
+    if (!message) {
+        input.focus();
+        return;
+    }
+
+    data.messages = Array.isArray(data.messages) ? data.messages : [];
+    data.messages.push({
+        id: sid(),
+        author: currentUserName,
+        text: message.slice(0, 220),
+        createdAt: Date.now()
+    });
+    normalizeMessages();
+    input.value = '';
+    render();
+    save();
+}
+
+function clearSlogans() {
+    showConfirmDialog('Slogans löschen?', 'Alle Nachrichten im Slogan-Bereich werden entfernt.', () => {
+        data.messages = [];
+        render();
+        save();
+    });
 }
 
 // ── Weekly / Biweekly / Monthly ──
 function renderWeeklySection(sec) {
     if (!sec.checked) sec.checked = {};
+    const span = getSectionTileSpan(sec);
     let cats = '';
     (sec.categories || []).forEach(cat => {
         let tasks = '';
@@ -377,7 +590,7 @@ function renderWeeklySection(sec) {
                     </div>
                 </div>
                 <div class="task-notes-panel ${hasTaskNotes ? 'open' : ''}" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}">
-                    <textarea rows="2" class="task-notes-input" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}" data-field="tasknotes" placeholder="Spezielle Anweisung für diese Aufgabe...">${notes}</textarea>
+                    <textarea rows="1" class="task-notes-input" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}" data-field="tasknotes" placeholder="Kurze Notiz...">${notes}</textarea>
                 </div>`;
         });
         cats += `
@@ -394,7 +607,7 @@ function renderWeeklySection(sec) {
     });
 
     return `
-        <div class="section" data-section="${sec.id}">
+        <div class="section tile-span-${span}" data-section="${sec.id}">
             <div class="section-header">
                 <input class="section-title-input" value="${esc(sec.title)}"
                        data-section="${sec.id}" data-field="sectiontitle">
@@ -402,9 +615,19 @@ function renderWeeklySection(sec) {
                     <label style="font-size:.7rem;color:var(--text-light);display:flex;align-items:center;gap:4px;" title="Checkboxen pro Aufgabe">
                         ☑
                         <input type="number" value="${sec.boxes}" min="1" max="31"
-                               data-section="${sec.id}" data-field="boxes"
+                                data-section="${sec.id}" data-field="boxes"
                                style="width:40px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;font-family:inherit;outline:none;text-align:center;">
                     </label>
+                    ${sectionSpanSelectMarkup(sec.id, span)}
+                    <button class="icon-btn drag-handle" title="Bereich verschieben" type="button" data-section="${sec.id}">⠿</button>
+                    <button class="icon-btn" title="Eine Zeile höher" type="button"
+                            data-action="moveSectionUp" data-section="${sec.id}">▲</button>
+                    <button class="icon-btn" title="Eine Zeile nach unten" type="button"
+                            data-action="moveSectionDown" data-section="${sec.id}">▼</button>
+                    <button class="icon-btn" title="Nach ganz oben" type="button"
+                            data-action="moveSectionTop" data-section="${sec.id}">⤒</button>
+                    <button class="icon-btn" title="Nach ganz unten" type="button"
+                            data-action="moveSectionBottom" data-section="${sec.id}">⤓</button>
                     <button class="icon-btn" title="Kategorie hinzufügen"
                             data-action="addCat" data-section="${sec.id}">＋</button>
                     <button class="icon-btn danger" title="Bereich löschen"
@@ -419,6 +642,7 @@ function renderWeeklySection(sec) {
 // ── Daily table ──
 function renderDailySection(sec) {
     if (!sec.checked) sec.checked = {};
+    const span = getSectionTileSpan(sec);
     const groups = [];
     const groupMap = {};
     (sec.columns || []).forEach(col => {
@@ -460,7 +684,7 @@ function renderDailySection(sec) {
     }
 
     return `
-        <div class="section" data-section="${sec.id}">
+        <div class="section tile-span-${span}" data-section="${sec.id}">
             <div class="section-header">
                 <input class="section-title-input" value="${esc(sec.title)}"
                        data-section="${sec.id}" data-field="sectiontitle">
@@ -471,6 +695,16 @@ function renderDailySection(sec) {
                                data-section="${sec.id}" data-field="days"
                                style="width:40px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;font-family:inherit;outline:none;text-align:center;">
                     </label>
+                    ${sectionSpanSelectMarkup(sec.id, span)}
+                    <button class="icon-btn drag-handle" title="Bereich verschieben" type="button" data-section="${sec.id}">⠿</button>
+                    <button class="icon-btn" title="Eine Zeile höher" type="button"
+                            data-action="moveSectionUp" data-section="${sec.id}">▲</button>
+                    <button class="icon-btn" title="Eine Zeile nach unten" type="button"
+                            data-action="moveSectionDown" data-section="${sec.id}">▼</button>
+                    <button class="icon-btn" title="Nach ganz oben" type="button"
+                            data-action="moveSectionTop" data-section="${sec.id}">⤒</button>
+                    <button class="icon-btn" title="Nach ganz unten" type="button"
+                            data-action="moveSectionBottom" data-section="${sec.id}">⤓</button>
                     <button class="icon-btn" title="Spalte hinzufügen"
                             data-action="showAddCol" data-section="${sec.id}">＋</button>
                     <button class="icon-btn danger" title="Bereich löschen"
@@ -578,7 +812,83 @@ function bindEvents() {
 
     // Action buttons
     document.querySelectorAll('[data-action]').forEach(btn => {
-        btn.addEventListener('click', handleAction);
+        if (btn.matches('select')) {
+            btn.addEventListener('change', handleAction);
+        } else {
+            btn.addEventListener('click', handleAction);
+        }
+    });
+
+    bindSectionDragAndDrop();
+}
+
+function bindSectionDragAndDrop() {
+    const sections = document.querySelectorAll('.section[data-section]');
+    const handles = document.querySelectorAll('.drag-handle');
+    const sectionsById = {};
+    sections.forEach(sec => { sectionsById[sec.dataset.section] = sec; });
+    function shouldInsertAfter(targetRect, pointerX, pointerY) {
+        const xOffset = pointerX - (targetRect.left + targetRect.width / 2);
+        const yOffset = pointerY - (targetRect.top + targetRect.height / 2);
+        if (Math.abs(xOffset) >= Math.abs(yOffset)) return xOffset > 0;
+        return yOffset > 0;
+    }
+
+    handles.forEach((handle) => {
+        handle.draggable = true;
+        handle.addEventListener('dragstart', (e) => {
+            const id = handle.dataset.section;
+            if (!id) return;
+            draggingSectionId = id;
+            const section = sectionsById[id];
+            if (section) section.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', id);
+        });
+
+        handle.addEventListener('dragend', () => {
+            draggingSectionId = null;
+            document.querySelectorAll('.section[data-section]').forEach(el => {
+                el.classList.remove('is-dragging', 'drop-hover');
+            });
+        });
+    });
+
+    sections.forEach((section) => {
+        section.addEventListener('dragover', (e) => {
+            if (!draggingSectionId) return;
+            if (section.dataset.section === draggingSectionId) return;
+            e.preventDefault();
+            section.classList.add('drop-hover');
+        });
+
+        section.addEventListener('dragleave', () => {
+            section.classList.remove('drop-hover');
+        });
+
+        section.addEventListener('drop', (e) => {
+            e.preventDefault();
+            section.classList.remove('drop-hover');
+
+            if (!draggingSectionId) return;
+            const targetId = section.dataset.section;
+            if (targetId === draggingSectionId) return;
+
+            const from = data.sections.findIndex(s => s.id === draggingSectionId);
+            const target = data.sections.findIndex(s => s.id === targetId);
+            if (from === -1 || target === -1) return;
+
+            const targetRect = section.getBoundingClientRect();
+            const insertAfter = shouldInsertAfter(targetRect, e.clientX, e.clientY);
+            let insertIndex = insertAfter ? target + 1 : target;
+            if (from < insertIndex) insertIndex -= 1;
+
+            const [moved] = data.sections.splice(from, 1);
+            data.sections.splice(insertIndex, 0, moved);
+            draggingSectionId = null;
+            render();
+            save();
+        });
     });
 }
 
@@ -628,6 +938,53 @@ function handleAction(e) {
                 data.sections = data.sections.filter(s => s.id !== secId);
                 render(); save();
             });
+            break;
+        }
+        case 'setSectionSpan': {
+            const sec = data.sections.find(s => s.id === secId);
+            if (!sec) break;
+            const value = parseInt(btn.value, 10);
+            if (!Number.isInteger(value) || value < 1 || value > SECTION_MAX_SPAN) break;
+            if (!sec.layout || typeof sec.layout !== 'object') sec.layout = {};
+            sec.layout.span = value;
+            render();
+            save();
+            break;
+        }
+        case 'moveSectionTop': {
+            const index = data.sections.findIndex(s => s.id === secId);
+            if (index > 0) {
+                moveSectionByIndex(index, 0);
+                render();
+                save();
+            }
+            break;
+        }
+        case 'moveSectionBottom': {
+            const index = data.sections.findIndex(s => s.id === secId);
+            if (index >= 0 && index < data.sections.length - 1) {
+                moveSectionByIndex(index, data.sections.length - 1);
+                render();
+                save();
+            }
+            break;
+        }
+        case 'moveSectionUp': {
+            const index = data.sections.findIndex(s => s.id === secId);
+            if (index > 0) {
+                moveSectionByIndex(index, index - 1);
+                render();
+                save();
+            }
+            break;
+        }
+        case 'moveSectionDown': {
+            const index = data.sections.findIndex(s => s.id === secId);
+            if (index >= 0 && index < data.sections.length - 1) {
+                moveSectionByIndex(index, index + 1);
+                render();
+                save();
+            }
             break;
         }
         case 'showAddCol': {
@@ -714,6 +1071,7 @@ function confirmAddSection() {
     const boxes = parseInt(document.getElementById('newSectionBoxes').value) || 4;
     data.sections.push({
         id: sid(), type: 'weekly', title: name, boxes,
+        layout: { span: 1 },
         categories: [{ id: sid(), name: 'Allgemein', tasks: [{ id: sid(), name: 'Neue Aufgabe', notes: '' }] }],
         checked: {}
     });
@@ -724,6 +1082,7 @@ function confirmAddSection() {
 function addDailySection() {
     data.sections.unshift({
         id: sid(), type: 'daily', title: 'Täglich', days: 31,
+        layout: { span: 2 },
         columns: [
             { id: sid(), group: 'Allgemein', name: 'Aufgabe 1' },
             { id: sid(), group: 'Allgemein', name: 'Aufgabe 2' },
@@ -750,6 +1109,74 @@ function resetAllChecks() {
         render(); save();
     });
 }
+
+let masonryRelayoutTimer = null;
+function scheduleMasonryRelayout() {
+    if (masonryRelayoutTimer) clearTimeout(masonryRelayoutTimer);
+    masonryRelayoutTimer = setTimeout(() => {
+        applyMasonryLayout();
+        masonryRelayoutTimer = null;
+    }, 80);
+}
+window.addEventListener('resize', scheduleMasonryRelayout);
+
+// ── Print: scale the entire layout to fit one A4 landscape page ──
+// A4 landscape printable area (mm) with 5mm margins: 287 × 200
+// At 96dpi that's roughly 1085 × 755 CSS px, but we measure dynamically.
+let _printBackup = null;
+
+function preparePrintLayout() {
+    const main = document.querySelector('.main');
+    const body = document.getElementById('planBody');
+    if (!main || !body) return;
+
+    // Measure content at its natural web size
+    const contentW = main.scrollWidth;
+    const contentH = main.scrollHeight;
+    if (!contentW || !contentH) return;
+
+    // A4 landscape printable area with 5mm margin ≈ 287mm × 200mm
+    // Convert to CSS px: 1mm ≈ 3.7795px at 96dpi
+    const pageW = 287 * 3.7795;
+    const pageH = 200 * 3.7795;
+
+    const scaleX = pageW / contentW;
+    const scaleY = pageH / contentH;
+    const scale = Math.min(scaleX, scaleY, 1); // never scale up
+
+    _printBackup = {
+        transform: main.style.transform,
+        transformOrigin: main.style.transformOrigin,
+        width: main.style.width,
+        maxWidth: main.style.maxWidth,
+        padding: main.style.padding,
+    };
+
+    main.style.transformOrigin = 'top left';
+    main.style.transform = `scale(${scale})`;
+    main.style.width = contentW + 'px';
+    main.style.maxWidth = 'none';
+    main.style.padding = '12px 18px 20px';
+}
+
+function restorePrintLayout() {
+    if (!_printBackup) return;
+    const main = document.querySelector('.main');
+    if (!main) return;
+
+    main.style.transform = _printBackup.transform || '';
+    main.style.transformOrigin = _printBackup.transformOrigin || '';
+    main.style.width = _printBackup.width || '';
+    main.style.maxWidth = _printBackup.maxWidth || '';
+    main.style.padding = _printBackup.padding || '';
+    _printBackup = null;
+}
+
+window.addEventListener('beforeprint', preparePrintLayout);
+window.addEventListener('afterprint', () => {
+    restorePrintLayout();
+    scheduleMasonryRelayout();
+});
 
 // ════════════════════════════════════════════════════
 //  INIT
