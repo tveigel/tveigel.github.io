@@ -2,12 +2,58 @@
 //  UTILITIES
 // ════════════════════════════════════════════════════
 const USER_NAME_STORAGE_KEY = 'putzplan_user_name';
+const VIEW_MODE_STORAGE_KEY = 'putzplan_view_mode';
 const ALLOWED_USER_NAMES = ['Alli', 'Tim'];
 const USER_COLOR_PALETTE = ['#2f80ed', '#f2994a', '#27ae60', '#eb5757', '#9b51e0', '#2d9cdb', '#56cc9b', '#bb6bd9'];
 const SECTION_MAX_SPAN = 4;
 
 function sid() { return 's' + Math.random().toString(36).substr(2, 9); }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function capitalize(value) {
+    if (!value) return '';
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
+function formatCurrentMonthLabel(date = new Date()) {
+    return capitalize(new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(date));
+}
+function formatShortDate(date) {
+    return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' }).format(date);
+}
+function formatLongDate(date) {
+    return capitalize(new Intl.DateTimeFormat('de-DE', {
+        weekday: 'long',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(date));
+}
+function formatWeekdayDate(date) {
+    const weekday = new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date).replace('.', '');
+    return `${weekday} ${formatShortDate(date)}`;
+}
+function getCurrentDateContext() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const year = today.getFullYear();
+    const monthIndex = today.getMonth();
+    const dayOfMonth = today.getDate();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const mondayOffset = (today.getDay() + 6) % 7; // Monday = 0
+    const weekStart = new Date(today);
+    weekStart.setDate(dayOfMonth - mondayOffset);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    return {
+        today,
+        year,
+        monthIndex,
+        dayOfMonth,
+        daysInMonth,
+        weekStart,
+        weekEnd,
+        weekOfMonth: Math.floor((dayOfMonth - 1) / 7) + 1
+    };
+}
 function normalizeUserName(value) {
     return (value || '').trim().replace(/\s+/g, ' ');
 }
@@ -289,6 +335,33 @@ let saveTimeout = null;
 let firestoreReady = false;
 let suppressNextSnapshot = false;
 let draggingSectionId = null;
+let currentViewMode = 'focus';
+
+function initViewMode() {
+    const saved = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    currentViewMode = saved === 'planner' ? 'planner' : 'focus';
+}
+function applyViewMode() {
+    const app = document.getElementById('appContainer');
+    const toggleBtn = document.getElementById('toggleViewModeBtn');
+    if (!app) return;
+    const focusMode = currentViewMode === 'focus';
+    app.classList.toggle('is-focus-mode', focusMode);
+    if (toggleBtn) {
+        toggleBtn.textContent = focusMode ? 'Vollansicht' : 'Fokus Woche';
+        toggleBtn.classList.toggle('is-active', focusMode);
+    }
+}
+function setViewMode(mode, persist = true) {
+    if (mode !== 'focus' && mode !== 'planner') return;
+    currentViewMode = mode;
+    if (persist) localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+    applyViewMode();
+    if (currentViewMode === 'planner') scheduleMasonryRelayout();
+}
+function toggleViewMode() {
+    setViewMode(currentViewMode === 'focus' ? 'planner' : 'focus');
+}
 
 function isOwnerCurrentUser(owner) {
     return userKey(owner) === userKey(currentUserName);
@@ -372,6 +445,7 @@ function initCurrentUser() {
 //  FIREBASE
 // ════════════════════════════════════════════════════
 function initApp() {
+    initViewMode();
     initCurrentUser();
     // The firebaseConfig and documentId are now expected to be in firebase-config.js
     if (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) {
@@ -479,8 +553,12 @@ function save() {
 // ════════════════════════════════════════════════════
 function render() {
     if (!data) return;
+    const dateContext = getCurrentDateContext();
     const monthInput = document.getElementById('monthInput');
-    if (monthInput) monthInput.value = data.month || '';
+    if (monthInput) {
+        monthInput.placeholder = `z.B. ${formatCurrentMonthLabel(dateContext.today)}`;
+        monthInput.value = data.month || formatCurrentMonthLabel(dateContext.today);
+    }
     renderSloganTicker();
     if (!Array.isArray(data.sections)) data.sections = [];
     normalizeAllChecks();
@@ -494,8 +572,10 @@ function render() {
         else sections += renderWeeklySection(sec);
     });
     body.innerHTML = sections;
+    renderFocusView(dateContext);
     bindEvents();
-    applyMasonryLayout();
+    applyViewMode();
+    if (currentViewMode === 'planner') applyMasonryLayout();
 }
 
 function getSloganTickerText() {
@@ -525,6 +605,181 @@ function renderSloganTicker() {
     track.style.animation = '';
     const duration = Math.max(16, Math.min(45, Math.round(repeated.length / 5)));
     track.style.setProperty('--slogan-duration', `${duration}s`);
+}
+
+function getSectionIntervalIndex(boxCount, context) {
+    const total = Math.max(1, parseInt(boxCount, 10) || 1);
+    if (total === 1) return { index: 0, total };
+    const progress = (context.dayOfMonth - 1) / context.daysInMonth;
+    return {
+        index: Math.min(total - 1, Math.floor(progress * total)),
+        total
+    };
+}
+function getIntervalDayRange(totalIntervals, intervalIndex, daysInMonth) {
+    const total = Math.max(1, totalIntervals);
+    const index = Math.min(Math.max(0, intervalIndex), total - 1);
+    const startDay = Math.floor((index * daysInMonth) / total) + 1;
+    const endDay = Math.max(startDay, Math.floor(((index + 1) * daysInMonth) / total));
+    return { startDay, endDay };
+}
+function collectRecurringFocusCards(context) {
+    const cards = [];
+    data.sections.forEach(sec => {
+        if (!sec || sec.type === 'daily') return;
+        if (!Array.isArray(sec.categories)) return;
+        if (!sec.checked || typeof sec.checked !== 'object') sec.checked = {};
+
+        const interval = getSectionIntervalIndex(sec.boxes, context);
+        const intervalRange = getIntervalDayRange(interval.total, interval.index, context.daysInMonth);
+        const intervalDeadlineDate = new Date(context.year, context.monthIndex, intervalRange.endDay, 23, 59, 59, 999);
+        const intervalDeadlineTs = intervalDeadlineDate.getTime();
+        const items = [];
+        sec.categories.forEach(cat => {
+            (cat.tasks || []).forEach(task => {
+                const key = `${task.id}_${interval.index}`;
+                if (getCheckboxOwner(sec.checked[key])) return;
+                items.push({
+                    sectionId: sec.id,
+                    key,
+                    title: task.name || 'Aufgabe',
+                    meta: `${cat.name || 'Allgemein'} · Faellig bis ${formatShortDate(intervalDeadlineDate)}`,
+                    deadlineTs: intervalDeadlineTs
+                });
+            });
+        });
+
+        items.sort((a, b) => {
+            if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
+            return String(a.title).localeCompare(String(b.title), 'de');
+        });
+
+        if (!items.length) return;
+        cards.push({
+            title: sec.title || 'Bereich',
+            subtitle: interval.total > 1
+                ? `Intervall ${interval.index + 1}/${interval.total} · bis ${formatShortDate(intervalDeadlineDate)}`
+                : `Bis ${formatShortDate(intervalDeadlineDate)}`,
+            deadlineTs: items[0].deadlineTs,
+            items: items.map(({ sectionId, key, title, meta, deadlineTs }) => ({ sectionId, key, title, meta, deadlineTs }))
+        });
+    });
+    return cards;
+}
+function getWeekDaysInCurrentMonth(context, maxDays) {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(context.weekStart);
+        date.setDate(context.weekStart.getDate() + i);
+        if (date.getFullYear() !== context.year || date.getMonth() !== context.monthIndex) continue;
+        const day = date.getDate();
+        if (day < 1 || day > maxDays) continue;
+        days.push({
+            day,
+            label: formatWeekdayDate(date),
+            isToday: day === context.dayOfMonth,
+            deadlineTs: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime()
+        });
+    }
+    return days;
+}
+function collectDailyFocusCards(context) {
+    const cards = [];
+    data.sections.forEach(sec => {
+        if (!sec || sec.type !== 'daily') return;
+        if (!Array.isArray(sec.columns) || sec.columns.length === 0) return;
+        if (!sec.checked || typeof sec.checked !== 'object') sec.checked = {};
+
+        const maxDays = Math.max(1, Math.min(31, parseInt(sec.days, 10) || 31));
+        const weekDays = getWeekDaysInCurrentMonth(context, maxDays);
+        if (!weekDays.length) return;
+
+        const items = [];
+        (sec.columns || []).forEach(col => {
+            const openDays = weekDays.filter(dayInfo => {
+                const key = `${col.id}_${dayInfo.day}`;
+                return !getCheckboxOwner(sec.checked[key]);
+            });
+            if (!openDays.length) return;
+
+            const targetDay = openDays.find(dayInfo => dayInfo.isToday) || openDays[0];
+            const key = `${col.id}_${targetDay.day}`;
+            const targetLabel = `${targetDay.label}${targetDay.isToday ? ' (Heute)' : ''}`;
+
+            items.push({
+                sectionId: sec.id,
+                key,
+                title: col.name || 'Aufgabe',
+                meta: `${col.group || 'Allgemein'} · Faellig ${targetLabel}`,
+                deadlineTs: targetDay.deadlineTs
+            });
+        });
+
+        items.sort((a, b) => {
+            if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
+            return String(a.title).localeCompare(String(b.title), 'de');
+        });
+
+        if (!items.length) return;
+        cards.push({
+            title: sec.title || 'Täglich',
+            subtitle: `${formatShortDate(context.weekStart)} - ${formatShortDate(context.weekEnd)}`,
+            deadlineTs: items[0].deadlineTs,
+            items: items.map(({ sectionId, key, title, meta, deadlineTs }) => ({ sectionId, key, title, meta, deadlineTs }))
+        });
+    });
+    return cards;
+}
+function renderFocusCard(card) {
+    const tasks = card.items.map(item => `
+        <div class="focus-task-row">
+            ${renderCheckbox(item.sectionId, item.key)}
+            <div class="focus-task-copy">
+                <div class="focus-task-name">${esc(item.title)}</div>
+                <div class="focus-task-meta">${esc(item.meta)}</div>
+            </div>
+        </div>`).join('');
+
+    return `
+        <article class="focus-card">
+            <div class="focus-card-header">
+                <div>
+                    <div class="focus-card-title">${esc(card.title)}</div>
+                    <div class="focus-card-subtitle">${esc(card.subtitle)}</div>
+                </div>
+                <span class="focus-card-count">${card.items.length}</span>
+            </div>
+            <div class="focus-task-list">${tasks}</div>
+        </article>
+    `;
+}
+function renderFocusView(context = getCurrentDateContext()) {
+    const focus = document.getElementById('focusView');
+    if (!focus || !data || !Array.isArray(data.sections)) return;
+
+    const recurringCards = collectRecurringFocusCards(context);
+    const dailyCards = collectDailyFocusCards(context);
+    const cards = [...recurringCards, ...dailyCards].sort((a, b) => {
+        if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
+        return String(a.title).localeCompare(String(b.title), 'de');
+    });
+    const totalOpen = cards.reduce((sum, card) => sum + card.items.length, 0);
+    const weekRange = `${formatShortDate(context.weekStart)} - ${formatShortDate(context.weekEnd)}`;
+    const cardMarkup = cards.map(renderFocusCard).join('');
+
+    focus.innerHTML = `
+        <div class="focus-hero">
+            <div>
+                <span class="focus-kicker">Fokus Woche ${context.weekOfMonth}</span>
+                <div class="focus-headline">${esc(formatLongDate(context.today))}</div>
+                <div class="focus-subline">${esc(weekRange)} · ${totalOpen} offene Aufgaben</div>
+            </div>
+            <div class="focus-summary">${totalOpen}</div>
+        </div>
+        <div class="focus-grid">
+            ${cardMarkup || '<article class="focus-empty">Alles erledigt fuer diese Woche. Stark.</article>'}
+        </div>
+    `;
 }
 
 function sendSloganMessage() {
@@ -643,6 +898,7 @@ function renderWeeklySection(sec) {
 function renderDailySection(sec) {
     if (!sec.checked) sec.checked = {};
     const span = getSectionTileSpan(sec);
+    const dateContext = getCurrentDateContext();
     const groups = [];
     const groupMap = {};
     (sec.columns || []).forEach(col => {
@@ -680,7 +936,7 @@ function renderDailySection(sec) {
             const key = `${col.id}_${d}`;
             cells += `<td>${renderCheckbox(sec.id, key)}</td>`;
         });
-        rows += `<tr>${cells}</tr>`;
+        rows += `<tr class="${d === dateContext.dayOfMonth ? 'today-row' : ''}">${cells}</tr>`;
     }
 
     return `
@@ -1112,6 +1368,7 @@ function resetAllChecks() {
 
 let masonryRelayoutTimer = null;
 function scheduleMasonryRelayout() {
+    if (currentViewMode !== 'planner') return;
     if (masonryRelayoutTimer) clearTimeout(masonryRelayoutTimer);
     masonryRelayoutTimer = setTimeout(() => {
         applyMasonryLayout();
@@ -1124,8 +1381,15 @@ window.addEventListener('resize', scheduleMasonryRelayout);
 // A4 landscape printable area (mm) with 5mm margins: 287 × 200
 // At 96dpi that's roughly 1085 × 755 CSS px, but we measure dynamically.
 let _printBackup = null;
+let _printViewMode = null;
 
 function preparePrintLayout() {
+    _printViewMode = currentViewMode;
+    if (currentViewMode !== 'planner') {
+        setViewMode('planner', false);
+        applyMasonryLayout();
+    }
+
     const main = document.querySelector('.main');
     const body = document.getElementById('planBody');
     if (!main || !body) return;
@@ -1160,7 +1424,11 @@ function preparePrintLayout() {
 }
 
 function restorePrintLayout() {
-    if (!_printBackup) return;
+    if (!_printBackup) {
+        if (_printViewMode && _printViewMode !== currentViewMode) setViewMode(_printViewMode, false);
+        _printViewMode = null;
+        return;
+    }
     const main = document.querySelector('.main');
     if (!main) return;
 
@@ -1170,6 +1438,8 @@ function restorePrintLayout() {
     main.style.maxWidth = _printBackup.maxWidth || '';
     main.style.padding = _printBackup.padding || '';
     _printBackup = null;
+    if (_printViewMode && _printViewMode !== currentViewMode) setViewMode(_printViewMode, false);
+    _printViewMode = null;
 }
 
 window.addEventListener('beforeprint', preparePrintLayout);

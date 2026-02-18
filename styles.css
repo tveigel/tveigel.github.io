@@ -198,6 +198,162 @@
             position: relative;
             display: block;
         }
+        .focus-view {
+            display: none;
+            margin-bottom: 18px;
+        }
+        #appContainer.is-focus-mode .focus-view {
+            display: block;
+            animation: fadeSlideIn .2s ease;
+        }
+        #appContainer.is-focus-mode .plan-body {
+            display: none;
+        }
+        #toggleViewModeBtn.is-active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .focus-hero {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #fff 0%, #f7efe5 100%);
+            box-shadow: 0 9px 24px rgba(86, 69, 59, .09);
+            margin-bottom: 12px;
+        }
+        .focus-kicker {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 600;
+            color: #8b6f55;
+            background: rgba(209, 188, 166, .28);
+            margin-bottom: 7px;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+        .focus-headline {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--text);
+        }
+        .focus-subline {
+            font-size: .82rem;
+            color: var(--text-light);
+        }
+        .focus-summary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            border: 1px solid #d8cbbc;
+            background: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #8b6f55;
+            flex-shrink: 0;
+        }
+        .focus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .focus-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 14px 10px;
+            background: linear-gradient(175deg, #fff 0%, #fdfaf5 100%);
+            box-shadow: 0 8px 18px rgba(86, 69, 59, .07);
+            min-width: 0;
+        }
+        .focus-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .focus-card-title {
+            font-size: .98rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .focus-card-subtitle {
+            font-size: .73rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .focus-card-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 600;
+            color: #7f6650;
+            background: #f1e7db;
+            border: 1px solid #e1d1be;
+            flex-shrink: 0;
+        }
+        .focus-task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .focus-task-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 0;
+            border-top: 1px dashed #ebe4dc;
+            min-width: 0;
+        }
+        .focus-task-row:first-child {
+            border-top: none;
+        }
+        .focus-task-row .cb {
+            margin-top: 1px;
+            width: 19px;
+            height: 19px;
+        }
+        .focus-task-copy {
+            min-width: 0;
+            flex: 1;
+        }
+        .focus-task-name {
+            font-size: .85rem;
+            line-height: 1.35;
+            color: var(--text);
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .focus-task-meta {
+            font-size: .72rem;
+            color: var(--text-light);
+            margin-top: 1px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .focus-empty {
+            border: 1px dashed #d8cbbc;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            color: var(--text-light);
+            background: #fffcf8;
+        }
 
         /* ── SECTION CARD ── */
         .section {
@@ -522,6 +678,13 @@
             height: 18px;
             margin: 0 auto;
         }
+        .daily-table tbody tr.today-row td {
+            background: #fff5e8;
+        }
+        .daily-table tbody tr.today-row td:first-child {
+            color: var(--text);
+            font-weight: 700;
+        }
 
         /* ── ADD BUTTONS ── */
         .add-btn {
@@ -623,6 +786,8 @@
             .add-btn, .icon-btn, .no-print,
             .confirm-bar, .col-remove-btn, .modal-overlay,
             #userModal, .drag-handle, .tile-size-select { display: none !important; }
+            #focusView { display: none !important; }
+            #appContainer.is-focus-mode .plan-body { display: block !important; }
 
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -756,6 +921,25 @@
             .plan-header {
                 gap: 10px;
                 margin-bottom: 16px;
+            }
+            .focus-hero {
+                padding: 14px;
+            }
+            .focus-headline {
+                font-size: 1.03rem;
+            }
+            .focus-summary {
+                min-width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                font-size: 1.05rem;
+            }
+            .focus-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .focus-card {
+                padding: 12px 12px 8px;
             }
             .plan-title { font-size: 2rem; }
             .plan-icon { display: none; }
