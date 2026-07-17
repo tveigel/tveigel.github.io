@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Putztag · Francesco</title>
-    <link rel="stylesheet" href="styles.css?v=20260717-5">
+    <link rel="stylesheet" href="styles.css?v=20260717-6">
 </head>
 <body>
     <div class="app-shell" id="appShell">
@@ -64,7 +64,12 @@
                             <p id="roomSubtitle"></p>
                         </div>
                     </div>
-                    <div class="room-score" id="roomScore"></div>
+                    <div class="room-header-actions">
+                        <div class="room-score" id="roomScore"></div>
+                        <button class="add-task-button" id="addTaskButton" type="button">
+                            <span aria-hidden="true">+</span> Aufgabe
+                        </button>
+                    </div>
                 </header>
 
                 <div class="task-list" id="taskList" aria-live="polite"></div>
@@ -98,8 +103,41 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="addTaskModal" hidden role="dialog" aria-modal="true" aria-labelledby="addTaskTitleHeading">
+        <form class="modal-card task-modal-card" id="addTaskForm">
+            <span class="modal-icon" aria-hidden="true">+</span>
+            <h2 id="addTaskTitleHeading">Aufgabe hinzufügen</h2>
+            <p>Eigene Aufgaben bleiben auf diesem Wallpad auch für den nächsten Putztag erhalten.</p>
+
+            <div class="task-form-grid">
+                <label>
+                    <span>Raum</span>
+                    <select id="addTaskRoom" required></select>
+                </label>
+                <label>
+                    <span>Was ist zu tun?</span>
+                    <input id="addTaskTitle" type="text" maxlength="90" placeholder="z. B. Schuhregal abwischen" autocomplete="off" required>
+                </label>
+                <label>
+                    <span>Detail <small>optional</small></span>
+                    <input id="addTaskDetail" type="text" maxlength="140" placeholder="z. B. auch darunter saugen" autocomplete="off">
+                </label>
+            </div>
+
+            <section class="custom-task-manager" id="customTaskManager" hidden aria-label="Eigene Aufgaben verwalten">
+                <strong>Eigene Aufgaben</strong>
+                <div class="custom-task-list" id="customTaskList"></div>
+            </section>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" id="cancelAddTask" type="button">Abbrechen</button>
+                <button class="modal-confirm modal-add" type="submit">Hinzufügen</button>
+            </div>
+        </form>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <noscript>Bitte JavaScript aktivieren, damit der Putzplan funktioniert.</noscript>
-    <script src="app.js?v=20260717-5"></script>
+    <script src="app.js?v=20260717-6"></script>
 </body>
 </html>
