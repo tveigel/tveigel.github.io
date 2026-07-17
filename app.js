@@ -426,7 +426,7 @@ function initFirestoreSync() {
         firestore = firebase.firestore();
         const id = typeof documentId !== 'undefined' && documentId
             ? documentId
-            : 'francesco-wallpad-putzplan-v1';
+            : 'default-putzplan';
         docRef = firestore.collection('putzplan').doc(id);
         setSyncStatus('Verbindet …', '');
 
