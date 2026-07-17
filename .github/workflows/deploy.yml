@@ -25,14 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create Firebase config file
-        run: |
-          echo 'const firebaseConfig = ${{ secrets.FIREBASE_CONFIG }};' > firebase-config.js
-          echo 'const documentId = "default-putzplan";' >> firebase-config.js
-
-      - name: Remove .gitignore so generated files are included in artifact
-        run: rm -f .gitignore
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

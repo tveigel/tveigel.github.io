@@ -1,7 +1,7 @@
 /* Francesco's wallpad cleaning plan — intentionally dependency-free. */
 
-const PLAN_VERSION = 3;
-const STATE_STORAGE_KEY = 'francesco_wallpad_putzplan_v3';
+const PLAN_VERSION = 4;
+const STATE_STORAGE_KEY = 'francesco_wallpad_putzplan_v4';
 const PERSON_STORAGE_KEY = 'francesco_wallpad_person';
 const ROOM_STORAGE_KEY = 'francesco_wallpad_room';
 const PEOPLE = ['Tim', 'Alli'];
@@ -14,15 +14,18 @@ const ROOMS = [
         icon: '🍋',
         color: '#4f7c68',
         soft: '#e5f0ea',
-        subtitle: 'Aus dem bisherigen digitalen Plan ergänzt',
+        subtitle: 'Geräte, Oberflächen, Schränke und Boden',
         tasks: [
-            { id: 'kueche-1', order: 1, title: 'Küche aufräumen', detail: 'Geschirr wegräumen und Arbeitsflächen frei machen' },
-            { id: 'kueche-2', order: 2, title: 'Tisch und Arbeitsflächen abwischen', detail: 'Alle frei geräumten Flächen gründlich wischen' },
-            { id: 'kueche-3', order: 3, title: 'Spülmaschine ein- / ausräumen', detail: 'Geschirr vollständig versorgen' },
-            { id: 'kueche-4', order: 4, title: 'Spülbecken reinigen', detail: 'Becken, Rand und Wasserhahn' },
-            { id: 'kueche-5', order: 5, title: 'Müll rausbringen', detail: 'Beutel wechseln und Mülleimer abwischen' },
-            { id: 'kueche-6', order: 6, title: 'Kühlschrank aussortieren', detail: 'Verdorbenes prüfen, Griffe und Front abwischen' },
-            { id: 'kueche-7', order: 7, title: 'Saugen und wischen', detail: 'Auch unter den gut erreichbaren Kanten' }
+            { id: 'kueche-1', order: 1, title: 'Spülmaschine + Ofen sauber machen', detail: 'Innen und außen' },
+            { id: 'kueche-2', order: 2, title: 'Ofenbleche sauber machen', detail: 'Alle Bleche gründlich reinigen' },
+            { id: 'kueche-3', order: 3, title: 'Fensterbrett, Rahmen + Heizung', detail: 'Alles sauber machen' },
+            { id: 'kueche-4', order: 4, title: 'Oberflächen abstauben + abwischen', detail: 'Z. B. Tische, Brotbox, Kaffeemaschine und Gewürz-/Ölfach' },
+            { id: 'kueche-5', order: 5, title: 'Dunstabzugshaube reinigen', detail: 'Rausnehmen und gründlich sauber machen' },
+            { id: 'kueche-6', order: 6, title: 'Abtropfstelle sauber machen', detail: 'Erst vollständig abräumen' },
+            { id: 'kueche-7', order: 7, title: 'Spülbecken reinigen', detail: 'Auswischen, Sieb leeren und sauber machen' },
+            { id: 'kueche-8', order: 8, title: 'Schränke inkl. Griffe wischen', detail: 'Fronten und Griffe mitnehmen' },
+            { id: 'kueche-9', order: 9, title: 'Barhocker + Stühle abwischen', detail: 'Inkl. Füße abstauben bzw. abwischen' },
+            { id: 'kueche-10', order: 10, title: 'Saugen und wischen', detail: 'Den kompletten Küchenboden' }
         ]
     },
     {
@@ -132,9 +135,6 @@ let activeRoomId = ROOMS.some(function (room) { return room.id === localStorage.
     ? localStorage.getItem(ROOM_STORAGE_KEY)
     : ROOMS[0].id;
 let state = loadLocalState();
-let firestore = null;
-let docRef = null;
-let writeTimer = null;
 let toastTimer = null;
 let hasCelebrated = Object.keys(state.completed).length === ALL_TASK_IDS.size;
 
@@ -357,7 +357,6 @@ function toggleTask(taskId) {
     state.updatedBy = currentPerson;
     persistLocalState();
     render();
-    scheduleRemoteWrite();
 
     const nowAllComplete = totalCompleted() === ALL_TASK_IDS.size;
     if (nowAllComplete && !wasAllComplete && !hasCelebrated) {
@@ -378,7 +377,6 @@ function resetToday() {
     elements.resetModal.hidden = true;
     elements.taskList.scrollTop = 0;
     render();
-    scheduleRemoteWrite(true);
     showToast('Bereit für einen frischen Putztag');
 }
 
@@ -394,66 +392,6 @@ function showToast(message) {
     toastTimer = window.setTimeout(function () {
         elements.toast.classList.remove('is-visible');
     }, 1900);
-}
-
-function scheduleRemoteWrite(immediate) {
-    if (!docRef) {
-        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
-        return;
-    }
-    if (writeTimer) window.clearTimeout(writeTimer);
-    setSyncStatus('Speichert …', '');
-    const write = function () {
-        docRef.set(JSON.parse(JSON.stringify(state))).then(function () {
-            setSyncStatus('Synchronisiert', 'online');
-        }).catch(function (error) {
-            console.error('Putzplan konnte nicht synchronisiert werden:', error);
-            setSyncStatus('Offline gespeichert', 'offline');
-        });
-    };
-    if (immediate) write();
-    else writeTimer = window.setTimeout(write, 250);
-}
-
-function initFirestoreSync() {
-    if (typeof firebaseConfig === 'undefined' || !firebaseConfig || !firebaseConfig.apiKey || typeof firebase === 'undefined') {
-        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
-        return;
-    }
-
-    try {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        firestore = firebase.firestore();
-        const id = typeof documentId !== 'undefined' && documentId
-            ? documentId
-            : 'default-putzplan';
-        docRef = firestore.collection('putzplan').doc(id);
-        setSyncStatus('Verbindet …', '');
-
-        docRef.onSnapshot(function (snapshot) {
-            if (!snapshot.exists) {
-                scheduleRemoteWrite(true);
-                return;
-            }
-            const remote = sanitizeState(snapshot.data());
-            if (remote.updatedAt > state.updatedAt) {
-                state = remote;
-                persistLocalState();
-                render();
-            }
-            setSyncStatus(snapshot.metadata.fromCache ? 'Offline gespeichert' : 'Synchronisiert', snapshot.metadata.fromCache ? 'offline' : 'online');
-        }, function (error) {
-            console.info('Cloud-Sync nicht verfügbar; der Putzplan bleibt lokal gespeichert.', error.code || 'unknown');
-            docRef = null;
-            firestore = null;
-            setSyncStatus('Auf dem Wallpad gespeichert', 'local');
-        });
-    } catch (error) {
-        console.info('Cloud-Sync konnte nicht gestartet werden; der Putzplan bleibt lokal gespeichert.');
-        docRef = null;
-        firestore = null;
-        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
-    }
 }
 
 function bindEvents() {
@@ -496,7 +434,7 @@ function init() {
     elements.todayLabel.textContent = formatToday();
     bindEvents();
     render();
-    initFirestoreSync();
+    setSyncStatus('Auf dem Wallpad gespeichert', 'local');
 }
 
 init();
