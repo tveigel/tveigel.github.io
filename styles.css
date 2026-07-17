@@ -341,7 +341,9 @@ button:focus-visible {
     place-items: center;
     border-radius: 14px;
     background: var(--room-button-soft);
-    font-size: 1.45rem;
+    font-size: .9rem;
+    font-weight: 850;
+    letter-spacing: -.02em;
 }
 
 .room-button[aria-current="page"] .room-button-icon {
@@ -421,7 +423,9 @@ button:focus-visible {
     border: 1px solid rgba(255, 255, 255, .75);
     border-radius: 17px;
     background: rgba(255, 255, 255, .62);
-    font-size: 1.8rem;
+    font-size: 1rem;
+    font-weight: 850;
+    letter-spacing: -.02em;
 }
 
 .room-kicker {
@@ -772,7 +776,7 @@ noscript {
     .person-button { min-width: 66px; min-height: 34px; padding: 6px 10px; }
     .workspace { grid-template-columns: 194px minmax(0, 1fr); gap: 11px; }
     .room-button { min-height: 69px; grid-template-columns: 40px minmax(0, 1fr) auto; padding: 8px 10px; gap: 8px; }
-    .room-button-icon { width: 39px; height: 39px; border-radius: 12px; font-size: 1.2rem; }
+    .room-button-icon { width: 39px; height: 39px; border-radius: 12px; font-size: .82rem; }
     .room-button-count { min-width: 31px; height: 31px; }
     .room-header { min-height: 80px; padding: 12px 18px; }
     .room-icon { flex-basis: 49px; width: 49px; height: 49px; }
@@ -802,7 +806,7 @@ noscript {
         flex-basis: 49px;
         width: 49px;
         height: 49px;
-        font-size: 1.55rem;
+        font-size: .95rem;
     }
 
     .task-list {
@@ -820,6 +824,112 @@ noscript {
         min-height: 36px;
         padding-top: 6px;
         padding-bottom: 6px;
+    }
+}
+
+@media (max-height: 760px) and (orientation: landscape) {
+    .app-shell {
+        gap: 8px;
+        padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    }
+
+    .topbar {
+        min-height: 64px;
+    }
+
+    .topbar-actions {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+    }
+
+    .utility-row {
+        gap: 6px;
+    }
+
+    .sync-status {
+        font-size: .64rem;
+    }
+
+    .person-switch {
+        padding: 2px;
+    }
+
+    .person-button {
+        min-width: 64px;
+        min-height: 30px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .reset-button {
+        min-height: 30px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .title-line h1 {
+        font-size: clamp(2rem, 3.7vw, 3rem);
+    }
+
+    .today {
+        margin-top: 4px;
+    }
+
+    .progress-ring {
+        flex-basis: 58px;
+        width: 58px;
+        height: 58px;
+    }
+
+    .room-rail {
+        gap: 6px;
+    }
+
+    .room-header {
+        min-height: 54px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .room-icon {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 13px;
+        font-size: .9rem;
+    }
+
+    .room-heading p:last-child {
+        margin-top: 2px;
+    }
+
+    .task-list {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .task-button {
+        min-height: 44px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .task-order {
+        width: 30px;
+        height: 30px;
+    }
+
+    .task-check {
+        width: 28px;
+        height: 28px;
+    }
+
+    .room-footer {
+        min-height: 28px;
+        padding-top: 3px;
+        padding-bottom: 3px;
     }
 }
 
