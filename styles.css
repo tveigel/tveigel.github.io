@@ -252,6 +252,7 @@ button:focus-visible {
 }
 
 .sync-status[data-state="online"]::before { background: #3c9569; }
+.sync-status[data-state="local"]::before { background: #3c9569; }
 .sync-status[data-state="offline"]::before { background: #c66a52; }
 
 .reset-button {
