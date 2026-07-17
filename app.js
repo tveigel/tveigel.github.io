@@ -398,7 +398,7 @@ function showToast(message) {
 
 function scheduleRemoteWrite(immediate) {
     if (!docRef) {
-        setSyncStatus('Nur auf diesem Gerät', 'offline');
+        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
         return;
     }
     if (writeTimer) window.clearTimeout(writeTimer);
@@ -417,7 +417,7 @@ function scheduleRemoteWrite(immediate) {
 
 function initFirestoreSync() {
     if (typeof firebaseConfig === 'undefined' || !firebaseConfig || !firebaseConfig.apiKey || typeof firebase === 'undefined') {
-        setSyncStatus('Nur auf diesem Gerät', 'offline');
+        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
         return;
     }
 
@@ -443,12 +443,16 @@ function initFirestoreSync() {
             }
             setSyncStatus(snapshot.metadata.fromCache ? 'Offline gespeichert' : 'Synchronisiert', snapshot.metadata.fromCache ? 'offline' : 'online');
         }, function (error) {
-            console.error('Putzplan-Verbindung fehlgeschlagen:', error);
-            setSyncStatus('Offline gespeichert', 'offline');
+            console.info('Cloud-Sync nicht verfügbar; der Putzplan bleibt lokal gespeichert.', error.code || 'unknown');
+            docRef = null;
+            firestore = null;
+            setSyncStatus('Auf dem Wallpad gespeichert', 'local');
         });
     } catch (error) {
-        console.error('Firebase konnte nicht gestartet werden:', error);
-        setSyncStatus('Nur auf diesem Gerät', 'offline');
+        console.info('Cloud-Sync konnte nicht gestartet werden; der Putzplan bleibt lokal gespeichert.');
+        docRef = null;
+        firestore = null;
+        setSyncStatus('Auf dem Wallpad gespeichert', 'local');
     }
 }
 
