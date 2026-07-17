@@ -2,6 +2,7 @@
 
 const PLAN_VERSION = 4;
 const STATE_STORAGE_KEY = 'francesco_wallpad_putzplan_v4';
+const CUSTOM_TASKS_STORAGE_KEY = 'francesco_wallpad_custom_tasks_v1';
 const PERSON_STORAGE_KEY = 'francesco_wallpad_person';
 const ROOM_STORAGE_KEY = 'francesco_wallpad_room';
 const PEOPLE = ['Tim', 'Alli'];
@@ -96,10 +97,19 @@ const ROOMS = [
             { id: 'wohnzimmer-6', order: 6, title: 'Fernsehtisch wischen', detail: 'Alle Fächer und Oberflächen' },
             { id: 'wohnzimmer-7', order: 7, title: 'Saugen und wischen', detail: 'Achtung Holz; auch beim Kleiderständer' }
         ]
+    },
+    {
+        id: 'flur',
+        name: 'Flur',
+        icon: 'F',
+        color: '#7a684f',
+        soft: '#f0e9df',
+        subtitle: 'Eingang, Garderobe und Boden',
+        tasks: []
     }
 ];
 
-const ALL_TASK_IDS = new Set(ROOMS.flatMap(function (room) {
+const BASE_TASK_IDS = new Set(ROOMS.flatMap(function (room) {
     return room.tasks.map(function (task) { return task.id; });
 }));
 
@@ -117,6 +127,7 @@ const elements = {
     roomTitle: document.getElementById('roomTitle'),
     roomSubtitle: document.getElementById('roomSubtitle'),
     roomScore: document.getElementById('roomScore'),
+    addTaskButton: document.getElementById('addTaskButton'),
     taskList: document.getElementById('taskList'),
     lastUpdated: document.getElementById('lastUpdated'),
     celebration: document.getElementById('celebration'),
@@ -124,6 +135,14 @@ const elements = {
     resetButton: document.getElementById('resetButton'),
     cancelReset: document.getElementById('cancelReset'),
     confirmReset: document.getElementById('confirmReset'),
+    addTaskModal: document.getElementById('addTaskModal'),
+    addTaskForm: document.getElementById('addTaskForm'),
+    addTaskRoom: document.getElementById('addTaskRoom'),
+    addTaskTitle: document.getElementById('addTaskTitle'),
+    addTaskDetail: document.getElementById('addTaskDetail'),
+    cancelAddTask: document.getElementById('cancelAddTask'),
+    customTaskManager: document.getElementById('customTaskManager'),
+    customTaskList: document.getElementById('customTaskList'),
     closeCelebration: document.getElementById('closeCelebration'),
     toast: document.getElementById('toast')
 };
@@ -134,9 +153,10 @@ let currentPerson = PEOPLE.indexOf(localStorage.getItem(PERSON_STORAGE_KEY)) >= 
 let activeRoomId = ROOMS.some(function (room) { return room.id === localStorage.getItem(ROOM_STORAGE_KEY); })
     ? localStorage.getItem(ROOM_STORAGE_KEY)
     : ROOMS[0].id;
+let customTasks = loadCustomTasks();
 let state = loadLocalState();
 let toastTimer = null;
-let hasCelebrated = Object.keys(state.completed).length === ALL_TASK_IDS.size;
+let hasCelebrated = Object.keys(state.completed).length === allTaskIds().size;
 
 function dayKey(date) {
     const d = date || new Date();
@@ -156,6 +176,60 @@ function emptyState() {
     };
 }
 
+function sanitizeCustomTask(candidate) {
+    if (!candidate || typeof candidate !== 'object') return null;
+    const roomExists = ROOMS.some(function (room) { return room.id === candidate.roomId; });
+    const id = String(candidate.id || '');
+    const title = String(candidate.title || '').trim().slice(0, 90);
+    const detail = String(candidate.detail || '').trim().slice(0, 140);
+    if (!roomExists || !/^custom-[a-z0-9-]+$/.test(id) || !title) return null;
+    return {
+        id: id,
+        roomId: candidate.roomId,
+        title: title,
+        detail: detail,
+        createdAt: Number.isFinite(Number(candidate.createdAt)) ? Number(candidate.createdAt) : 0
+    };
+}
+
+function loadCustomTasks() {
+    try {
+        const raw = JSON.parse(localStorage.getItem(CUSTOM_TASKS_STORAGE_KEY) || '[]');
+        if (!Array.isArray(raw)) return [];
+        const seen = new Set();
+        return raw.map(sanitizeCustomTask).filter(function (task) {
+            if (!task || seen.has(task.id)) return false;
+            seen.add(task.id);
+            return true;
+        }).slice(0, 60);
+    } catch (error) {
+        return [];
+    }
+}
+
+function persistCustomTasks() {
+    localStorage.setItem(CUSTOM_TASKS_STORAGE_KEY, JSON.stringify(customTasks));
+}
+
+function tasksForRoom(room) {
+    const additions = customTasks.filter(function (task) {
+        return task.roomId === room.id;
+    }).map(function (task, index) {
+        return {
+            id: task.id,
+            order: room.tasks.length + index + 1,
+            title: task.title,
+            detail: task.detail,
+            isCustom: true
+        };
+    });
+    return room.tasks.concat(additions);
+}
+
+function allTaskIds() {
+    return new Set(Array.from(BASE_TASK_IDS).concat(customTasks.map(function (task) { return task.id; })));
+}
+
 function sanitizeState(candidate) {
     const clean = emptyState();
     if (!candidate || candidate.version !== PLAN_VERSION || candidate.day !== dayKey()) return clean;
@@ -164,9 +238,10 @@ function sanitizeState(candidate) {
         ? candidate.completed
         : {};
 
+    const validTaskIds = allTaskIds();
     Object.keys(sourceCompleted).forEach(function (taskId) {
         const entry = sourceCompleted[taskId];
-        if (!ALL_TASK_IDS.has(taskId) || !entry || PEOPLE.indexOf(entry.by) < 0) return;
+        if (!validTaskIds.has(taskId) || !entry || PEOPLE.indexOf(entry.by) < 0) return;
         clean.completed[taskId] = {
             by: entry.by,
             at: Number.isFinite(Number(entry.at)) ? Number(entry.at) : 0
@@ -195,14 +270,15 @@ function roomById(id) {
 }
 
 function completedCountForRoom(room) {
-    return room.tasks.reduce(function (count, task) {
+    return tasksForRoom(room).reduce(function (count, task) {
         return count + (state.completed[task.id] ? 1 : 0);
     }, 0);
 }
 
 function totalCompleted() {
+    const validTaskIds = allTaskIds();
     return Object.keys(state.completed).filter(function (taskId) {
-        return ALL_TASK_IDS.has(taskId);
+        return validTaskIds.has(taskId);
     }).length;
 }
 
@@ -250,7 +326,7 @@ function renderPeople() {
 
 function renderProgress() {
     const done = totalCompleted();
-    const total = ALL_TASK_IDS.size;
+    const total = allTaskIds().size;
     const percent = Math.round((done / total) * 100);
     elements.progressRing.style.setProperty('--progress', (percent * 3.6) + 'deg');
     elements.progressPercent.textContent = percent + '%';
@@ -266,10 +342,11 @@ function renderProgress() {
 
 function renderRoomRail() {
     elements.roomRail.innerHTML = ROOMS.map(function (room) {
+        const tasks = tasksForRoom(room);
         const done = completedCountForRoom(room);
-        const percent = Math.round((done / room.tasks.length) * 100);
+        const percent = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
         const isActive = room.id === activeRoomId;
-        const isComplete = done === room.tasks.length;
+        const isComplete = tasks.length > 0 && done === tasks.length;
         return '<button class="room-button' + (isComplete ? ' is-complete' : '') + '"' +
             ' type="button" data-room-id="' + room.id + '"' +
             ' aria-current="' + (isActive ? 'page' : 'false') + '"' +
@@ -277,10 +354,10 @@ function renderRoomRail() {
                 '<span class="room-button-icon" aria-hidden="true">' + room.icon + '</span>' +
                 '<span class="room-button-copy">' +
                     '<span class="room-button-name">' + escapeHtml(room.name) + '</span>' +
-                    '<span class="room-button-meta">' + (isComplete ? 'Geschafft' : done + ' von ' + room.tasks.length) + '</span>' +
+                    '<span class="room-button-meta">' + (tasks.length ? (isComplete ? 'Geschafft' : done + ' von ' + tasks.length) : 'Noch leer') + '</span>' +
                 '</span>' +
-                '<span class="room-button-count" aria-label="' + done + ' von ' + room.tasks.length + ' erledigt">' +
-                    (isComplete ? '✓' : done + '/' + room.tasks.length) +
+                '<span class="room-button-count" aria-label="' + done + ' von ' + tasks.length + ' erledigt">' +
+                    (isComplete ? '✓' : done + '/' + tasks.length) +
                 '</span>' +
             '</button>';
     }).join('');
@@ -288,17 +365,18 @@ function renderRoomRail() {
 
 function renderActiveRoom() {
     const room = roomById(activeRoomId);
+    const tasks = tasksForRoom(room);
     const done = completedCountForRoom(room);
     elements.roomPanel.style.setProperty('--room', room.color);
     elements.roomPanel.style.setProperty('--room-soft', room.soft);
     elements.roomIcon.textContent = room.icon;
     elements.roomTitle.textContent = room.name;
     elements.roomSubtitle.textContent = room.subtitle;
-    elements.roomScore.textContent = done === room.tasks.length
-        ? '✓ Raum geschafft'
-        : done + ' / ' + room.tasks.length + ' erledigt';
+    elements.roomScore.textContent = tasks.length === 0
+        ? 'Noch keine Aufgaben'
+        : (done === tasks.length ? '✓ Raum geschafft' : done + ' / ' + tasks.length + ' erledigt');
 
-    elements.taskList.innerHTML = room.tasks.map(function (task) {
+    elements.taskList.innerHTML = tasks.length ? tasks.map(function (task) {
         const completion = state.completed[task.id];
         const owner = completion ? completion.by : '';
         const ownerColor = owner ? PERSON_COLORS[owner] : PERSON_COLORS[currentPerson];
@@ -312,14 +390,19 @@ function renderActiveRoom() {
                 '<span class="task-order" aria-hidden="true">' + task.order + '</span>' +
                 '<span class="task-copy">' +
                     '<span class="task-title">' + escapeHtml(task.title) + '</span>' +
-                    '<span class="task-detail">' + escapeHtml(task.detail) + '</span>' +
+                    (task.detail ? '<span class="task-detail">' + escapeHtml(task.detail) + '</span>' : '') +
                 '</span>' +
                 '<span class="task-owner">' + escapeHtml(owner) + '</span>' +
                 '<span class="task-check" aria-hidden="true">' +
                     '<svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg>' +
                 '</span>' +
             '</button>';
-    }).join('');
+    }).join('') : '<div class="empty-room">' +
+        '<span class="empty-room-mark" aria-hidden="true">+</span>' +
+        '<strong>Der Flur wartet noch auf Aufgaben.</strong>' +
+        '<p>Fügt nur das hinzu, was bei euch wirklich gemacht werden soll.</p>' +
+        '<button type="button" data-open-add-room="' + room.id + '">Erste Aufgabe hinzufügen</button>' +
+    '</div>';
 
     if (state.updatedAt) {
         elements.lastUpdated.textContent = 'Zuletzt ' + formatTime(state.updatedAt) +
@@ -346,8 +429,9 @@ function selectRoom(roomId) {
 }
 
 function toggleTask(taskId) {
-    if (!ALL_TASK_IDS.has(taskId)) return;
-    const wasAllComplete = totalCompleted() === ALL_TASK_IDS.size;
+    const validTaskIds = allTaskIds();
+    if (!validTaskIds.has(taskId)) return;
+    const wasAllComplete = totalCompleted() === validTaskIds.size;
     if (state.completed[taskId]) {
         delete state.completed[taskId];
     } else {
@@ -358,7 +442,7 @@ function toggleTask(taskId) {
     persistLocalState();
     render();
 
-    const nowAllComplete = totalCompleted() === ALL_TASK_IDS.size;
+    const nowAllComplete = totalCompleted() === allTaskIds().size;
     if (nowAllComplete && !wasAllComplete && !hasCelebrated) {
         hasCelebrated = true;
         window.setTimeout(function () { elements.celebration.hidden = false; }, 280);
@@ -378,6 +462,79 @@ function resetToday() {
     elements.taskList.scrollTop = 0;
     render();
     showToast('Bereit für einen frischen Putztag');
+}
+
+function renderCustomTaskManager() {
+    elements.customTaskManager.hidden = customTasks.length === 0;
+    if (!customTasks.length) {
+        elements.customTaskList.innerHTML = '';
+        return;
+    }
+    elements.customTaskList.innerHTML = customTasks.map(function (task) {
+        const room = roomById(task.roomId);
+        return '<div class="custom-task-item">' +
+            '<span><small>' + escapeHtml(room.name) + '</small><strong>' + escapeHtml(task.title) + '</strong></span>' +
+            '<button type="button" data-remove-custom-task="' + task.id + '" aria-label="' + escapeHtml(task.title) + ' entfernen">Entfernen</button>' +
+        '</div>';
+    }).join('');
+}
+
+function openAddTaskModal(roomId) {
+    const selectedRoom = ROOMS.some(function (room) { return room.id === roomId; }) ? roomId : activeRoomId;
+    elements.addTaskForm.reset();
+    elements.addTaskRoom.innerHTML = ROOMS.map(function (room) {
+        return '<option value="' + room.id + '">' + escapeHtml(room.name) + '</option>';
+    }).join('');
+    elements.addTaskRoom.value = selectedRoom;
+    renderCustomTaskManager();
+    elements.addTaskModal.hidden = false;
+    window.setTimeout(function () { elements.addTaskTitle.focus(); }, 40);
+}
+
+function closeAddTaskModal() {
+    elements.addTaskModal.hidden = true;
+}
+
+function addCustomTask(roomId, title, detail) {
+    if (!ROOMS.some(function (room) { return room.id === roomId; }) || !title) return;
+    if (customTasks.length >= 60) {
+        showToast('Maximal 60 eigene Aufgaben möglich');
+        return;
+    }
+    const task = {
+        id: 'custom-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7),
+        roomId: roomId,
+        title: title.slice(0, 90),
+        detail: detail.slice(0, 140),
+        createdAt: Date.now()
+    };
+    customTasks.push(task);
+    hasCelebrated = false;
+    persistCustomTasks();
+    state.updatedAt = Date.now();
+    state.updatedBy = currentPerson;
+    persistLocalState();
+    activeRoomId = roomId;
+    localStorage.setItem(ROOM_STORAGE_KEY, roomId);
+    closeAddTaskModal();
+    elements.taskList.scrollTop = 0;
+    render();
+    showToast('Aufgabe zu ' + roomById(roomId).name + ' hinzugefügt');
+}
+
+function removeCustomTask(taskId) {
+    const task = customTasks.find(function (candidate) { return candidate.id === taskId; });
+    if (!task) return;
+    customTasks = customTasks.filter(function (candidate) { return candidate.id !== taskId; });
+    delete state.completed[taskId];
+    state.updatedAt = Date.now();
+    state.updatedBy = currentPerson;
+    persistCustomTasks();
+    persistLocalState();
+    hasCelebrated = totalCompleted() === allTaskIds().size;
+    render();
+    renderCustomTaskManager();
+    showToast('Eigene Aufgabe entfernt');
 }
 
 function setSyncStatus(text, status) {
@@ -401,6 +558,11 @@ function bindEvents() {
     });
 
     elements.taskList.addEventListener('click', function (event) {
+        const addButton = event.target.closest('[data-open-add-room]');
+        if (addButton) {
+            openAddTaskModal(addButton.dataset.openAddRoom);
+            return;
+        }
         const button = event.target.closest('[data-task-id]');
         if (button) toggleTask(button.dataset.taskId);
     });
@@ -415,6 +577,24 @@ function bindEvents() {
     });
     elements.cancelReset.addEventListener('click', function () { elements.resetModal.hidden = true; });
     elements.confirmReset.addEventListener('click', resetToday);
+    elements.addTaskButton.addEventListener('click', function () { openAddTaskModal(activeRoomId); });
+    elements.cancelAddTask.addEventListener('click', closeAddTaskModal);
+    elements.addTaskForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const title = elements.addTaskTitle.value.trim();
+        if (!title) {
+            elements.addTaskTitle.setCustomValidity('Bitte beschreibt kurz die Aufgabe.');
+            elements.addTaskTitle.reportValidity();
+            return;
+        }
+        elements.addTaskTitle.setCustomValidity('');
+        addCustomTask(elements.addTaskRoom.value, title, elements.addTaskDetail.value.trim());
+    });
+    elements.addTaskTitle.addEventListener('input', function () { elements.addTaskTitle.setCustomValidity(''); });
+    elements.customTaskList.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-remove-custom-task]');
+        if (button) removeCustomTask(button.dataset.removeCustomTask);
+    });
     elements.closeCelebration.addEventListener('click', function () { elements.celebration.hidden = true; });
 
     elements.resetModal.addEventListener('click', function (event) {
@@ -423,10 +603,14 @@ function bindEvents() {
     elements.celebration.addEventListener('click', function (event) {
         if (event.target === elements.celebration) elements.celebration.hidden = true;
     });
+    elements.addTaskModal.addEventListener('click', function (event) {
+        if (event.target === elements.addTaskModal) closeAddTaskModal();
+    });
     document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape') return;
         elements.resetModal.hidden = true;
         elements.celebration.hidden = true;
+        closeAddTaskModal();
     });
 }
 

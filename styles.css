@@ -458,6 +458,42 @@ button:focus-visible {
     white-space: nowrap;
 }
 
+.room-header-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-task-button {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 13px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--room);
+    box-shadow: 0 7px 18px color-mix(in srgb, var(--room) 22%, transparent);
+    color: #fff;
+    cursor: pointer;
+    font-size: .74rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.add-task-button span {
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: .7;
+}
+
+.add-task-button:active,
+.empty-room button:active {
+    transform: scale(.98);
+}
+
 .task-list {
     min-height: 0;
     overflow-x: hidden;
@@ -471,6 +507,54 @@ button:focus-visible {
 .task-list::-webkit-scrollbar { width: 6px; }
 .task-list::-webkit-scrollbar-track { background: transparent; }
 .task-list::-webkit-scrollbar-thumb { border-radius: 999px; background: #cbc7be; }
+
+.empty-room {
+    display: grid;
+    min-height: 100%;
+    padding: 30px;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+}
+
+.empty-room-mark {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 14px;
+    place-items: center;
+    border-radius: 18px;
+    background: var(--room-soft);
+    color: var(--room);
+    font-size: 2rem;
+    font-weight: 400;
+}
+
+.empty-room strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.55rem;
+    font-weight: 500;
+}
+
+.empty-room p {
+    max-width: 380px;
+    margin: 8px 0 18px;
+    color: var(--muted);
+    font-size: .8rem;
+    line-height: 1.45;
+}
+
+.empty-room button {
+    min-height: 44px;
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--room);
+    color: #fff;
+    cursor: pointer;
+    font-size: .76rem;
+    font-weight: 800;
+}
 
 .task-button {
     position: relative;
@@ -695,6 +779,126 @@ button:focus-visible {
     line-height: 1.55;
 }
 
+.task-modal-card {
+    width: min(540px, 100%);
+    max-height: min(88dvh, 720px);
+    overflow-y: auto;
+    text-align: left;
+}
+
+.task-modal-card > .modal-icon,
+.task-modal-card > h2,
+.task-modal-card > p {
+    text-align: center;
+}
+
+.task-form-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.task-form-grid label {
+    display: grid;
+    gap: 6px;
+}
+
+.task-form-grid label > span {
+    color: #56615c;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .03em;
+}
+
+.task-form-grid label small {
+    color: #929994;
+    font-size: .62rem;
+    font-weight: 650;
+}
+
+.task-form-grid input,
+.task-form-grid select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid #d9d4ca;
+    border-radius: 12px;
+    outline: none;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: .82rem;
+}
+
+.task-form-grid input:focus,
+.task-form-grid select:focus {
+    border-color: #7c9d8e;
+    box-shadow: 0 0 0 3px rgba(79, 124, 104, .12);
+}
+
+.custom-task-manager {
+    margin: 4px 0 18px;
+    padding: 13px;
+    border: 1px solid #e1ddd4;
+    border-radius: 14px;
+    background: #faf8f3;
+}
+
+.custom-task-manager > strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: .72rem;
+}
+
+.custom-task-list {
+    display: grid;
+    gap: 7px;
+}
+
+.custom-task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 7px;
+    border-top: 1px solid #e7e2d8;
+}
+
+.custom-task-item span {
+    min-width: 0;
+}
+
+.custom-task-item small,
+.custom-task-item strong {
+    display: block;
+}
+
+.custom-task-item small {
+    color: var(--muted);
+    font-size: .58rem;
+    font-weight: 750;
+}
+
+.custom-task-item strong {
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: .72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-task-item button {
+    min-height: 34px;
+    padding: 6px 9px;
+    border: 1px solid #dfc6c0;
+    border-radius: 9px;
+    background: #fff;
+    color: #a24e40;
+    cursor: pointer;
+    font-size: .63rem;
+    font-weight: 800;
+}
+
 .modal-actions {
     display: grid;
     grid-template-columns: 1fr 1.35fr;
@@ -719,6 +923,11 @@ button:focus-visible {
     border: 1px solid #b95544;
     background: #b95544;
     color: #fff;
+}
+
+.modal-confirm.modal-add {
+    border-color: #4f7c68;
+    background: #4f7c68;
 }
 
 .toast {
@@ -786,7 +995,7 @@ noscript {
     .task-check { width: 29px; height: 29px; }
 }
 
-@media (max-height: 820px) and (orientation: landscape) {
+@media (max-height: 860px) and (orientation: landscape) {
     .app-shell {
         gap: 12px;
         padding: max(12px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
@@ -893,6 +1102,15 @@ noscript {
         padding-bottom: 4px;
     }
 
+    .room-header-actions {
+        gap: 8px;
+    }
+
+    .add-task-button {
+        min-height: 34px;
+        padding: 6px 10px;
+    }
+
     .room-icon {
         flex-basis: 40px;
         width: 40px;
@@ -960,7 +1178,7 @@ noscript {
 
     .room-rail {
         display: grid;
-        grid-template-columns: repeat(5, minmax(92px, 1fr));
+        grid-template-columns: repeat(6, minmax(92px, 1fr));
         gap: 8px;
         overflow-x: auto;
         padding-bottom: 9px;
