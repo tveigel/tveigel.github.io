@@ -11,7 +11,7 @@ const ROOMS = [
     {
         id: 'kueche',
         name: 'Küche',
-        icon: '🍋',
+        icon: 'K',
         color: '#4f7c68',
         soft: '#e5f0ea',
         subtitle: 'Geräte, Oberflächen, Schränke und Boden',
@@ -31,7 +31,7 @@ const ROOMS = [
     {
         id: 'klo',
         name: 'Klo',
-        icon: '🧻',
+        icon: 'WC',
         color: '#b95544',
         soft: '#f7e7e2',
         subtitle: 'Rot: WC · Blau: Oberflächen',
@@ -50,7 +50,7 @@ const ROOMS = [
     {
         id: 'bad',
         name: 'Bad',
-        icon: '🫧',
+        icon: 'B',
         color: '#b7832f',
         soft: '#f7edd4',
         subtitle: 'Gelb: Waschbecken und Dusche',
@@ -68,7 +68,7 @@ const ROOMS = [
     {
         id: 'schlafzimmer',
         name: 'Schlafzimmer',
-        icon: '🌙',
+        icon: 'S',
         color: '#426f9b',
         soft: '#e5edf5',
         subtitle: 'Oberflächen, Spiegel und Boden',
@@ -83,7 +83,7 @@ const ROOMS = [
     {
         id: 'wohnzimmer',
         name: 'Wohnzimmer',
-        icon: '🛋️',
+        icon: 'W',
         color: '#6b6195',
         soft: '#ece9f5',
         subtitle: 'Oberflächen, Textilien und Holzboden',
@@ -434,7 +434,7 @@ function init() {
     elements.todayLabel.textContent = formatToday();
     bindEvents();
     render();
-    setSyncStatus('Auf dem Wallpad gespeichert', 'local');
+    setSyncStatus('Lokal gespeichert', 'local');
 }
 
 init();
