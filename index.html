@@ -1,143 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mein Putzplan</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Firebase SDK (compat for simplicity) -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f1e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Putztag · Francesco</title>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-    <!-- Local Firebase config -->
     <script src="firebase-config.js"></script>
-
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260717-1">
 </head>
 <body>
-
-<!-- ══════════════════════════════════════════════════ -->
-<!--  MAIN APP                                         -->
-<!-- ══════════════════════════════════════════════════ -->
-<div id="appContainer">
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-        <span class="toolbar-title">✨ Putzplan Creator</span>
-        <span id="syncStatus" class="toolbar-status">Lokal</span>
-        <span id="userBadge" class="toolbar-user">👤 Name wählen</span>
-        <button class="btn btn-sm" onclick="openUserNameModal()">Name</button>
-        <button class="btn btn-sm" onclick="showAddSectionModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Bereich
-        </button>
-        <button class="btn btn-sm" onclick="addDailySection()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Tägliche Tabelle
-        </button>
-        <button class="btn btn-sm" onclick="resetAllChecks()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            Reset
-        </button>
-        <button class="btn btn-sm btn-primary" onclick="window.print()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Drucken
-        </button>
-        <button id="toggleViewModeBtn" class="btn btn-sm" onclick="toggleViewMode()">Fokus Woche</button>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main">
-        <div class="plan-header">
-            <span class="plan-title">Mein Putzplan</span>
-            <div>
-                <label style="font-size:.75rem;color:var(--text-light);">Monat:</label>
-                <input type="text" class="month-input" id="monthInput" placeholder="z.B. Februar 2026">
+    <div class="app-shell" id="appShell">
+        <header class="topbar">
+            <div class="brand-block">
+                <p class="eyebrow">FRANCESCO PRÄSENTIERT</p>
+                <div class="title-line">
+                    <h1>Putztag</h1>
+                    <span class="title-spark" aria-hidden="true">✦</span>
+                </div>
+                <p class="today" id="todayLabel"></p>
             </div>
-            <span class="plan-icon">🧹</span>
-        </div>
-        <section class="slogan-band no-print">
-            <div class="slogan-marquee" role="status" aria-live="polite">
-                <div class="slogan-track" id="sloganTrack"></div>
+
+            <section class="overall-progress" aria-labelledby="progressTitle">
+                <div class="progress-ring" id="progressRing" aria-hidden="true">
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-copy">
+                    <p class="progress-label" id="progressTitle">Wohnung</p>
+                    <strong id="progressHeadline">Los geht’s</strong>
+                    <span id="progressCount">0 von 36 erledigt</span>
+                </div>
+            </section>
+
+            <div class="topbar-actions">
+                <div class="person-switch" aria-label="Wer putzt gerade?">
+                    <button class="person-button" type="button" data-person="Tim" aria-pressed="true">
+                        <span class="person-dot person-dot--tim"></span>Tim
+                    </button>
+                    <button class="person-button" type="button" data-person="Alli" aria-pressed="false">
+                        <span class="person-dot person-dot--alli"></span>Alli
+                    </button>
+                </div>
+                <div class="utility-row">
+                    <span class="sync-status" id="syncStatus" role="status">Wird geladen …</span>
+                    <button class="reset-button" id="resetButton" type="button" aria-label="Putztag zurücksetzen">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.9 5.5A9 9 0 1 1 3 13"/><path d="M4 3v5h5"/></svg>
+                        Neu starten
+                    </button>
+                </div>
             </div>
-            <div class="slogan-composer">
-                <input id="sloganInput" class="slogan-input" type="text" maxlength="220"
-                       placeholder="Nachricht eingeben..."
-                       onkeydown="if (event.key === 'Enter') { event.preventDefault(); sendSloganMessage(); }">
-                <button type="button" class="btn btn-sm" onclick="sendSloganMessage()">Senden</button>
-                <button type="button" class="btn btn-sm btn-danger" onclick="clearSlogans()">Löschen</button>
+        </header>
+
+        <div class="workspace">
+            <nav class="room-rail" id="roomRail" aria-label="Räume"></nav>
+
+            <main class="room-panel" id="roomPanel">
+                <header class="room-header">
+                    <div class="room-heading">
+                        <span class="room-icon" id="roomIcon" aria-hidden="true"></span>
+                        <div>
+                            <p class="room-kicker">JETZT DRAN</p>
+                            <h2 id="roomTitle"></h2>
+                            <p id="roomSubtitle"></p>
+                        </div>
+                    </div>
+                    <div class="room-score" id="roomScore"></div>
+                </header>
+
+                <div class="task-list" id="taskList" aria-live="polite"></div>
+
+                <footer class="room-footer">
+                    <span><span class="tap-symbol" aria-hidden="true">✓</span> Antippen, sobald es erledigt ist</span>
+                    <span id="lastUpdated">Noch keine Änderungen</span>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration" hidden aria-live="polite">
+        <div class="celebration-card">
+            <div class="celebration-icon" aria-hidden="true">✨</div>
+            <p>Wohnung fertig!</p>
+            <strong>Sehr stark. Jetzt Füße hoch.</strong>
+            <button type="button" id="closeCelebration">Zurück zum Plan</button>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="resetModal" hidden role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+        <div class="modal-card">
+            <span class="modal-icon" aria-hidden="true">↺</span>
+            <h2 id="resetTitle">Wirklich neu starten?</h2>
+            <p>Alle Häkchen von heute werden entfernt. Die Aufgaben bleiben natürlich erhalten.</p>
+            <div class="modal-actions">
+                <button class="modal-cancel" id="cancelReset" type="button">Abbrechen</button>
+                <button class="modal-confirm" id="confirmReset" type="button">Alle Häkchen löschen</button>
             </div>
-        </section>
-        <section class="focus-view no-print" id="focusView"></section>
-        <div class="plan-body" id="planBody"></div>
-    </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════ -->
-<!--  MODALS                                           -->
-<!-- ══════════════════════════════════════════════════ -->
-
-<!-- Name Setup -->
-<div class="modal-overlay" id="userModal">
-    <div class="modal">
-        <h3>Wer bist du?</h3>
-        <label>Wähle deinen Namen, damit deine Häkchen ihre Farbe bekommen.</label>
-        <select id="userNameSelect">
-            <option value="Alli">Alli</option>
-            <option value="Tim">Tim</option>
-        </select>
-        <div class="modal-actions">
-            <button class="btn" onclick="closeModal('userModal')">Abbrechen</button>
-            <button class="btn btn-primary" onclick="saveUserNameFromModal()">Speichern</button>
         </div>
     </div>
-</div>
 
-<!-- Add Section -->
-<div class="modal-overlay" id="addSectionModal">
-    <div class="modal">
-        <h3>Neuen Bereich hinzufügen</h3>
-        <label>Name</label>
-        <input type="text" id="newSectionName" placeholder="z.B. Wöchentlich">
-        <label>Checkboxen pro Aufgabe</label>
-        <input type="number" id="newSectionBoxes" value="4" min="1" max="31">
-        <div class="modal-actions">
-            <button class="btn" onclick="closeModal('addSectionModal')">Abbrechen</button>
-            <button class="btn btn-primary" onclick="confirmAddSection()">Hinzufügen</button>
-        </div>
-    </div>
-</div>
-
-<!-- Add Daily Column -->
-<div class="modal-overlay" id="addColModal">
-    <div class="modal">
-        <h3>Neue Spalte hinzufügen</h3>
-        <label>Gruppenname (z.B. Küche & Essbereich)</label>
-        <input type="text" id="newColGroup" placeholder="z.B. Küche & Essbereich">
-        <label>Aufgabenname</label>
-        <input type="text" id="newColName" placeholder="z.B. Küche aufräumen">
-        <input type="hidden" id="newColSection">
-        <div class="modal-actions">
-            <button class="btn" onclick="closeModal('addColModal')">Abbrechen</button>
-            <button class="btn btn-primary" onclick="confirmAddCol()">Hinzufügen</button>
-        </div>
-    </div>
-</div>
-
-<!-- Confirm Dialog Modal -->
-<div class="modal-overlay" id="confirmModal">
-    <div class="modal" style="max-width:360px;text-align:center;">
-        <h3 id="confirmTitle">Bist du sicher?</h3>
-        <p id="confirmMessage" style="font-size:.9rem;color:var(--text-light);margin-bottom:20px;"></p>
-        <div class="modal-actions" style="justify-content:center;">
-            <button class="btn" onclick="closeModal('confirmModal')">Abbrechen</button>
-            <button class="btn btn-danger" id="confirmYesBtn">Ja, löschen</button>
-        </div>
-    </div>
-</div>
-
-<script src="app.js"></script>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <noscript>Bitte JavaScript aktivieren, damit der Putzplan funktioniert.</noscript>
+    <script src="app.js?v=20260717-1"></script>
 </body>
 </html>

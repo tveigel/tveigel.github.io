@@ -1,1454 +1,498 @@
-// ════════════════════════════════════════════════════
-//  UTILITIES
-// ════════════════════════════════════════════════════
-const USER_NAME_STORAGE_KEY = 'putzplan_user_name';
-const VIEW_MODE_STORAGE_KEY = 'putzplan_view_mode';
-const ALLOWED_USER_NAMES = ['Alli', 'Tim'];
-const USER_COLOR_PALETTE = ['#2f80ed', '#f2994a', '#27ae60', '#eb5757', '#9b51e0', '#2d9cdb', '#56cc9b', '#bb6bd9'];
-const SECTION_MAX_SPAN = 4;
+/* Francesco's wallpad cleaning plan — intentionally dependency-free. */
 
-function sid() { return 's' + Math.random().toString(36).substr(2, 9); }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function capitalize(value) {
-    if (!value) return '';
-    return value.charAt(0).toUpperCase() + value.slice(1);
+const PLAN_VERSION = 3;
+const STATE_STORAGE_KEY = 'francesco_wallpad_putzplan_v3';
+const PERSON_STORAGE_KEY = 'francesco_wallpad_person';
+const ROOM_STORAGE_KEY = 'francesco_wallpad_room';
+const PEOPLE = ['Tim', 'Alli'];
+const PERSON_COLORS = { Tim: '#2d6cdf', Alli: '#e06a46' };
+
+const ROOMS = [
+    {
+        id: 'kueche',
+        name: 'Küche',
+        icon: '🍋',
+        color: '#4f7c68',
+        soft: '#e5f0ea',
+        subtitle: 'Aus dem bisherigen digitalen Plan ergänzt',
+        tasks: [
+            { id: 'kueche-1', order: 1, title: 'Küche aufräumen', detail: 'Geschirr wegräumen und Arbeitsflächen frei machen' },
+            { id: 'kueche-2', order: 2, title: 'Tisch und Arbeitsflächen abwischen', detail: 'Alle frei geräumten Flächen gründlich wischen' },
+            { id: 'kueche-3', order: 3, title: 'Spülmaschine ein- / ausräumen', detail: 'Geschirr vollständig versorgen' },
+            { id: 'kueche-4', order: 4, title: 'Spülbecken reinigen', detail: 'Becken, Rand und Wasserhahn' },
+            { id: 'kueche-5', order: 5, title: 'Müll rausbringen', detail: 'Beutel wechseln und Mülleimer abwischen' },
+            { id: 'kueche-6', order: 6, title: 'Kühlschrank aussortieren', detail: 'Verdorbenes prüfen, Griffe und Front abwischen' },
+            { id: 'kueche-7', order: 7, title: 'Saugen und wischen', detail: 'Auch unter den gut erreichbaren Kanten' }
+        ]
+    },
+    {
+        id: 'klo',
+        name: 'Klo',
+        icon: '🧻',
+        color: '#b95544',
+        soft: '#f7e7e2',
+        subtitle: 'Rot: WC · Blau: Oberflächen',
+        tasks: [
+            { id: 'klo-1', order: 1, title: 'Kloschüssel reinigen', detail: 'Mit Kloreiniger' },
+            { id: 'klo-2', order: 2, title: 'Toilettenpapier auffüllen', detail: 'Ggf. in die Einkaufsliste eintragen' },
+            { id: 'klo-3', order: 3, title: 'Seife auffüllen', detail: 'Vorrat prüfen' },
+            { id: 'klo-4', order: 4, title: 'Müll wechseln', detail: 'Mülleimer auch abwischen' },
+            { id: 'klo-5', order: 5, title: 'Handtuch wechseln', detail: 'Holzbrett ebenfalls abwischen' },
+            { id: 'klo-6', order: 6, title: 'Toilette komplett abwischen', detail: 'Inkl. Sitz, Deckel und Spülschüssel' },
+            { id: 'klo-7', order: 7, title: 'Waschbecken + Badspiegel', detail: 'Inkl. Wasserhahn' },
+            { id: 'klo-8', order: 8, title: 'Saugen und wischen', detail: 'Den kompletten Boden' },
+            { id: 'klo-9', order: 9, title: 'Lichtschalter + Türklinken desinfizieren', detail: 'Türklinken innen und außen' }
+        ]
+    },
+    {
+        id: 'bad',
+        name: 'Bad',
+        icon: '🫧',
+        color: '#b7832f',
+        soft: '#f7edd4',
+        subtitle: 'Gelb: Waschbecken und Dusche',
+        tasks: [
+            { id: 'bad-1', order: 1, title: 'Dusche komplett reinigen', detail: 'Wände, Armaturen, Boden, Abfluss, Duschköpfe und Ablage' },
+            { id: 'bad-2', order: 2, title: 'Badspiegel putzen', detail: 'Auch oben drauf' },
+            { id: 'bad-3', order: 3, title: 'Waschbecken reinigen', detail: 'Inkl. Wasserhahn, Unterseite, Badschrank; Sieb wechseln' },
+            { id: 'bad-4', order: 4, title: 'Seife auffüllen', detail: 'Evtl. Zahnputzbecher auswechseln' },
+            { id: 'bad-5', order: 5, title: 'Badvorleger + Handtuch wechseln', detail: 'Frische Textilien bereitlegen' },
+            { id: 'bad-6', order: 6, title: 'Evtl. Flecken von der Wand entfernen', detail: 'Vor allem Spritzwasser' },
+            { id: 'bad-7', order: 7, title: 'Saugen und wischen', detail: 'Auch unter dem Badschrank' },
+            { id: 'bad-8', order: 8, title: 'Lichtschalter + Türklinken desinfizieren', detail: 'Türklinken innen und außen' }
+        ]
+    },
+    {
+        id: 'schlafzimmer',
+        name: 'Schlafzimmer',
+        icon: '🌙',
+        color: '#426f9b',
+        soft: '#e5edf5',
+        subtitle: 'Oberflächen, Spiegel und Boden',
+        tasks: [
+            { id: 'schlafzimmer-1', order: 1, title: 'Klamotten aufräumen', detail: 'Auch Sachen auf dem Schrank etc.' },
+            { id: 'schlafzimmer-2', order: 2, title: 'Fensterbrett, Rahmen + Heizung', detail: 'Alles abstauben bzw. abwischen' },
+            { id: 'schlafzimmer-3', order: 3, title: 'Schreibtisch, Kommode + Nachtschränke', detail: 'Auch den roten alten Schrank abstauben' },
+            { id: 'schlafzimmer-4', order: 4, title: 'Spiegel putzen', detail: 'Streifenfrei' },
+            { id: 'schlafzimmer-5', order: 5, title: 'Saugen und wischen', detail: 'Unter dem Bett, in Ritzen, hinter Nachtschränken und großem Schrank' }
+        ]
+    },
+    {
+        id: 'wohnzimmer',
+        name: 'Wohnzimmer',
+        icon: '🛋️',
+        color: '#6b6195',
+        soft: '#ece9f5',
+        subtitle: 'Oberflächen, Textilien und Holzboden',
+        tasks: [
+            { id: 'wohnzimmer-1', order: 1, title: 'Fensterbrett, Rahmen + Heizung', detail: 'Alles abstauben bzw. abwischen' },
+            { id: 'wohnzimmer-2', order: 2, title: 'Alle Oberflächen abstauben', detail: 'Z. B. TV-Schrank, Regal und Tische' },
+            { id: 'wohnzimmer-3', order: 3, title: 'Spiegel putzen', detail: 'Streifenfrei' },
+            { id: 'wohnzimmer-4', order: 4, title: 'Couch absaugen', detail: 'Ritzen und unter den Kissen mitnehmen' },
+            { id: 'wohnzimmer-5', order: 5, title: 'Evtl. Kissenbezüge / Decke waschen', detail: 'Bei Bedarf in die Wäsche geben' },
+            { id: 'wohnzimmer-6', order: 6, title: 'Fernsehtisch wischen', detail: 'Alle Fächer und Oberflächen' },
+            { id: 'wohnzimmer-7', order: 7, title: 'Saugen und wischen', detail: 'Achtung Holz; auch beim Kleiderständer' }
+        ]
+    }
+];
+
+const ALL_TASK_IDS = new Set(ROOMS.flatMap(function (room) {
+    return room.tasks.map(function (task) { return task.id; });
+}));
+
+const elements = {
+    appShell: document.getElementById('appShell'),
+    todayLabel: document.getElementById('todayLabel'),
+    progressRing: document.getElementById('progressRing'),
+    progressPercent: document.getElementById('progressPercent'),
+    progressHeadline: document.getElementById('progressHeadline'),
+    progressCount: document.getElementById('progressCount'),
+    syncStatus: document.getElementById('syncStatus'),
+    roomRail: document.getElementById('roomRail'),
+    roomPanel: document.getElementById('roomPanel'),
+    roomIcon: document.getElementById('roomIcon'),
+    roomTitle: document.getElementById('roomTitle'),
+    roomSubtitle: document.getElementById('roomSubtitle'),
+    roomScore: document.getElementById('roomScore'),
+    taskList: document.getElementById('taskList'),
+    lastUpdated: document.getElementById('lastUpdated'),
+    celebration: document.getElementById('celebration'),
+    resetModal: document.getElementById('resetModal'),
+    resetButton: document.getElementById('resetButton'),
+    cancelReset: document.getElementById('cancelReset'),
+    confirmReset: document.getElementById('confirmReset'),
+    closeCelebration: document.getElementById('closeCelebration'),
+    toast: document.getElementById('toast')
+};
+
+let currentPerson = PEOPLE.indexOf(localStorage.getItem(PERSON_STORAGE_KEY)) >= 0
+    ? localStorage.getItem(PERSON_STORAGE_KEY)
+    : 'Tim';
+let activeRoomId = ROOMS.some(function (room) { return room.id === localStorage.getItem(ROOM_STORAGE_KEY); })
+    ? localStorage.getItem(ROOM_STORAGE_KEY)
+    : ROOMS[0].id;
+let state = loadLocalState();
+let firestore = null;
+let docRef = null;
+let writeTimer = null;
+let toastTimer = null;
+let hasCelebrated = Object.keys(state.completed).length === ALL_TASK_IDS.size;
+
+function dayKey(date) {
+    const d = date || new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
 }
-function formatCurrentMonthLabel(date = new Date()) {
-    return capitalize(new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(date));
+
+function emptyState() {
+    return {
+        version: PLAN_VERSION,
+        day: dayKey(),
+        completed: {},
+        updatedAt: 0,
+        updatedBy: ''
+    };
 }
-function formatShortDate(date) {
-    return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' }).format(date);
+
+function sanitizeState(candidate) {
+    const clean = emptyState();
+    if (!candidate || candidate.version !== PLAN_VERSION || candidate.day !== dayKey()) return clean;
+
+    const sourceCompleted = candidate.completed && typeof candidate.completed === 'object'
+        ? candidate.completed
+        : {};
+
+    Object.keys(sourceCompleted).forEach(function (taskId) {
+        const entry = sourceCompleted[taskId];
+        if (!ALL_TASK_IDS.has(taskId) || !entry || PEOPLE.indexOf(entry.by) < 0) return;
+        clean.completed[taskId] = {
+            by: entry.by,
+            at: Number.isFinite(Number(entry.at)) ? Number(entry.at) : 0
+        };
+    });
+
+    clean.updatedAt = Number.isFinite(Number(candidate.updatedAt)) ? Number(candidate.updatedAt) : 0;
+    clean.updatedBy = PEOPLE.indexOf(candidate.updatedBy) >= 0 ? candidate.updatedBy : '';
+    return clean;
 }
-function formatLongDate(date) {
-    return capitalize(new Intl.DateTimeFormat('de-DE', {
+
+function loadLocalState() {
+    try {
+        return sanitizeState(JSON.parse(localStorage.getItem(STATE_STORAGE_KEY) || 'null'));
+    } catch (error) {
+        return emptyState();
+    }
+}
+
+function persistLocalState() {
+    localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(state));
+}
+
+function roomById(id) {
+    return ROOMS.find(function (room) { return room.id === id; }) || ROOMS[0];
+}
+
+function completedCountForRoom(room) {
+    return room.tasks.reduce(function (count, task) {
+        return count + (state.completed[task.id] ? 1 : 0);
+    }, 0);
+}
+
+function totalCompleted() {
+    return Object.keys(state.completed).filter(function (taskId) {
+        return ALL_TASK_IDS.has(taskId);
+    }).length;
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function formatToday() {
+    return new Intl.DateTimeFormat('de-DE', {
         weekday: 'long',
         day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(date));
-}
-function formatWeekdayDate(date) {
-    const weekday = new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date).replace('.', '');
-    return `${weekday} ${formatShortDate(date)}`;
-}
-function getCurrentDateContext() {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const year = today.getFullYear();
-    const monthIndex = today.getMonth();
-    const dayOfMonth = today.getDate();
-    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
-    const mondayOffset = (today.getDay() + 6) % 7; // Monday = 0
-    const weekStart = new Date(today);
-    weekStart.setDate(dayOfMonth - mondayOffset);
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    return {
-        today,
-        year,
-        monthIndex,
-        dayOfMonth,
-        daysInMonth,
-        weekStart,
-        weekEnd,
-        weekOfMonth: Math.floor((dayOfMonth - 1) / 7) + 1
-    };
-}
-function normalizeUserName(value) {
-    return (value || '').trim().replace(/\s+/g, ' ');
-}
-function resolveUserName(value) {
-    const normalized = normalizeUserName(value);
-    if (!normalized) return '';
-    const found = ALLOWED_USER_NAMES.find(name => name.toLowerCase() === normalized.toLowerCase());
-    return found || '';
-}
-function userKey(value) {
-    return normalizeUserName(value).toLowerCase();
-}
-function getUserColor(name) {
-    const key = userKey(name);
-    if (!key) return 'var(--accent)';
-    let hash = 0;
-    for (let i = 0; i < key.length; i++) hash += key.charCodeAt(i);
-    return USER_COLOR_PALETTE[hash % USER_COLOR_PALETTE.length];
-}
-function getCheckboxOwner(value) {
-    const owner = (typeof value === 'string') ? normalizeUserName(value) : '';
-    return owner === 'true' || owner === 'false' ? '' : owner;
-}
-function normalizeTaskNotes() {
-    if (!data || !Array.isArray(data.sections)) return;
-    data.sections.forEach(section => {
-        (section.categories || []).forEach(category => {
-            (category.tasks || []).forEach(task => {
-                if (!task || typeof task !== 'object') return;
-                task.notes = typeof task.notes === 'string' ? task.notes : '';
-            });
-        });
-    });
-}
-function normalizeMessages() {
-    if (!data) return;
-    if (!Array.isArray(data.messages)) data.messages = [];
-
-    const cleaned = [];
-    data.messages.forEach(msg => {
-        if (!msg || typeof msg !== 'object') return;
-        const text = normalizeUserName(msg.text || '');
-        const author = normalizeUserName(msg.author || '');
-        if (!text) return;
-        cleaned.push({
-            id: msg.id || sid(),
-            text: text.slice(0, 220),
-            author: author || 'Freund/in',
-            createdAt: Number.isFinite(Number(msg.createdAt)) ? Number(msg.createdAt) : Date.now()
-        });
-    });
-
-    data.messages = cleaned
-        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
-        .slice(-40);
-}
-function getSectionTileSpan(sec) {
-    const span = parseInt(sec && sec.layout && sec.layout.span, 10);
-    if (span >= 1 && span <= SECTION_MAX_SPAN) return span;
-    if (sec && sec.type === 'daily') return 2;
-    return 1;
-}
-function normalizeSectionLayout() {
-    if (!data || !Array.isArray(data.sections)) return;
-    data.sections.forEach(section => {
-        if (!section || typeof section !== 'object') return;
-        const span = parseInt(section.layout && section.layout.span, 10);
-        if (span < 1 || span > SECTION_MAX_SPAN) {
-            section.layout = section.layout || {};
-            section.layout.span = section.type === 'daily' ? 2 : 1;
-        }
-    });
-}
-function sectionSpanSelectMarkup(secId, span) {
-    const spanOptions = Array.from({ length: SECTION_MAX_SPAN }, (_, i) => i + 1)
-        .map(value => `<option value="${value}" ${span === value ? 'selected' : ''}>${value}/${SECTION_MAX_SPAN}</option>`)
-        .join('');
-    return `
-        <label style="font-size:.65rem;color:var(--text-light);display:flex;align-items:center;gap:4px;" title="Kachel-Breite">
-            <span>Größe:</span>
-            <select class="tile-size-select" data-action="setSectionSpan" data-section="${secId}">
-                ${spanOptions}
-            </select>
-        </label>
-    `;
-}
-function moveSectionByIndex(index, toIndex) {
-    if (index === -1 || toIndex < 0 || toIndex >= data.sections.length) return;
-    const section = data.sections.splice(index, 1)[0];
-    data.sections.splice(toIndex, 0, section);
+        month: 'long'
+    }).format(new Date());
 }
 
-const DESKTOP_MASONRY_BREAKPOINT = 801;
-
-function getPlanBodyGutterPx() {
-    const body = document.getElementById('planBody');
-    if (!body) return 16;
-    const styles = getComputedStyle(body);
-    const rawGap = (styles.gap || styles.gridGap || styles.columnGap || '').split(' ')[0];
-    const px = parseFloat(rawGap);
-    return Number.isFinite(px) ? px : 16;
+function formatTime(timestamp) {
+    if (!timestamp) return '';
+    return new Intl.DateTimeFormat('de-DE', {
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(new Date(timestamp));
 }
 
-function shouldUseMasonryLayout() {
-    return window.innerWidth >= DESKTOP_MASONRY_BREAKPOINT;
-}
-
-function getSectionById(id) {
-    if (!data || !Array.isArray(data.sections)) return null;
-    return data.sections.find(s => s.id === id) || null;
-}
-
-function applyMasonryLayout() {
-    const body = document.getElementById('planBody');
-    if (!body) return;
-
-    const sections = [...body.querySelectorAll('.section[data-section]')];
-    const useMasonry = shouldUseMasonryLayout();
-    body.classList.toggle('masonry-mode', useMasonry);
-
-    if (sections.length === 0) {
-        body.style.height = '';
-        return;
-    }
-
-    if (!useMasonry) {
-        sections.forEach(section => {
-            section.style.position = '';
-            section.style.top = '';
-            section.style.left = '';
-            section.style.width = '';
-        });
-        body.style.height = '';
-        return;
-    }
-
-    const bodyWidth = body.clientWidth;
-    const gutter = getPlanBodyGutterPx();
-    const spanCount = SECTION_MAX_SPAN;
-    const columnWidth = (bodyWidth - ((spanCount - 1) * gutter)) / spanCount;
-    if (!Number.isFinite(columnWidth) || columnWidth <= 0) return;
-
-    const columnHeights = Array.from({ length: spanCount }, () => 0);
-    let maxHeight = 0;
-
-    sections.forEach(section => {
-        const sec = getSectionById(section.dataset.section);
-        const span = getSectionTileSpan(sec);
-        const effectiveSpan = Math.min(Math.max(1, span), spanCount);
-        const stepWidth = columnWidth + gutter;
-
-        let bestStartCol = 0;
-        let bestTop = Infinity;
-        for (let startCol = 0; startCol <= spanCount - effectiveSpan; startCol++) {
-            const endCol = startCol + effectiveSpan;
-            const candidateTop = Math.max(...columnHeights.slice(startCol, endCol));
-            if (candidateTop < bestTop) {
-                bestTop = candidateTop;
-                bestStartCol = startCol;
-            }
-        }
-
-        const targetWidth = effectiveSpan === spanCount
-            ? `${bodyWidth}px`
-            : `${(effectiveSpan * columnWidth) + ((effectiveSpan - 1) * gutter)}px`;
-
-        section.style.position = 'absolute';
-        section.style.left = `${bestStartCol * stepWidth}px`;
-        section.style.top = `${bestTop}px`;
-        section.style.width = targetWidth;
-
-        const height = section.getBoundingClientRect().height;
-        for (let col = bestStartCol; col < bestStartCol + effectiveSpan; col++) {
-            columnHeights[col] = bestTop + height + gutter;
-        }
-        if (bestTop + height > maxHeight) maxHeight = bestTop + height;
-    });
-
-    body.style.height = `${maxHeight}px`;
-}
-
-// ════════════════════════════════════════════════════
-//  DEFAULT DATA
-// ════════════════════════════════════════════════════
-function createDefaultData() {
-    return {
-        month: '',
-        messages: [],
-        sections: [
-            {
-                id: sid(), type: 'daily', title: 'Täglich', days: 31,
-                layout: { span: 2 },
-                columns: [
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Küche aufräumen' },
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Tisch abwischen' },
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Spülmaschine ein-/ausräumen' },
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Müll raustragen' },
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Staubsaugen' },
-                    { id: sid(), group: 'Küche & Essbereich', name: 'Spülbecken reinigen' },
-                    { id: sid(), group: 'Schlafzimmer', name: 'Bett machen' },
-                    { id: sid(), group: 'Schlafzimmer', name: 'Lüften' },
-                ],
-                checked: {}
-            },
-            {
-                id: sid(), type: 'weekly', title: 'Wöchentlich', boxes: 4,
-                layout: { span: 1 },
-                categories: [
-                    { id: sid(), name: 'Allgemein', tasks: [
-                        { id: sid(), name: 'Staub wischen' },
-                        { id: sid(), name: 'Staubsaugen' },
-                        { id: sid(), name: 'Böden reinigen' },
-                        { id: sid(), name: 'Wäsche waschen' },
-                        { id: sid(), name: 'Bügeln' },
-                        { id: sid(), name: 'Türklinken abwischen' },
-                        { id: sid(), name: 'Blumen giessen' },
-                    ]},
-                    { id: sid(), name: 'Küche & Essbereich', tasks: [
-                        { id: sid(), name: 'Kühlschrank aussortieren' },
-                        { id: sid(), name: 'Mülleimer reinigen' },
-                        { id: sid(), name: 'Fliesen reinigen' },
-                    ]},
-                    { id: sid(), name: 'Bad & WC', tasks: [
-                        { id: sid(), name: 'Toilette reinigen' },
-                        { id: sid(), name: 'Waschbecken reinigen' },
-                        { id: sid(), name: 'Spiegel putzen' },
-                        { id: sid(), name: 'Dusche reinigen' },
-                        { id: sid(), name: 'Badewanne reinigen' },
-                        { id: sid(), name: 'Müll raustragen' },
-                        { id: sid(), name: 'Handtücher waschen' },
-                    ]}
-                ], checked: {}
-            },
-            {
-                id: sid(), type: 'weekly', title: '2-Wöchentlich', boxes: 2,
-                layout: { span: 1 },
-                categories: [
-                    { id: sid(), name: 'Schlafzimmer', tasks: [
-                        { id: sid(), name: 'Bettwäsche wechseln' },
-                    ]}
-                ], checked: {}
-            },
-            {
-                id: sid(), type: 'weekly', title: 'Monatlich', boxes: 1,
-                layout: { span: 1 },
-                categories: [
-                    { id: sid(), name: 'Allgemein', tasks: [
-                        { id: sid(), name: 'Heizkörper reinigen' },
-                        { id: sid(), name: 'Schränke aufräumen' },
-                        { id: sid(), name: 'Möbel und Polster säubern' },
-                        { id: sid(), name: 'Aussortieren & Ausmisten' },
-                        { id: sid(), name: 'Dekorationen abstauben' },
-                        { id: sid(), name: 'Blumen düngen' },
-                    ]},
-                    { id: sid(), name: 'Küche & Essbereich', tasks: [
-                        { id: sid(), name: 'Küchengeräte reinigen' },
-                        { id: sid(), name: 'Wasserkocher entkalken' },
-                        { id: sid(), name: 'Kaffeemaschine entkalken' },
-                        { id: sid(), name: 'Kühlschrank putzen' },
-                    ]},
-                    { id: sid(), name: 'Bad & WC', tasks: [
-                        { id: sid(), name: 'Badfliesen reinigen' },
-                    ]}
-                ], checked: {}
-            }
-        ]
-    };
-}
-
-// ════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════
-let data = null;
-let currentUserName = '';
-let db = null;
-let docRef = null;
-let unsubscribe = null;
-let saveTimeout = null;
-let firestoreReady = false;
-let suppressNextSnapshot = false;
-let draggingSectionId = null;
-let currentViewMode = 'focus';
-
-function initViewMode() {
-    const saved = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-    currentViewMode = saved === 'planner' ? 'planner' : 'focus';
-}
-function applyViewMode() {
-    const app = document.getElementById('appContainer');
-    const toggleBtn = document.getElementById('toggleViewModeBtn');
-    if (!app) return;
-    const focusMode = currentViewMode === 'focus';
-    app.classList.toggle('is-focus-mode', focusMode);
-    if (toggleBtn) {
-        toggleBtn.textContent = focusMode ? 'Vollansicht' : 'Fokus Woche';
-        toggleBtn.classList.toggle('is-active', focusMode);
-    }
-}
-function setViewMode(mode, persist = true) {
-    if (mode !== 'focus' && mode !== 'planner') return;
-    currentViewMode = mode;
-    if (persist) localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
-    applyViewMode();
-    if (currentViewMode === 'planner') scheduleMasonryRelayout();
-}
-function toggleViewMode() {
-    setViewMode(currentViewMode === 'focus' ? 'planner' : 'focus');
-}
-
-function isOwnerCurrentUser(owner) {
-    return userKey(owner) === userKey(currentUserName);
-}
-function normalizeSectionChecks(section) {
-    if (!section.checked || typeof section.checked !== 'object' || Array.isArray(section.checked)) {
-        section.checked = {};
-        return;
-    }
-    Object.keys(section.checked).forEach((key) => {
-        const owner = getCheckboxOwner(section.checked[key]);
-        if (owner) {
-            section.checked[key] = owner;
-        } else if (section.checked[key] === true) {
-            section.checked[key] = 'Anonym';
-        } else {
-            delete section.checked[key];
-        }
-    });
-}
-function normalizeAllChecks() {
-    if (!data || !Array.isArray(data.sections)) return;
-    data.sections.forEach(normalizeSectionChecks);
-    normalizeMessages();
-    normalizeSectionLayout();
-    normalizeTaskNotes();
-}
-function renderCheckbox(sectionId, key) {
-    const sec = data.sections.find(s => s.id === sectionId);
-    if (!sec || !sec.checked) return `<div class="cb" data-section="${sectionId}" data-key="${key}"></div>`;
-    const owner = getCheckboxOwner(sec.checked[key]);
-    if (!owner) return `<div class="cb" data-section="${sectionId}" data-key="${key}"></div>`;
-    const extraClass = isOwnerCurrentUser(owner) ? ' mine' : ' other';
-    const color = getUserColor(owner);
-    const title = esc(`Erledigt von ${owner}`);
-    return `<div class="cb checked${extraClass}" data-section="${sectionId}" data-key="${key}" title="${title}" style="--cb-color:${color};"></div>`;
-}
-function updateUserBadge() {
-    const badge = document.getElementById('userBadge');
-    if (!badge) return;
-    badge.textContent = currentUserName ? `👤 ${currentUserName}` : '👤 Name wählen';
-}
-function setCurrentUserName(name) {
-    const normalized = resolveUserName(name);
-    if (!normalized) {
-        currentUserName = '';
-        localStorage.removeItem(USER_NAME_STORAGE_KEY);
-        updateUserBadge();
-        return false;
-    }
-    currentUserName = normalized;
-    localStorage.setItem(USER_NAME_STORAGE_KEY, currentUserName);
-    updateUserBadge();
-    return true;
-}
-function openUserNameModal() {
-    const select = document.getElementById('userNameSelect');
-    if (!select) return;
-    select.value = resolveUserName(currentUserName) || ALLOWED_USER_NAMES[0];
-    openModal('userModal');
-    setTimeout(() => select.focus(), 120);
-}
-function saveUserNameFromModal() {
-    const select = document.getElementById('userNameSelect');
-    if (!select) return;
-    const name = resolveUserName(select.value);
-    if (!name) {
-        select.focus();
-        return;
-    }
-    setCurrentUserName(name);
-    closeModal('userModal');
-    render();
-}
-function initCurrentUser() {
-    const saved = localStorage.getItem(USER_NAME_STORAGE_KEY);
-    if (!setCurrentUserName(saved)) openUserNameModal();
-}
-
-// ════════════════════════════════════════════════════
-//  FIREBASE
-// ════════════════════════════════════════════════════
-function initApp() {
-    initViewMode();
-    initCurrentUser();
-    // The firebaseConfig and documentId are now expected to be in firebase-config.js
-    if (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) {
-        try {
-            initFirestore(firebaseConfig, documentId || 'default-putzplan');
-        } catch (e) {
-            console.error('Firebase init failed:', e);
-            startLocal();
-        }
-    } else {
-        console.warn("Firebase config not found. Running in local mode.");
-        startLocal();
-    }
-}
-
-function startLocal() {
-    try {
-        const saved = localStorage.getItem('putzplan');
-        data = saved ? JSON.parse(saved) : createDefaultData();
-        if (!data || !Array.isArray(data.sections)) data = createDefaultData();
-        normalizeAllChecks();
-    } catch { data = createDefaultData(); }
-    document.getElementById('appContainer').style.display = '';
-    updateSyncStatus('local');
-    render();
-}
-
-function initFirestore(config, docId) {
-    try {
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        db = firebase.firestore();
-        docRef = db.collection('putzplan').doc(docId);
-        updateSyncStatus('connecting');
-        document.getElementById('appContainer').style.display = '';
-
-        unsubscribe = docRef.onSnapshot(
-            (doc) => {
-                firestoreReady = true;
-                if (suppressNextSnapshot) { suppressNextSnapshot = false; return; }
-                if (doc.exists) {
-                    data = doc.data();
-                    if (!data || !Array.isArray(data.sections)) data = createDefaultData();
-                    normalizeAllChecks();
-                    localStorage.setItem('putzplan', JSON.stringify(data));
-                    updateSyncStatus('connected');
-                    render();
-                } else {
-                    const local = localStorage.getItem('putzplan');
-                    data = local ? JSON.parse(local) : createDefaultData();
-                    if (!data || !Array.isArray(data.sections)) data = createDefaultData();
-                    normalizeAllChecks();
-                    docRef.set(data);
-                    updateSyncStatus('connected');
-                    render();
-                }
-            },
-            (error) => {
-                console.error('Firestore error:', error);
-                updateSyncStatus('error');
-                if (!data) startLocal();
-            }
-        );
-    } catch (e) {
-        console.error('Firebase init error:', e);
-        startLocal();
-    }
-}
-
-function updateSyncStatus(status) {
-    const el = document.getElementById('syncStatus');
-    if (!el) return;
-    el.className = 'toolbar-status';
-    switch (status) {
-        case 'local': el.textContent = '💾 Nur lokal'; break;
-        case 'connecting': el.textContent = '🔄 Verbinde...'; break;
-        case 'connected': el.textContent = '🟢 Synchronisiert'; el.classList.add('connected'); break;
-        case 'saving': el.textContent = '🔄 Speichert...'; break;
-        case 'error': el.textContent = '🔴 Fehler'; el.classList.add('error'); break;
-    }
-}
-
-// ════════════════════════════════════════════════════
-//  SAVE (debounced)
-// ════════════════════════════════════════════════════
-function save() {
-    localStorage.setItem('putzplan', JSON.stringify(data));
-    if (firestoreReady && docRef) {
-        if (saveTimeout) clearTimeout(saveTimeout);
-        updateSyncStatus('saving');
-        saveTimeout = setTimeout(() => {
-            suppressNextSnapshot = true;
-            docRef.set(JSON.parse(JSON.stringify(data))).then(() => {
-                updateSyncStatus('connected');
-            }).catch(err => {
-                console.error('Save error:', err);
-                suppressNextSnapshot = false;
-                updateSyncStatus('error');
-            });
-        }, 800);
-    }
-}
-
-// ════════════════════════════════════════════════════
-//  RENDER
-// ════════════════════════════════════════════════════
 function render() {
-    if (!data) return;
-    const dateContext = getCurrentDateContext();
-    const monthInput = document.getElementById('monthInput');
-    if (monthInput) {
-        monthInput.placeholder = `z.B. ${formatCurrentMonthLabel(dateContext.today)}`;
-        monthInput.value = data.month || formatCurrentMonthLabel(dateContext.today);
-    }
-    renderSloganTicker();
-    if (!Array.isArray(data.sections)) data.sections = [];
-    normalizeAllChecks();
-    const body = document.getElementById('planBody');
-    if (!body) return;
-    body.innerHTML = '';
-
-    let sections = '';
-    data.sections.forEach(sec => {
-        if (sec.type === 'daily') sections += renderDailySection(sec);
-        else sections += renderWeeklySection(sec);
+    const previousScroll = elements.taskList.scrollTop;
+    renderPeople();
+    renderProgress();
+    renderRoomRail();
+    renderActiveRoom();
+    window.requestAnimationFrame(function () {
+        elements.taskList.scrollTop = previousScroll;
     });
-    body.innerHTML = sections;
-    renderFocusView(dateContext);
-    bindEvents();
-    applyViewMode();
-    if (currentViewMode === 'planner') applyMasonryLayout();
 }
 
-function getSloganTickerText() {
-    if (!Array.isArray(data.messages) || data.messages.length === 0) {
-        return '';
-    }
-
-    const lines = data.messages.map(msg => `${msg.author || 'Freund/in'}: ${msg.text || ''}`);
-    return lines.join('   ···   ');
-}
-
-function renderSloganTicker() {
-    const track = document.getElementById('sloganTrack');
-    if (!track) return;
-
-    const text = getSloganTickerText();
-    if (!text) {
-        track.textContent = '';
-        track.style.animation = 'none';
-        return;
-    }
-
-    const repeated = `${text}   •••   ${text}`;
-    const safeText = esc(repeated);
-
-    track.innerHTML = `<span class="slogan-segment">${safeText}</span>`;
-    track.style.animation = '';
-    const duration = Math.max(16, Math.min(45, Math.round(repeated.length / 5)));
-    track.style.setProperty('--slogan-duration', `${duration}s`);
-}
-
-function getSectionIntervalIndex(boxCount, context) {
-    const total = Math.max(1, parseInt(boxCount, 10) || 1);
-    if (total === 1) return { index: 0, total };
-    const progress = (context.dayOfMonth - 1) / context.daysInMonth;
-    return {
-        index: Math.min(total - 1, Math.floor(progress * total)),
-        total
-    };
-}
-function getIntervalDayRange(totalIntervals, intervalIndex, daysInMonth) {
-    const total = Math.max(1, totalIntervals);
-    const index = Math.min(Math.max(0, intervalIndex), total - 1);
-    const startDay = Math.floor((index * daysInMonth) / total) + 1;
-    const endDay = Math.max(startDay, Math.floor(((index + 1) * daysInMonth) / total));
-    return { startDay, endDay };
-}
-function collectRecurringFocusCards(context) {
-    const cards = [];
-    data.sections.forEach(sec => {
-        if (!sec || sec.type === 'daily') return;
-        if (!Array.isArray(sec.categories)) return;
-        if (!sec.checked || typeof sec.checked !== 'object') sec.checked = {};
-
-        const interval = getSectionIntervalIndex(sec.boxes, context);
-        const intervalRange = getIntervalDayRange(interval.total, interval.index, context.daysInMonth);
-        const intervalDeadlineDate = new Date(context.year, context.monthIndex, intervalRange.endDay, 23, 59, 59, 999);
-        const intervalDeadlineTs = intervalDeadlineDate.getTime();
-        const items = [];
-        sec.categories.forEach(cat => {
-            (cat.tasks || []).forEach(task => {
-                const key = `${task.id}_${interval.index}`;
-                if (getCheckboxOwner(sec.checked[key])) return;
-                items.push({
-                    sectionId: sec.id,
-                    key,
-                    title: task.name || 'Aufgabe',
-                    meta: `${cat.name || 'Allgemein'} · Faellig bis ${formatShortDate(intervalDeadlineDate)}`,
-                    deadlineTs: intervalDeadlineTs
-                });
-            });
-        });
-
-        items.sort((a, b) => {
-            if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
-            return String(a.title).localeCompare(String(b.title), 'de');
-        });
-
-        if (!items.length) return;
-        cards.push({
-            title: sec.title || 'Bereich',
-            subtitle: interval.total > 1
-                ? `Intervall ${interval.index + 1}/${interval.total} · bis ${formatShortDate(intervalDeadlineDate)}`
-                : `Bis ${formatShortDate(intervalDeadlineDate)}`,
-            deadlineTs: items[0].deadlineTs,
-            items: items.map(({ sectionId, key, title, meta, deadlineTs }) => ({ sectionId, key, title, meta, deadlineTs }))
-        });
+function renderPeople() {
+    document.querySelectorAll('.person-button').forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.dataset.person === currentPerson));
     });
-    return cards;
 }
-function getWeekDaysInCurrentMonth(context, maxDays) {
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(context.weekStart);
-        date.setDate(context.weekStart.getDate() + i);
-        if (date.getFullYear() !== context.year || date.getMonth() !== context.monthIndex) continue;
-        const day = date.getDate();
-        if (day < 1 || day > maxDays) continue;
-        days.push({
-            day,
-            label: formatWeekdayDate(date),
-            isToday: day === context.dayOfMonth,
-            deadlineTs: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime()
-        });
+
+function renderProgress() {
+    const done = totalCompleted();
+    const total = ALL_TASK_IDS.size;
+    const percent = Math.round((done / total) * 100);
+    elements.progressRing.style.setProperty('--progress', (percent * 3.6) + 'deg');
+    elements.progressPercent.textContent = percent + '%';
+    elements.progressCount.textContent = done + ' von ' + total + ' erledigt';
+
+    let headline = 'Los geht’s';
+    if (percent === 100) headline = 'Alles blitzblank';
+    else if (percent >= 75) headline = 'Fast geschafft';
+    else if (percent >= 40) headline = 'Läuft bei euch';
+    else if (percent > 0) headline = 'Guter Anfang';
+    elements.progressHeadline.textContent = headline;
+}
+
+function renderRoomRail() {
+    elements.roomRail.innerHTML = ROOMS.map(function (room) {
+        const done = completedCountForRoom(room);
+        const percent = Math.round((done / room.tasks.length) * 100);
+        const isActive = room.id === activeRoomId;
+        const isComplete = done === room.tasks.length;
+        return '<button class="room-button' + (isComplete ? ' is-complete' : '') + '"' +
+            ' type="button" data-room-id="' + room.id + '"' +
+            ' aria-current="' + (isActive ? 'page' : 'false') + '"' +
+            ' style="--room-button-color:' + room.color + ';--room-button-soft:' + room.soft + ';--room-progress:' + percent + '%">' +
+                '<span class="room-button-icon" aria-hidden="true">' + room.icon + '</span>' +
+                '<span class="room-button-copy">' +
+                    '<span class="room-button-name">' + escapeHtml(room.name) + '</span>' +
+                    '<span class="room-button-meta">' + (isComplete ? 'Geschafft' : done + ' von ' + room.tasks.length) + '</span>' +
+                '</span>' +
+                '<span class="room-button-count" aria-label="' + done + ' von ' + room.tasks.length + ' erledigt">' +
+                    (isComplete ? '✓' : done + '/' + room.tasks.length) +
+                '</span>' +
+            '</button>';
+    }).join('');
+}
+
+function renderActiveRoom() {
+    const room = roomById(activeRoomId);
+    const done = completedCountForRoom(room);
+    elements.roomPanel.style.setProperty('--room', room.color);
+    elements.roomPanel.style.setProperty('--room-soft', room.soft);
+    elements.roomIcon.textContent = room.icon;
+    elements.roomTitle.textContent = room.name;
+    elements.roomSubtitle.textContent = room.subtitle;
+    elements.roomScore.textContent = done === room.tasks.length
+        ? '✓ Raum geschafft'
+        : done + ' / ' + room.tasks.length + ' erledigt';
+
+    elements.taskList.innerHTML = room.tasks.map(function (task) {
+        const completion = state.completed[task.id];
+        const owner = completion ? completion.by : '';
+        const ownerColor = owner ? PERSON_COLORS[owner] : PERSON_COLORS[currentPerson];
+        const label = completion
+            ? task.title + ', erledigt von ' + owner + '. Antippen zum Rückgängigmachen.'
+            : task.title + '. Antippen zum Erledigen.';
+        return '<button class="task-button" type="button" data-task-id="' + task.id + '"' +
+            ' aria-pressed="' + String(Boolean(completion)) + '"' +
+            ' aria-label="' + escapeHtml(label) + '"' +
+            ' style="--owner-color:' + ownerColor + '">' +
+                '<span class="task-order" aria-hidden="true">' + task.order + '</span>' +
+                '<span class="task-copy">' +
+                    '<span class="task-title">' + escapeHtml(task.title) + '</span>' +
+                    '<span class="task-detail">' + escapeHtml(task.detail) + '</span>' +
+                '</span>' +
+                '<span class="task-owner">' + escapeHtml(owner) + '</span>' +
+                '<span class="task-check" aria-hidden="true">' +
+                    '<svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg>' +
+                '</span>' +
+            '</button>';
+    }).join('');
+
+    if (state.updatedAt) {
+        elements.lastUpdated.textContent = 'Zuletzt ' + formatTime(state.updatedAt) +
+            (state.updatedBy ? ' · ' + state.updatedBy : '');
+    } else {
+        elements.lastUpdated.textContent = 'Noch keine Änderungen';
     }
-    return days;
-}
-function collectDailyFocusCards(context) {
-    const cards = [];
-    data.sections.forEach(sec => {
-        if (!sec || sec.type !== 'daily') return;
-        if (!Array.isArray(sec.columns) || sec.columns.length === 0) return;
-        if (!sec.checked || typeof sec.checked !== 'object') sec.checked = {};
-
-        const maxDays = Math.max(1, Math.min(31, parseInt(sec.days, 10) || 31));
-        const weekDays = getWeekDaysInCurrentMonth(context, maxDays);
-        if (!weekDays.length) return;
-
-        const items = [];
-        (sec.columns || []).forEach(col => {
-            const openDays = weekDays.filter(dayInfo => {
-                const key = `${col.id}_${dayInfo.day}`;
-                return !getCheckboxOwner(sec.checked[key]);
-            });
-            if (!openDays.length) return;
-
-            const targetDay = openDays.find(dayInfo => dayInfo.isToday) || openDays[0];
-            const key = `${col.id}_${targetDay.day}`;
-            const targetLabel = `${targetDay.label}${targetDay.isToday ? ' (Heute)' : ''}`;
-
-            items.push({
-                sectionId: sec.id,
-                key,
-                title: col.name || 'Aufgabe',
-                meta: `${col.group || 'Allgemein'} · Faellig ${targetLabel}`,
-                deadlineTs: targetDay.deadlineTs
-            });
-        });
-
-        items.sort((a, b) => {
-            if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
-            return String(a.title).localeCompare(String(b.title), 'de');
-        });
-
-        if (!items.length) return;
-        cards.push({
-            title: sec.title || 'Täglich',
-            subtitle: `${formatShortDate(context.weekStart)} - ${formatShortDate(context.weekEnd)}`,
-            deadlineTs: items[0].deadlineTs,
-            items: items.map(({ sectionId, key, title, meta, deadlineTs }) => ({ sectionId, key, title, meta, deadlineTs }))
-        });
-    });
-    return cards;
-}
-function renderFocusCard(card) {
-    const tasks = card.items.map(item => `
-        <div class="focus-task-row">
-            ${renderCheckbox(item.sectionId, item.key)}
-            <div class="focus-task-copy">
-                <div class="focus-task-name">${esc(item.title)}</div>
-                <div class="focus-task-meta">${esc(item.meta)}</div>
-            </div>
-        </div>`).join('');
-
-    return `
-        <article class="focus-card">
-            <div class="focus-card-header">
-                <div>
-                    <div class="focus-card-title">${esc(card.title)}</div>
-                    <div class="focus-card-subtitle">${esc(card.subtitle)}</div>
-                </div>
-                <span class="focus-card-count">${card.items.length}</span>
-            </div>
-            <div class="focus-task-list">${tasks}</div>
-        </article>
-    `;
-}
-function renderFocusView(context = getCurrentDateContext()) {
-    const focus = document.getElementById('focusView');
-    if (!focus || !data || !Array.isArray(data.sections)) return;
-
-    const recurringCards = collectRecurringFocusCards(context);
-    const dailyCards = collectDailyFocusCards(context);
-    const cards = [...recurringCards, ...dailyCards].sort((a, b) => {
-        if (a.deadlineTs !== b.deadlineTs) return a.deadlineTs - b.deadlineTs;
-        return String(a.title).localeCompare(String(b.title), 'de');
-    });
-    const totalOpen = cards.reduce((sum, card) => sum + card.items.length, 0);
-    const weekRange = `${formatShortDate(context.weekStart)} - ${formatShortDate(context.weekEnd)}`;
-    const cardMarkup = cards.map(renderFocusCard).join('');
-
-    focus.innerHTML = `
-        <div class="focus-hero">
-            <div>
-                <span class="focus-kicker">Fokus Woche ${context.weekOfMonth}</span>
-                <div class="focus-headline">${esc(formatLongDate(context.today))}</div>
-                <div class="focus-subline">${esc(weekRange)} · ${totalOpen} offene Aufgaben</div>
-            </div>
-            <div class="focus-summary">${totalOpen}</div>
-        </div>
-        <div class="focus-grid">
-            ${cardMarkup || '<article class="focus-empty">Alles erledigt fuer diese Woche. Stark.</article>'}
-        </div>
-    `;
 }
 
-function sendSloganMessage() {
-    const input = document.getElementById('sloganInput');
-    if (!input) return;
-    if (!currentUserName) {
-        openUserNameModal();
-        return;
-    }
+function selectPerson(person) {
+    if (PEOPLE.indexOf(person) < 0) return;
+    currentPerson = person;
+    localStorage.setItem(PERSON_STORAGE_KEY, currentPerson);
+    renderPeople();
+    showToast(currentPerson + ' putzt jetzt');
+}
 
-    const message = normalizeUserName(input.value);
-    if (!message) {
-        input.focus();
-        return;
-    }
-
-    data.messages = Array.isArray(data.messages) ? data.messages : [];
-    data.messages.push({
-        id: sid(),
-        author: currentUserName,
-        text: message.slice(0, 220),
-        createdAt: Date.now()
-    });
-    normalizeMessages();
-    input.value = '';
+function selectRoom(roomId) {
+    if (!ROOMS.some(function (room) { return room.id === roomId; })) return;
+    activeRoomId = roomId;
+    localStorage.setItem(ROOM_STORAGE_KEY, roomId);
+    elements.taskList.scrollTop = 0;
     render();
-    save();
 }
 
-function clearSlogans() {
-    showConfirmDialog('Slogans löschen?', 'Alle Nachrichten im Slogan-Bereich werden entfernt.', () => {
-        data.messages = [];
-        render();
-        save();
-    });
+function toggleTask(taskId) {
+    if (!ALL_TASK_IDS.has(taskId)) return;
+    const wasAllComplete = totalCompleted() === ALL_TASK_IDS.size;
+    if (state.completed[taskId]) {
+        delete state.completed[taskId];
+    } else {
+        state.completed[taskId] = { by: currentPerson, at: Date.now() };
+    }
+    state.updatedAt = Date.now();
+    state.updatedBy = currentPerson;
+    persistLocalState();
+    render();
+    scheduleRemoteWrite();
+
+    const nowAllComplete = totalCompleted() === ALL_TASK_IDS.size;
+    if (nowAllComplete && !wasAllComplete && !hasCelebrated) {
+        hasCelebrated = true;
+        window.setTimeout(function () { elements.celebration.hidden = false; }, 280);
+    }
+    if (!nowAllComplete) hasCelebrated = false;
 }
 
-// ── Weekly / Biweekly / Monthly ──
-function renderWeeklySection(sec) {
-    if (!sec.checked) sec.checked = {};
-    const span = getSectionTileSpan(sec);
-    let cats = '';
-    (sec.categories || []).forEach(cat => {
-        let tasks = '';
-        (cat.tasks || []).forEach(t => {
-            const notes = esc(t.notes || '');
-            const hasTaskNotes = (t.notes || '').trim().length > 0;
-            let boxes = '';
-            for (let b = 0; b < sec.boxes; b++) {
-                const key = `${t.id}_${b}`;
-                boxes += renderCheckbox(sec.id, key);
-            }
-            tasks += `
-                <div class="task-row">
-                    <input class="task-label-input" value="${esc(t.name)}" 
-                           data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}" data-field="taskname">
-                    <div class="checkboxes">${boxes}</div>
-                    <div class="row-actions no-print">
-                        <button class="icon-btn ${hasTaskNotes ? 'note-active' : ''}" title="Aufgaben-Notiz"
-                                data-action="toggleTaskNotes" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}">📝</button>
-                        <button class="icon-btn danger" title="Aufgabe entfernen" 
-                                data-action="removeTask" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}">✕</button>
-                    </div>
-                </div>
-                <div class="task-notes-panel ${hasTaskNotes ? 'open' : ''}" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}">
-                    <textarea rows="1" class="task-notes-input" data-section="${sec.id}" data-cat="${cat.id}" data-task="${t.id}" data-field="tasknotes" placeholder="Kurze Notiz...">${notes}</textarea>
-                </div>`;
-        });
-        cats += `
-            <div class="category">
-                <div class="category-header">
-                    <input class="category-name-input" value="${esc(cat.name)}"
-                           data-section="${sec.id}" data-cat="${cat.id}" data-field="catname">
-                    <button class="icon-btn danger no-print" title="Kategorie entfernen"
-                            data-action="removeCat" data-section="${sec.id}" data-cat="${cat.id}" style="flex-shrink:0;">✕</button>
-                </div>
-                ${tasks}
-                <button class="add-btn no-print" data-action="addTask" data-section="${sec.id}" data-cat="${cat.id}">+ Aufgabe</button>
-            </div>`;
-    });
-
-    return `
-        <div class="section tile-span-${span}" data-section="${sec.id}">
-            <div class="section-header">
-                <input class="section-title-input" value="${esc(sec.title)}"
-                       data-section="${sec.id}" data-field="sectiontitle">
-                <div class="section-actions no-print">
-                    <label style="font-size:.7rem;color:var(--text-light);display:flex;align-items:center;gap:4px;" title="Checkboxen pro Aufgabe">
-                        ☑
-                        <input type="number" value="${sec.boxes}" min="1" max="31"
-                                data-section="${sec.id}" data-field="boxes"
-                               style="width:40px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;font-family:inherit;outline:none;text-align:center;">
-                    </label>
-                    ${sectionSpanSelectMarkup(sec.id, span)}
-                    <button class="icon-btn drag-handle" title="Bereich verschieben" type="button" data-section="${sec.id}">⠿</button>
-                    <button class="icon-btn" title="Eine Zeile höher" type="button"
-                            data-action="moveSectionUp" data-section="${sec.id}">▲</button>
-                    <button class="icon-btn" title="Eine Zeile nach unten" type="button"
-                            data-action="moveSectionDown" data-section="${sec.id}">▼</button>
-                    <button class="icon-btn" title="Nach ganz oben" type="button"
-                            data-action="moveSectionTop" data-section="${sec.id}">⤒</button>
-                    <button class="icon-btn" title="Nach ganz unten" type="button"
-                            data-action="moveSectionBottom" data-section="${sec.id}">⤓</button>
-                    <button class="icon-btn" title="Kategorie hinzufügen"
-                            data-action="addCat" data-section="${sec.id}">＋</button>
-                    <button class="icon-btn danger" title="Bereich löschen"
-                            data-action="removeSection" data-section="${sec.id}">🗑</button>
-                </div>
-            </div>
-            ${cats}
-            <button class="add-btn no-print" data-action="addCat" data-section="${sec.id}">+ Kategorie</button>
-        </div>`;
+function resetToday() {
+    state = emptyState();
+    state.updatedAt = Date.now();
+    state.updatedBy = currentPerson;
+    activeRoomId = ROOMS[0].id;
+    hasCelebrated = false;
+    localStorage.setItem(ROOM_STORAGE_KEY, activeRoomId);
+    persistLocalState();
+    elements.resetModal.hidden = true;
+    elements.taskList.scrollTop = 0;
+    render();
+    scheduleRemoteWrite(true);
+    showToast('Bereit für einen frischen Putztag');
 }
 
-// ── Daily table ──
-function renderDailySection(sec) {
-    if (!sec.checked) sec.checked = {};
-    const span = getSectionTileSpan(sec);
-    const dateContext = getCurrentDateContext();
-    const groups = [];
-    const groupMap = {};
-    (sec.columns || []).forEach(col => {
-        if (!groupMap[col.group]) {
-            groupMap[col.group] = { name: col.group, cols: [] };
-            groups.push(groupMap[col.group]);
-        }
-        groupMap[col.group].cols.push(col);
-    });
+function setSyncStatus(text, status) {
+    elements.syncStatus.textContent = text;
+    elements.syncStatus.dataset.state = status || '';
+}
 
-    let groupHeaderCells = '<th style="border-bottom:none;"></th>';
-    groups.forEach(g => {
-        groupHeaderCells += `<th colspan="${g.cols.length}" style="text-align:center;font-size:.72rem;font-weight:600;padding:6px 4px;border-bottom:none;color:var(--text);">${esc(g.name)}</th>`;
-    });
+function showToast(message) {
+    elements.toast.textContent = message;
+    elements.toast.classList.add('is-visible');
+    if (toastTimer) window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () {
+        elements.toast.classList.remove('is-visible');
+    }, 1900);
+}
 
-    let colHeaderCells = '<th style="border-bottom:2px solid var(--border);"></th>';
-    groups.forEach(g => {
-        g.cols.forEach(col => {
-            colHeaderCells += `<th class="col-header">
-                <div class="col-header-inner">
-                    <span class="col-header-text">${esc(col.name)}</span>
-                </div>
-                <button class="col-remove-btn no-print"
-                        data-action="removeCol" data-section="${sec.id}" data-col="${col.id}"
-                        title="Spalte entfernen">✕</button>
-            </th>`;
+function scheduleRemoteWrite(immediate) {
+    if (!docRef) {
+        setSyncStatus('Nur auf diesem Gerät', 'offline');
+        return;
+    }
+    if (writeTimer) window.clearTimeout(writeTimer);
+    setSyncStatus('Speichert …', '');
+    const write = function () {
+        docRef.set(JSON.parse(JSON.stringify(state))).then(function () {
+            setSyncStatus('Synchronisiert', 'online');
+        }).catch(function (error) {
+            console.error('Putzplan konnte nicht synchronisiert werden:', error);
+            setSyncStatus('Offline gespeichert', 'offline');
         });
-    });
+    };
+    if (immediate) write();
+    else writeTimer = window.setTimeout(write, 250);
+}
 
-    let rows = '';
-    const numDays = sec.days || 31;
-    for (let d = 1; d <= numDays; d++) {
-        let cells = `<td>${d}</td>`;
-        (sec.columns || []).forEach(col => {
-            const key = `${col.id}_${d}`;
-            cells += `<td>${renderCheckbox(sec.id, key)}</td>`;
-        });
-        rows += `<tr class="${d === dateContext.dayOfMonth ? 'today-row' : ''}">${cells}</tr>`;
+function initFirestoreSync() {
+    if (typeof firebaseConfig === 'undefined' || !firebaseConfig || !firebaseConfig.apiKey || typeof firebase === 'undefined') {
+        setSyncStatus('Nur auf diesem Gerät', 'offline');
+        return;
     }
 
-    return `
-        <div class="section tile-span-${span}" data-section="${sec.id}">
-            <div class="section-header">
-                <input class="section-title-input" value="${esc(sec.title)}"
-                       data-section="${sec.id}" data-field="sectiontitle">
-                <div class="section-actions no-print">
-                    <label style="font-size:.7rem;color:var(--text-light);display:flex;align-items:center;gap:4px;" title="Anzahl Tage">
-                        📅
-                        <input type="number" value="${numDays}" min="1" max="31"
-                               data-section="${sec.id}" data-field="days"
-                               style="width:40px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;font-family:inherit;outline:none;text-align:center;">
-                    </label>
-                    ${sectionSpanSelectMarkup(sec.id, span)}
-                    <button class="icon-btn drag-handle" title="Bereich verschieben" type="button" data-section="${sec.id}">⠿</button>
-                    <button class="icon-btn" title="Eine Zeile höher" type="button"
-                            data-action="moveSectionUp" data-section="${sec.id}">▲</button>
-                    <button class="icon-btn" title="Eine Zeile nach unten" type="button"
-                            data-action="moveSectionDown" data-section="${sec.id}">▼</button>
-                    <button class="icon-btn" title="Nach ganz oben" type="button"
-                            data-action="moveSectionTop" data-section="${sec.id}">⤒</button>
-                    <button class="icon-btn" title="Nach ganz unten" type="button"
-                            data-action="moveSectionBottom" data-section="${sec.id}">⤓</button>
-                    <button class="icon-btn" title="Spalte hinzufügen"
-                            data-action="showAddCol" data-section="${sec.id}">＋</button>
-                    <button class="icon-btn danger" title="Bereich löschen"
-                            data-action="removeSection" data-section="${sec.id}">🗑</button>
-                </div>
-            </div>
-            <div class="daily-table-wrapper">
-                <table class="daily-table">
-                    <thead>
-                        <tr>${groupHeaderCells}</tr>
-                        <tr>${colHeaderCells}</tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            </div>
-            <button class="add-btn no-print" data-action="showAddCol" data-section="${sec.id}" style="margin-top:12px;">+ Spalte hinzufügen</button>
-        </div>`;
-}
+    try {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        firestore = firebase.firestore();
+        const id = typeof documentId !== 'undefined' && documentId
+            ? documentId
+            : 'francesco-wallpad-putzplan-v1';
+        docRef = firestore.collection('putzplan').doc(id);
+        setSyncStatus('Verbindet …', '');
 
-// ════════════════════════════════════════════════════
-//  EVENTS
-// ════════════════════════════════════════════════════
-function bindEvents() {
-    // Checkboxes
-    document.querySelectorAll('.cb').forEach(cb => {
-        cb.addEventListener('click', () => {
-            if (!currentUserName) {
-                openUserNameModal();
+        docRef.onSnapshot(function (snapshot) {
+            if (!snapshot.exists) {
+                scheduleRemoteWrite(true);
                 return;
             }
-            const sec = data.sections.find(s => s.id === cb.dataset.section);
-            if (!sec) return;
-            if (!sec.checked) sec.checked = {};
-            const key = cb.dataset.key;
-            const owner = getCheckboxOwner(sec.checked[key]);
-            if (isOwnerCurrentUser(owner)) {
-                delete sec.checked[key];
-            } else {
-                sec.checked[key] = currentUserName;
-            }
-            render();
-            save();
-        });
-    });
-
-    // Inline edits
-    document.querySelectorAll('[data-field="sectiontitle"]').forEach(input => {
-        input.addEventListener('input', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            if (sec) { sec.title = input.value; save(); }
-        });
-    });
-    document.querySelectorAll('[data-field="catname"]').forEach(input => {
-        input.addEventListener('input', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            const cat = sec && sec.categories ? sec.categories.find(c => c.id === input.dataset.cat) : null;
-            if (cat) { cat.name = input.value; save(); }
-        });
-    });
-    document.querySelectorAll('[data-field="taskname"]').forEach(input => {
-        input.addEventListener('input', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            const cat = sec && sec.categories ? sec.categories.find(c => c.id === input.dataset.cat) : null;
-            const task = cat && cat.tasks ? cat.tasks.find(t => t.id === input.dataset.task) : null;
-            if (task) { task.name = input.value; save(); }
-        });
-    });
-    document.querySelectorAll('[data-field="tasknotes"]').forEach(input => {
-        input.addEventListener('input', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            const cat = sec && sec.categories ? sec.categories.find(c => c.id === input.dataset.cat) : null;
-            const task = cat && cat.tasks ? cat.tasks.find(t => t.id === input.dataset.task) : null;
-            if (!task) return;
-
-            task.notes = input.value;
-            const panel = input.closest('.task-notes-panel');
-            const row = panel ? panel.previousElementSibling : null;
-            const btn = row ? row.querySelector('[data-action="toggleTaskNotes"]') : null;
-            if (btn) {
-                if ((input.value || '').trim()) btn.classList.add('note-active');
-                else btn.classList.remove('note-active');
-                if (!panel.classList.contains('open')) panel.classList.add('open');
-            }
-            save();
-        });
-    });
-    document.querySelectorAll('[data-field="days"]').forEach(input => {
-        input.addEventListener('change', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            if (sec) { sec.days = Math.max(1, Math.min(31, parseInt(input.value) || 31)); render(); save(); }
-        });
-    });
-    document.querySelectorAll('[data-field="boxes"]').forEach(input => {
-        input.addEventListener('change', () => {
-            const sec = data.sections.find(s => s.id === input.dataset.section);
-            if (sec) { sec.boxes = Math.max(1, Math.min(31, parseInt(input.value) || 4)); render(); save(); }
-        });
-    });
-
-    // Month
-    const monthEl = document.getElementById('monthInput');
-    if (monthEl) {
-        monthEl.addEventListener('input', () => { data.month = monthEl.value; save(); });
-    }
-
-    // Action buttons
-    document.querySelectorAll('[data-action]').forEach(btn => {
-        if (btn.matches('select')) {
-            btn.addEventListener('change', handleAction);
-        } else {
-            btn.addEventListener('click', handleAction);
-        }
-    });
-
-    bindSectionDragAndDrop();
-}
-
-function bindSectionDragAndDrop() {
-    const sections = document.querySelectorAll('.section[data-section]');
-    const handles = document.querySelectorAll('.drag-handle');
-    const sectionsById = {};
-    sections.forEach(sec => { sectionsById[sec.dataset.section] = sec; });
-    function shouldInsertAfter(targetRect, pointerX, pointerY) {
-        const xOffset = pointerX - (targetRect.left + targetRect.width / 2);
-        const yOffset = pointerY - (targetRect.top + targetRect.height / 2);
-        if (Math.abs(xOffset) >= Math.abs(yOffset)) return xOffset > 0;
-        return yOffset > 0;
-    }
-
-    handles.forEach((handle) => {
-        handle.draggable = true;
-        handle.addEventListener('dragstart', (e) => {
-            const id = handle.dataset.section;
-            if (!id) return;
-            draggingSectionId = id;
-            const section = sectionsById[id];
-            if (section) section.classList.add('is-dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', id);
-        });
-
-        handle.addEventListener('dragend', () => {
-            draggingSectionId = null;
-            document.querySelectorAll('.section[data-section]').forEach(el => {
-                el.classList.remove('is-dragging', 'drop-hover');
-            });
-        });
-    });
-
-    sections.forEach((section) => {
-        section.addEventListener('dragover', (e) => {
-            if (!draggingSectionId) return;
-            if (section.dataset.section === draggingSectionId) return;
-            e.preventDefault();
-            section.classList.add('drop-hover');
-        });
-
-        section.addEventListener('dragleave', () => {
-            section.classList.remove('drop-hover');
-        });
-
-        section.addEventListener('drop', (e) => {
-            e.preventDefault();
-            section.classList.remove('drop-hover');
-
-            if (!draggingSectionId) return;
-            const targetId = section.dataset.section;
-            if (targetId === draggingSectionId) return;
-
-            const from = data.sections.findIndex(s => s.id === draggingSectionId);
-            const target = data.sections.findIndex(s => s.id === targetId);
-            if (from === -1 || target === -1) return;
-
-            const targetRect = section.getBoundingClientRect();
-            const insertAfter = shouldInsertAfter(targetRect, e.clientX, e.clientY);
-            let insertIndex = insertAfter ? target + 1 : target;
-            if (from < insertIndex) insertIndex -= 1;
-
-            const [moved] = data.sections.splice(from, 1);
-            data.sections.splice(insertIndex, 0, moved);
-            draggingSectionId = null;
-            render();
-            save();
-        });
-    });
-}
-
-// ════════════════════════════════════════════════════
-//  ACTIONS
-// ════════════════════════════════════════════════════
-function handleAction(e) {
-    e.stopPropagation();
-    const btn = e.currentTarget;
-    const action = btn.dataset.action;
-    const secId = btn.dataset.section;
-    const catId = btn.dataset.cat;
-    const taskId = btn.dataset.task;
-    const colId = btn.dataset.col;
-
-    switch (action) {
-        case 'addTask': {
-            const sec = data.sections.find(s => s.id === secId);
-            const cat = sec.categories.find(c => c.id === catId);
-            cat.tasks.push({ id: sid(), name: 'Neue Aufgabe', notes: '' });
-            render(); save();
-            break;
-        }
-        case 'removeTask': {
-            const sec = data.sections.find(s => s.id === secId);
-            const cat = sec.categories.find(c => c.id === catId);
-            cat.tasks = cat.tasks.filter(t => t.id !== taskId);
-            render(); save();
-            break;
-        }
-        case 'addCat': {
-            const sec = data.sections.find(s => s.id === secId);
-            sec.categories.push({ id: sid(), name: 'Neue Kategorie', tasks: [{ id: sid(), name: 'Neue Aufgabe', notes: '' }] });
-            render(); save();
-            break;
-        }
-        case 'removeCat': {
-            showConfirmDialog('Kategorie löschen?', 'Die Kategorie und alle Aufgaben darin werden entfernt.', () => {
-                const sec = data.sections.find(s => s.id === secId);
-                sec.categories = sec.categories.filter(c => c.id !== catId);
-                render(); save();
-            });
-            break;
-        }
-        case 'removeSection': {
-            showConfirmDialog('Bereich löschen?', 'Der gesamte Bereich wird unwiderruflich entfernt.', () => {
-                data.sections = data.sections.filter(s => s.id !== secId);
-                render(); save();
-            });
-            break;
-        }
-        case 'setSectionSpan': {
-            const sec = data.sections.find(s => s.id === secId);
-            if (!sec) break;
-            const value = parseInt(btn.value, 10);
-            if (!Number.isInteger(value) || value < 1 || value > SECTION_MAX_SPAN) break;
-            if (!sec.layout || typeof sec.layout !== 'object') sec.layout = {};
-            sec.layout.span = value;
-            render();
-            save();
-            break;
-        }
-        case 'moveSectionTop': {
-            const index = data.sections.findIndex(s => s.id === secId);
-            if (index > 0) {
-                moveSectionByIndex(index, 0);
+            const remote = sanitizeState(snapshot.data());
+            if (remote.updatedAt > state.updatedAt) {
+                state = remote;
+                persistLocalState();
                 render();
-                save();
             }
-            break;
-        }
-        case 'moveSectionBottom': {
-            const index = data.sections.findIndex(s => s.id === secId);
-            if (index >= 0 && index < data.sections.length - 1) {
-                moveSectionByIndex(index, data.sections.length - 1);
-                render();
-                save();
-            }
-            break;
-        }
-        case 'moveSectionUp': {
-            const index = data.sections.findIndex(s => s.id === secId);
-            if (index > 0) {
-                moveSectionByIndex(index, index - 1);
-                render();
-                save();
-            }
-            break;
-        }
-        case 'moveSectionDown': {
-            const index = data.sections.findIndex(s => s.id === secId);
-            if (index >= 0 && index < data.sections.length - 1) {
-                moveSectionByIndex(index, index + 1);
-                render();
-                save();
-            }
-            break;
-        }
-        case 'showAddCol': {
-            const sec = data.sections.find(s => s.id === secId);
-            const lastGroup = sec.columns && sec.columns.length > 0 ? sec.columns[sec.columns.length - 1].group : '';
-            document.getElementById('newColGroup').value = lastGroup;
-            document.getElementById('newColName').value = '';
-            document.getElementById('newColSection').value = secId;
-            openModal('addColModal');
-            setTimeout(() => document.getElementById('newColName').focus(), 100);
-            break;
-        }
-        case 'removeCol': {
-            showConfirmDialog('Spalte entfernen?', 'Die Spalte und alle zugehörigen Häkchen werden gelöscht.', () => {
-                const sec = data.sections.find(s => s.id === secId);
-                sec.columns = sec.columns.filter(c => c.id !== colId);
-                render(); save();
-            });
-            break;
-        }
-        case 'toggleTaskNotes': {
-            const panel = document.querySelector(`.task-notes-panel[data-section="${secId}"][data-cat="${catId}"][data-task="${taskId}"]`);
-            if (!panel) break;
-            panel.classList.toggle('open');
-            if (btn) btn.classList.toggle('note-active', panel.classList.contains('open'));
-            if (panel.classList.contains('open')) {
-                const noteInput = panel.querySelector('[data-field="tasknotes"]');
-                if (noteInput) noteInput.focus();
-            }
-            break;
-        }
+            setSyncStatus(snapshot.metadata.fromCache ? 'Offline gespeichert' : 'Synchronisiert', snapshot.metadata.fromCache ? 'offline' : 'online');
+        }, function (error) {
+            console.error('Putzplan-Verbindung fehlgeschlagen:', error);
+            setSyncStatus('Offline gespeichert', 'offline');
+        });
+    } catch (error) {
+        console.error('Firebase konnte nicht gestartet werden:', error);
+        setSyncStatus('Nur auf diesem Gerät', 'offline');
     }
 }
 
-// ════════════════════════════════════════════════════
-//  CONFIRM DIALOG
-// ════════════════════════════════════════════════════
-let confirmCallback = null;
+function bindEvents() {
+    elements.roomRail.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-room-id]');
+        if (button) selectRoom(button.dataset.roomId);
+    });
 
-function showConfirmDialog(title, message, onConfirm) {
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').textContent = message;
-    confirmCallback = onConfirm;
-    openModal('confirmModal');
-}
+    elements.taskList.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-task-id]');
+        if (button) toggleTask(button.dataset.taskId);
+    });
 
-document.getElementById('confirmYesBtn').addEventListener('click', () => {
-    closeModal('confirmModal');
-    if (confirmCallback) { confirmCallback(); confirmCallback = null; }
-});
+    document.querySelectorAll('.person-button').forEach(function (button) {
+        button.addEventListener('click', function () { selectPerson(button.dataset.person); });
+    });
 
-const userNameSelect = document.getElementById('userNameSelect');
-if (userNameSelect) {
-    userNameSelect.addEventListener('change', saveUserNameFromModal);
-    userNameSelect.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') saveUserNameFromModal();
+    elements.resetButton.addEventListener('click', function () {
+        elements.resetModal.hidden = false;
+        elements.cancelReset.focus();
+    });
+    elements.cancelReset.addEventListener('click', function () { elements.resetModal.hidden = true; });
+    elements.confirmReset.addEventListener('click', resetToday);
+    elements.closeCelebration.addEventListener('click', function () { elements.celebration.hidden = true; });
+
+    elements.resetModal.addEventListener('click', function (event) {
+        if (event.target === elements.resetModal) elements.resetModal.hidden = true;
+    });
+    elements.celebration.addEventListener('click', function (event) {
+        if (event.target === elements.celebration) elements.celebration.hidden = true;
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') return;
+        elements.resetModal.hidden = true;
+        elements.celebration.hidden = true;
     });
 }
 
-// ════════════════════════════════════════════════════
-//  MODAL HELPERS
-// ════════════════════════════════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('active'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.classList.remove('active');
-    });
-});
-
-// ════════════════════════════════════════════════════
-//  TOOLBAR ACTIONS
-// ════════════════════════════════════════════════════
-function showAddSectionModal() {
-    document.getElementById('newSectionName').value = '';
-    document.getElementById('newSectionBoxes').value = '4';
-    openModal('addSectionModal');
-    setTimeout(() => document.getElementById('newSectionName').focus(), 100);
+function init() {
+    elements.todayLabel.textContent = formatToday();
+    bindEvents();
+    render();
+    initFirestoreSync();
 }
 
-function confirmAddSection() {
-    const name = document.getElementById('newSectionName').value.trim() || 'Neuer Bereich';
-    const boxes = parseInt(document.getElementById('newSectionBoxes').value) || 4;
-    data.sections.push({
-        id: sid(), type: 'weekly', title: name, boxes,
-        layout: { span: 1 },
-        categories: [{ id: sid(), name: 'Allgemein', tasks: [{ id: sid(), name: 'Neue Aufgabe', notes: '' }] }],
-        checked: {}
-    });
-    closeModal('addSectionModal');
-    render(); save();
-}
-
-function addDailySection() {
-    data.sections.unshift({
-        id: sid(), type: 'daily', title: 'Täglich', days: 31,
-        layout: { span: 2 },
-        columns: [
-            { id: sid(), group: 'Allgemein', name: 'Aufgabe 1' },
-            { id: sid(), group: 'Allgemein', name: 'Aufgabe 2' },
-        ],
-        checked: {}
-    });
-    render(); save();
-}
-
-function confirmAddCol() {
-    const secId = document.getElementById('newColSection').value;
-    const group = document.getElementById('newColGroup').value.trim() || 'Allgemein';
-    const name = document.getElementById('newColName').value.trim() || 'Neue Spalte';
-    const sec = data.sections.find(s => s.id === secId);
-    if (!sec) return;
-    sec.columns.push({ id: sid(), group, name });
-    closeModal('addColModal');
-    render(); save();
-}
-
-function resetAllChecks() {
-    showConfirmDialog('Alle Häkchen zurücksetzen?', 'Alle Checkboxen in allen Bereichen werden geleert.', () => {
-        data.sections.forEach(sec => { sec.checked = {}; });
-        render(); save();
-    });
-}
-
-let masonryRelayoutTimer = null;
-function scheduleMasonryRelayout() {
-    if (currentViewMode !== 'planner') return;
-    if (masonryRelayoutTimer) clearTimeout(masonryRelayoutTimer);
-    masonryRelayoutTimer = setTimeout(() => {
-        applyMasonryLayout();
-        masonryRelayoutTimer = null;
-    }, 80);
-}
-window.addEventListener('resize', scheduleMasonryRelayout);
-
-// ── Print: scale the entire layout to fit one A4 landscape page ──
-// A4 landscape printable area (mm) with 5mm margins: 287 × 200
-// At 96dpi that's roughly 1085 × 755 CSS px, but we measure dynamically.
-let _printBackup = null;
-let _printViewMode = null;
-
-function preparePrintLayout() {
-    _printViewMode = currentViewMode;
-    if (currentViewMode !== 'planner') {
-        setViewMode('planner', false);
-        applyMasonryLayout();
-    }
-
-    const main = document.querySelector('.main');
-    const body = document.getElementById('planBody');
-    if (!main || !body) return;
-
-    // Measure content at its natural web size
-    const contentW = main.scrollWidth;
-    const contentH = main.scrollHeight;
-    if (!contentW || !contentH) return;
-
-    // A4 landscape printable area with 5mm margin ≈ 287mm × 200mm
-    // Convert to CSS px: 1mm ≈ 3.7795px at 96dpi
-    const pageW = 287 * 3.7795;
-    const pageH = 200 * 3.7795;
-
-    const scaleX = pageW / contentW;
-    const scaleY = pageH / contentH;
-    const scale = Math.min(scaleX, scaleY, 1); // never scale up
-
-    _printBackup = {
-        transform: main.style.transform,
-        transformOrigin: main.style.transformOrigin,
-        width: main.style.width,
-        maxWidth: main.style.maxWidth,
-        padding: main.style.padding,
-    };
-
-    main.style.transformOrigin = 'top left';
-    main.style.transform = `scale(${scale})`;
-    main.style.width = contentW + 'px';
-    main.style.maxWidth = 'none';
-    main.style.padding = '12px 18px 20px';
-}
-
-function restorePrintLayout() {
-    if (!_printBackup) {
-        if (_printViewMode && _printViewMode !== currentViewMode) setViewMode(_printViewMode, false);
-        _printViewMode = null;
-        return;
-    }
-    const main = document.querySelector('.main');
-    if (!main) return;
-
-    main.style.transform = _printBackup.transform || '';
-    main.style.transformOrigin = _printBackup.transformOrigin || '';
-    main.style.width = _printBackup.width || '';
-    main.style.maxWidth = _printBackup.maxWidth || '';
-    main.style.padding = _printBackup.padding || '';
-    _printBackup = null;
-    if (_printViewMode && _printViewMode !== currentViewMode) setViewMode(_printViewMode, false);
-    _printViewMode = null;
-}
-
-window.addEventListener('beforeprint', preparePrintLayout);
-window.addEventListener('afterprint', () => {
-    restorePrintLayout();
-    scheduleMasonryRelayout();
-});
-
-// ════════════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════════════
-initApp();
+init();
